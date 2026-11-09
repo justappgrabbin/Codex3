@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs",
+    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs && node tests/ato-boolean.test.mjs",
+    "test:ato-core": "node --test vendor/ato-core/test/*.test.mjs",
     "build": "node scripts/build.mjs"
   },
   "devDependencies": {
