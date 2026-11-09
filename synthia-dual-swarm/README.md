@@ -30,3 +30,13 @@ A separate `synthia-unity` project contains native integration components, model
 `npm test` runs the core regressions. `npm run build` rebuilds the single-file package after installing the pinned esbuild development dependency. Browser checks require Playwright and Chromium; neither is a runtime dependency.
 
 See `docs/VERIFICATION.md`, `docs/SOURCE-INTAKE.md`, and `docs/INTAKE-INVENTORY.json`. Original uploads were left unchanged. Asset availability does not imply unrestricted redistribution rights; preserve source attribution and verify the original asset terms before publishing.
+
+## Continuous-agent milestone
+
+Use **Start agents** to run three functional agents on a shared 750 ms simulation clock. They discover a damaged relay, communicate observed state, gather finite parts, attempt repairs and update action-value estimates from rewards and failures. A failed repair lowers its learned value enough for tool morphology to become preferable; morphology changes reach, speed and ability to grip. Those consequences affect future actions and other agents. Communication and successful repairs create actual typed relations and packet crossings.
+
+Controls include pause, single-step, a morphology permission, a 120-tick budget, checkpoint/save and restoration. Checkpoints retain the world and experience-updated policies, restore paused, and can reverse experimental runs. Execution also suspends during replay, movement, global pause and hidden tabs. It runs only while the browser page is active; this is not an unattended server service. Completion/budget exhaustion saves a local checkpoint; explicit checkpointing is available mid-run.
+
+This is a bounded local multi-agent scenario with authored legal actions, body mechanics, rewards and goal utilities. It does not accept arbitrary natural-language tasks, invent arbitrary tools, or prove open-ended intelligence. The three agents are functional entities shown in the graph and activity log; they are not three newly rigged visual characters. Their tool morphology currently affects simulation mechanics, not visible hand reconstruction. Existing 5D frames and the separate neural assembly controller remain in place.
+
+Other repositories mentioned as potential integrations (Simlish, Generative-address-system, Synthcodex1, Language-contact-model/Klein and Codex2) have not been connected by this milestone.

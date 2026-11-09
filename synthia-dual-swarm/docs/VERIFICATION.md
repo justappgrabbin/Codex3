@@ -11,3 +11,9 @@ The interface seed compiles to shared substrate entities. Named quality explorat
 Unity is not installed. The Unity package is a native project scaffold with real model assets, morph components and exported controller inference. Its C# compilation, FBX import, animation controllers and rendered appearance remain unverified in Unity Editor. Browser test results do not establish Unity correctness.
 
 Earlier procedural-body screenshots and earlier design notes describe superseded milestones. Current entry points and limitations are in README.md; source intake is in SOURCE-INTAKE.md.
+
+## Continuous agents
+
+Five additional regressions cover independent choices with communication and failure adaptation, finite-resource consequences, pause/budget bounds, denied tool morphology, deterministic checkpoint continuation/replay, and scarcity preventing completion. Total: 22 passing core tests. The browser test `tests/autonomy-browser.cjs` checks unattended completion, checkpoint reversal, single-step and replay on the actual standalone build.
+
+A browser check caught completion autosave overwriting the explicit reversal checkpoint. These now use separate storage keys; restore prefers the explicit checkpoint and falls back to the completion autosave.

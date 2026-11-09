@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Substrate} from '../core/substrate.js';
+import {AutonomousSwarm} from '../core/autonomy.js';
+const create=()=>new AutonomousSwarm(new Substrate());
+test('autonomous agents communicate, fail, adapt tools, consume resources and complete',()=>{const r=create();r.control(true);while(r.step()){}assert.equal(r.state.completed,true);assert.ok(r.state.tick<120);const agents=r.agents();assert.ok(agents.some(a=>a.state.experiences.some(e=>e.reward===-2)));assert.ok(agents.some(a=>a.state.tool==='gripper'));assert.ok(r.core.require('autonomy.stock').state.parts<9);assert.ok([...r.core.relations.values()].some(e=>e.kind==='communicates'&&e.crossings>0));assert.ok([...r.core.relations.values()].some(e=>e.kind==='repairs'));});
+test('pause and budget bound execution',()=>{const r=create();assert.equal(r.step(),false);r.core.change('autonomy',{budget:2},'test budget');r.control(true);for(let i=0;i<10;i++)r.step();assert.equal(r.state.tick,2);assert.equal(r.state.running,false);});
+test('permission denial blocks morphology and completion, without bypass',()=>{const r=create();r.setPermission('morph',false);r.control(true);while(r.step()){}assert.equal(r.state.completed,false);assert.ok(r.agents().every(a=>a.state.tool==='hands'));});
+test('checkpoint restores policies and shared world with a paused supervisor state',()=>{const r=create();r.control(true);for(let i=0;i<5;i++)r.step();r.control(false);const saved=r.fingerprint(),restored=AutonomousSwarm.restore(r.checkpoint());assert.equal(restored.fingerprint(),saved);r.control(true);restored.control(true);while(r.step()){}while(restored.step()){}assert.equal(restored.fingerprint(),r.fingerprint());assert.deepEqual(Substrate.replay(r.core.export()).snapshot(),r.core.snapshot());});
+test('different starting damage and stock affect causal outcome',()=>{const r=create();r.core.change('autonomy.stock',{parts:1},'resource scarcity');r.control(true);while(r.step()){}assert.equal(r.state.completed,false);assert.equal(r.core.require('autonomy.relay').state.health,1);});
