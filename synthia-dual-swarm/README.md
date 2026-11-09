@@ -74,3 +74,9 @@ reusable plans, invent components, negotiate teams, or implement the proposed fo
 ability pairs. Resource scarcity or denied permissions can prevent completion.
 `npm test` covers unfamiliar layouts, direct-action denials, recovery, conservation,
 tie decay, new damage and deterministic replay alongside the existing regressions.
+
+## Dynamic participants and collective function learning
+
+The follow-on branch separates initial demo conditions from runtime rules, supports arbitrary participant rosters and component catalogs, and lets agents coordinate in response to queued function demands. A compatible relationship cluster can compose/test a numerical transformation and drive an existing scene object. Learned functions, action-sequence values, goals, rule changes and renderer feedback survive checkpoint replay. Local code, PNG and silent video exports are available.
+
+See [DYNAMIC-SWARM.md](docs/DYNAMIC-SWARM.md) for the configuration format, numerical example, recovered Synthia local-model adapter, verification and current boundaries. The default three-agent relay remains an example, not a required roster or solution script.

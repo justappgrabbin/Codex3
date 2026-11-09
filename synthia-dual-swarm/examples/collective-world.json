@@ -1,0 +1,18 @@
+{
+  "budget": 120,
+  "rules": {
+    "clusterRadius": 5,
+    "clusterThreshold": 0.3,
+    "relationshipGain": 0.35
+  },
+  "scenario": {
+    "agents": [
+      {"id":"autonomy.ember","position":-1,"primitives":["scale","bias"]},
+      {"id":"autonomy.tide","position":1,"primitives":["sin"]},
+      {"id":"autonomy.moss","position":2,"primitives":["clamp"]},
+      {"id":"autonomy.fern","position":-3,"primitives":["bias"]}
+    ],
+    "structures": [{"id":"autonomy.pump","position":4,"health":0,"required":2}],
+    "supplies": [{"id":"autonomy.scrap","position":-2,"parts":6}]
+  }
+}

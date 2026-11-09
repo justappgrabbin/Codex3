@@ -13,7 +13,7 @@ cd synthia-dual-swarm
 npm start
 ```
 
-Open http://localhost:8000. Run `npm test` for the 29 core and autonomy regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
+Open http://localhost:8000. Run `npm test` for the 46 core, autonomy and production regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
 
 ## Included
 
@@ -24,3 +24,7 @@ Browser checks passed for assets, learned assembly, recursive frame exploration,
 ## Continuous-agent milestone
 
 The browser now includes three functional agents operating on a bounded shared clock. Use **Start agents** to observe communication, finite-resource gathering, failed repairs, experience-based action values and tool morphology with operational consequences. Pause, single-step, morphology permission and checkpoint reversal are available. The scenario uses authored legal operators and local goals; it does not establish arbitrary-task intelligence. Runs while the page is active, not as a background server. See the browser README for limits and verification.
+
+## Dynamic rule-based branch
+
+Configurable participants and physical rules, relationship-enabled numerical tool composition, retained consequence learning, local Synthia model proposals, and scene/code/media exports are described in [DYNAMIC-SWARM.md](synthia-dual-swarm/docs/DYNAMIC-SWARM.md). Existing generator sources remain separate until their actual runtime integrations are verified.

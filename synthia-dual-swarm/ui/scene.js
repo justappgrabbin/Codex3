@@ -83,7 +83,25 @@ export class SceneView{
   this.companion.position.copy(this.player.root.position).add(new T.Vector3(.9,0,.3));this.companion.rotation.y=this.player.root.rotation.y;this.gait(dt,!!this.motion&&!this.motion.vehicle);
   if(this.particles){const p=this.particles,u=Math.min(1,(this.clock-this.assembledAt)/1.6),e=1-Math.pow(1-u,3),a=p.geometry.attributes.position.array;for(let i=0;i<a.length;i++)a[i]=p.userData.origin[i]*(1-e)+p.userData.targets[i]*e;p.geometry.attributes.position.needsUpdate=true;p.material.opacity=(1-u)*.9;for(const mat of this.materials){mat.transparent=u<1;mat.opacity=Math.min(1,.2+u);}}
   if(this.imageField){const {field,points,targets,start}=this.imageField,age=this.clock-start,gather=Math.min(1,age/2),a=points.geometry.attributes.position.array;for(let i=0;i<field.samples.length;i++){const seed=i*2.39996,motion=age<2?1-gather:0,region=field.samples[i].cluster;a[i*3]=targets[i*3]+Math.cos(seed)*motion*3+Math.sin(this.clock*.5+region)*.018;a[i*3+1]=targets[i*3+1]+Math.sin(seed)*motion*2+Math.cos(this.clock*.4+region)*.018;a[i*3+2]=0;}points.geometry.attributes.position.needsUpdate=true;}
- }this.renderer.render(this.scene,this.camera);this.raf=requestAnimationFrame(t=>this.frame(t));}
+ }this.updateProduction();this.renderer.render(this.scene,this.camera);this.raf=requestAnimationFrame(t=>this.frame(t));}
+ updateProduction(){
+  this.productionTargets??=new Map();
+  for(const [object,base] of this.productionTargets){object.scale.copy(base.scale);object.rotation.z=base.rotation;}
+  this.productionTargets.clear();
+  if(!this.production)return;
+  for(const binding of this.production.state.bindings){
+   const value=this.production.sample(binding.target,this.clock);if(value===null)continue;
+   let object;
+   if(binding.target===this.imageFieldId)object=this.imageField?.points;
+   else this.scene.traverse(o=>{if(!object&&o.userData.entity===binding.target)object=o;});
+   if(!object)continue;
+   const base={scale:object.scale.clone(),rotation:object.rotation.z};this.productionTargets.set(object,base);
+   object.scale.multiplyScalar(1+value*.05);object.rotation.z+=value*.04;
+   this.productionMeasurements??=new Map();
+   const key=binding.toolId+':'+binding.target;
+   if(!this.productionMeasurements.has(key)){this.productionMeasurements.set(key,true);this.production.feedback(binding.target,Math.abs(value*.05));}
+  }
+ }
  setPaused(value){this.paused=value;}
  highlight(id){this.selected=id;this.content.traverse(o=>{if(o.isMesh&&o.material?.emissive){let p=o;while(p&&!p.userData.entity)p=p.parent;o.material.emissive.set(p?.userData.entity===id?'#274a45':'#000000');}});}
 }

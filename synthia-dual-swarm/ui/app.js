@@ -1,3 +1,5 @@
+import {proposeLocalProgram} from '../core/local-model.js';
+import {LocalProduction} from '../core/production.js';
 import {AutonomousSwarm} from '../core/autonomy.js';
 import {Substrate,gateBits} from '../core/substrate.js';
 import {World,BRANCHES} from '../core/world.js';
@@ -13,8 +15,8 @@ import {compileDiscourse} from '../core/grammar.js';
 const $=id=>document.getElementById(id),el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;};
 let core=new Substrate(),world=new World(core),selected='companion',mode='embodied',replayWorld=null,scene,graph,busy=false,paused=false,sound=false,audio=null,queued=false,history=false,noticeTimer;
 mountSwarmInterface(core,document.getElementById('swarm-blueprint'),document.getElementById('swarm-interface'));
-new AutonomousSwarm(core);
-const baseline=core.events.length;
+new LocalProduction(new AutonomousSwarm(core));
+let baseline=core.events.length;
 let learner=new AssemblyLearner();
 let framePath=[],frameDimension='Movement';
 const activeWorld=()=>replayWorld||world;
@@ -44,7 +46,7 @@ function renderInspector(){const c=activeWorld().core;if(!c.entities.has(selecte
  $('history-panel').replaceChildren();const children=entity.children.map(id=>c.require(id).label);if(children.length){const line=el('div',undefined,'history-entry');line.append(el('strong','Composed from'),el('p',children.join(' → ')));$('history-panel').append(line);}for(const h of [...entity.history].reverse()){const line=el('div',undefined,'history-entry');line.append(el('strong','Event '+h.seq),el('p',h.frame?'Frame: '+c.require(h.frame).label+' / '+h.placement:h.reason||JSON.stringify(h.patch||h.qualities||h)));$('history-panel').append(line);}const relations=[...c.relations.values()].filter(r=>r.source===selected||r.target===selected);$('capabilities').textContent=(entity.functions.join(' · ')||'Composition / relation')+' · '+relations.length+' relations';$('resonate').disabled=!!replayWorld;$('change-line').disabled=!!replayWorld;
 }
 function renderLedger(){const c=activeWorld().core;$('event-count').textContent=c.events.length+' recorded events';const box=$('events');box.replaceChildren();for(const event of c.events.slice(-60).reverse()){const li=el('li');li.append(el('span',String(event.seq).padStart(3,'0')),el('code',event.type),el('span',event.data.label||event.data.reason||event.data.operator||event.data.id||event.data.kind||event.data.relation||''));box.append(li);}const range=$('replay');range.min=baseline;range.max=core.events.length;if(!replayWorld)range.value=core.events.length;$('replay-position').textContent=replayWorld?'Event '+replayWorld.core.events.length:'Live';}
-function render(){const w=activeWorld();renderAutonomy();renderLearning();renderPaths();renderActivity();renderInspector();renderLedger();if(scene&&scene.room!==w.room)scene.build(w);const imageId=w.state.activeImage;if(imageId&&scene&&scene.imageFieldId!==imageId)scene.showImageField(w.core.require(imageId).state.field,imageId);const model=w.state.assemblyLearning;if(model)scene?.applyLearner(model);scene?.applyQualities(w);graph?.draw(w.core,selected);scene?.highlight(selected);$('clear-image').hidden=!imageId;$('onboarding').querySelectorAll('input,textarea,select,button').forEach(x=>x.disabled=!!replayWorld||busy);$('world-status').textContent=replayWorld?'Recorded state · read only':busy?'Swarm resolving':w.core.entities.size+' addressed entities · shared interface and embodiment';
+function render(){const w=activeWorld();renderAutonomy();renderProduction();renderLearning();renderPaths();renderActivity();renderInspector();renderLedger();if(scene&&scene.room!==w.room)scene.build(w);const imageId=w.state.activeImage;if(imageId&&scene&&scene.imageFieldId!==imageId)scene.showImageField(w.core.require(imageId).state.field,imageId);const model=w.state.assemblyLearning;if(model)scene?.applyLearner(model);scene?.applyQualities(w);graph?.draw(w.core,selected);scene?.highlight(selected);$('clear-image').hidden=!imageId;$('onboarding').querySelectorAll('input,textarea,select,button').forEach(x=>x.disabled=!!replayWorld||busy);$('world-status').textContent=replayWorld?'Recorded state · read only':busy?'Swarm resolving':w.core.entities.size+' addressed entities · shared interface and embodiment';
  const branch=BRANCHES.find(b=>b.id===w.room);$('companion-text').textContent=replayWorld?'We’re viewing an earlier state. Return to live to continue.':branch?(w.core.require('scene.'+branch.id).state.complete?'We’ll carry this experience into the next room.':branch.description):w.state.profile?'The three recipes are prepared. Your choices stay open.':'Choose a goal. I’ll prepare the room while you explore.';
 }
 function download(name,data){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);}
@@ -81,7 +83,7 @@ graph=new FunctionView($('function-canvas'),selectEntity);render();
 window.synthia={getState:()=>activeWorld().core.snapshot(),getExport:()=>activeWorld().core.export(),getStatus:()=>({morphPhase:scene?.morphPhase,humanReady:!!scene?.human,wolfReady:!!scene?.wolf,avatarError:scene?.avatarError,humanBones:scene?.human?.boneCount,humanAnimations:scene?.human?Object.keys(scene.human.actions):[],room:activeWorld().room,busy,paused,replay:!!replayWorld,mode,webgl:!!scene}),verifyReplay:()=>hash(Substrate.replay(core.export()).snapshot())===hash(core.snapshot())};
 
 // A fixed, bounded simulation tick; never catches up hidden-tab wall time.
-function renderAutonomy(){const c=activeWorld().core;if(!c.entities.has('autonomy'))return;const r=new AutonomousSwarm(c),s=r.state;$('autonomy-status').textContent=`Tick ${s.tick}/${s.budget} · structures ${r.structures().filter(e=>e.state.health>=e.state.required).length}/${r.structures().length} · ${s.summary}`;$('autonomy-toggle').textContent=s.running?'Pause agents':'Start agents';for(const id of ['autonomy-toggle','autonomy-step','autonomy-morph','autonomy-save','autonomy-restore'])$(id).disabled=!!replayWorld||busy;$('autonomy-morph').checked=s.permissions.morph;const host=$('autonomy-agents');host.replaceChildren();for(const a of r.agents()){const item=el('p',`${a.label} · ${a.state.goal} · ${a.state.tool} · energy ${a.state.energy??40} · parts ${a.state.inventory} · ${a.state.lastAction}`,'small-note');item.dataset.swarmEntity=a.id;host.append(item);}}
+function renderAutonomy(){const c=activeWorld().core;if(!c.entities.has('autonomy'))return;const r=new AutonomousSwarm(c),s=r.state;$('autonomy-status').textContent=`Tick ${s.tick}/${s.budget} · structures ${r.structures().filter(e=>e.state.health>=e.state.required).length}/${r.structures().length} · ${s.summary}`;$('autonomy-toggle').textContent=s.running?'Pause agents':'Start agents';for(const id of ['autonomy-toggle','autonomy-step','autonomy-morph','autonomy-save','autonomy-restore','swarm-config','swarm-config-undo'])$(id).disabled=!!replayWorld||busy;$('autonomy-morph').checked=s.permissions.morph;const host=$('autonomy-agents');host.replaceChildren();for(const a of r.agents()){const item=el('p',`${a.label} · ${a.state.goal} · ${a.state.tool} · energy ${a.state.energy??40} · parts ${a.state.inventory} · ${a.state.lastAction}`,'small-note');item.dataset.swarmEntity=a.id;host.append(item);}}
 $('autonomy-toggle').onclick=()=>guard(()=>{if(replayWorld||busy)return;const r=new AutonomousSwarm(core);r.control(!r.state.running);schedule();});
 $('autonomy-step').onclick=()=>guard(()=>{if(replayWorld||busy||paused)return;const r=new AutonomousSwarm(core);r.control(true);r.step();r.control(false);schedule();});
 $('autonomy-morph').onchange=e=>guard(()=>{if(!replayWorld&&!busy)new AutonomousSwarm(core).setPermission('morph',e.target.checked);});
@@ -89,3 +91,69 @@ $('autonomy-save').onclick=()=>guard(()=>{if(replayWorld||busy)return;const r=ne
 $('autonomy-restore').onclick=()=>guard(()=>{if(replayWorld||busy)return;const raw=localStorage.getItem('synthia.autonomy.checkpoint')||localStorage.getItem('synthia.autonomy.autosave');if(!raw)throw Error('Save a checkpoint first.');const restored=AutonomousSwarm.restore(JSON.parse(raw));core=restored.core;world=new World(core);selected='autonomy';bind();scene?.build(world,{animate:false});schedule();notify('Checkpoint restored. Agents are paused.');});
 setInterval(()=>guard(()=>{if(replayWorld||busy||paused||document.hidden)return;const r=new AutonomousSwarm(core);if(!r.state.running)return;r.step();if(!r.state.running)localStorage.setItem('synthia.autonomy.autosave',JSON.stringify(r.checkpoint()));}),750);
 renderAutonomy();
+
+function production(){return new LocalProduction(new AutonomousSwarm(core));}
+function renderProduction(){
+ const c=activeWorld().core;
+ if(!c.entities.has('production')){if(scene)scene.production=null;return;}
+ const p=new LocalProduction(new AutonomousSwarm(c));if(scene)scene.production=p;
+ $('production-status').textContent=`${p.clusters().length} relationship clusters · ${p.state.tools.length} retained functions · ${p.state.attempts.length} trials · ${(p.state.tasks||[]).filter(t=>['queued','blocked'].includes(t.status)).length} unmet demands${p.state.tasks?.length?' · '+p.state.tasks.at(-1).status:''}`;
+ const select=$('production-tool'),previous=select.value;select.replaceChildren();
+ for(const tool of p.state.tools){const option=el('option',tool.program.map(s=>s.op+(s.value===undefined?'':' '+s.value)).join(' → '));option.value=tool.id;select.append(option);}if(p.state.tools.some(t=>t.id===previous))select.value=previous;
+ for(const id of ['production-learn','production-local','production-apply','production-release','production-code','production-image','production-video'])$(id).disabled=!!replayWorld||busy;
+}
+function downloadLocal(blob,name){const url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('production-learn').onclick=()=>guard(()=>{
+ if(replayWorld||busy)return;
+ const id=production().request({samples:JSON.parse($('production-samples').value),target:$('production-target').value});
+ new AutonomousSwarm(core).control(true);notify('Function demand queued. Agents will coordinate and test available combinations.');schedule();
+});
+$('production-apply').onclick=()=>guard(()=>{if(!replayWorld&&!busy){production().bind($('production-tool').value,$('production-target').value);schedule();}});
+$('production-release').onclick=()=>guard(()=>{if(!replayWorld&&!busy)production().unbind($('production-target').value);});
+$('production-code').onclick=()=>guard(()=>{if(replayWorld||busy)return;const result=production().exportTool($('production-tool').value);downloadLocal(new Blob([result.source],{type:'text/javascript'}),'synthia-transform.mjs');downloadLocal(new Blob([JSON.stringify(result.manifest,null,2)],{type:'application/json'}),'synthia-transform-evidence.json');});
+$('production-image').onclick=()=>guard(()=>{
+ if(replayWorld||busy)return;if(!scene)throw Error('3D rendering is unavailable');
+ scene.renderer.render(scene.scene,scene.camera);
+ scene.canvas.toBlob(blob=>{if(blob)downloadLocal(blob,'synthia-scene.png');else notify('Scene capture failed');},'image/png');
+});
+$('production-video').onclick=()=>guard(()=>{
+ if(replayWorld||busy)return;
+ if(!scene||!scene.canvas.captureStream||!window.MediaRecorder)throw Error('Video recording is unavailable in this browser');
+ const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'].find(type=>MediaRecorder.isTypeSupported(type));if(!mime)throw Error('No supported video encoder');
+ const output=document.createElement('canvas');output.width=960;output.height=540;const ctx=output.getContext('2d');let track;
+ const capture=()=>{scene.renderer.render(scene.scene,scene.camera);ctx.fillStyle='#0d1720';ctx.fillRect(0,0,960,540);const scale=Math.min(960/scene.canvas.width,540/scene.canvas.height),w=scene.canvas.width*scale,h=scene.canvas.height*scale;ctx.drawImage(scene.canvas,(960-w)/2,(540-h)/2,w,h);track?.requestFrame?.();};
+ capture();const stream=output.captureStream(0);track=stream.getVideoTracks()[0];if(!track.requestFrame){stream.getTracks().forEach(t=>t.stop());throw Error('Manual canvas video capture is unavailable in this browser');}let recorder;try{recorder=new MediaRecorder(stream,{mimeType:mime});}catch(error){stream.getTracks().forEach(t=>t.stop());throw error;}const chunks=[];let timer,frames,flush,encoding=false;
+ const cleanup=()=>{clearTimeout(timer);clearTimeout(flush);clearInterval(frames);stream.getTracks().forEach(track=>track.stop());setBusy(false);};
+ recorder.ondataavailable=e=>{if(e.data.size){chunks.push(e.data);if(!encoding){encoding=true;clearTimeout(timer);timer=setTimeout(()=>{clearInterval(frames);capture();flush=setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();},200);},5000);}}};
+ recorder.onerror=()=>{cleanup();notify('Video recording failed');};
+ recorder.onstop=()=>{cleanup();if(chunks.length)downloadLocal(new Blob(chunks,{type:mime}),'synthia-scene.'+(mime.startsWith('video/mp4')?'mp4':'webm'));};
+ try{recorder.start(100);frames=setInterval(capture,100);setBusy(true,'Recording local scene…');timer=setTimeout(()=>{if(!encoding){recorder.stop();notify('Video encoder did not produce frames');}},15000);}catch(error){cleanup();throw error;}
+});
+renderProduction();
+
+$('production-local').onclick=async()=>{
+ if(replayWorld||busy)return;
+ try{
+  const samples=JSON.parse($('production-samples').value);production().validateSamples(samples);
+  const provider=$('production-provider').value,model=$('production-model').value.trim();
+  setBusy(true,'Asking your local coding model…');
+  const program=await proposeLocalProgram(samples,{provider,model});
+  production().request({samples,target:$('production-target').value,proposals:[program]});
+  new AutonomousSwarm(core).control(true);notify('Local model proposal queued for cluster capability checks and held-out testing.');
+ }catch(error){notify(error.message);}finally{setBusy(false);}
+};
+
+$('swarm-config').onchange=async event=>{
+ const input=event.target,file=input.files[0];if(!file||replayWorld||busy)return;
+ try{
+  if(file.size>65536)throw Error('World configuration must be at most 64 KB');
+  const config=JSON.parse(await file.text()),candidate=new Substrate();new World(candidate);
+  new LocalProduction(new AutonomousSwarm(candidate,config));
+  localStorage.setItem('synthia.autonomy.previous-world',JSON.stringify(new AutonomousSwarm(core).checkpoint()));
+  core=candidate;world=new World(core);baseline=core.events.length;selected='autonomy';bind();scene?.build(world,{animate:false});schedule();notify('World conditions loaded. Agents are paused. Previous world retained.');
+ }catch(error){notify(error.message);}finally{input.value='';}
+};
+$('swarm-config-undo').onclick=()=>guard(()=>{
+ if(replayWorld||busy)return;const raw=localStorage.getItem('synthia.autonomy.previous-world');if(!raw)throw Error('No previous world configuration');
+ const restored=AutonomousSwarm.restore(JSON.parse(raw));core=restored.core;world=new World(core);baseline=Math.min(baseline,core.events.length);selected='autonomy';bind();scene?.build(world,{animate:false});schedule();
+});
