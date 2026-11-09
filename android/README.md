@@ -29,3 +29,7 @@ QuickJS Android dependency: https://github.com/cashapp/quickjs-java (Apache-2.0)
 ## Text representations
 
 Runtime → Text representations converts up to 4,096 UTF-16 units into UTF-8 binary bytes, Unicode scalar labels, ASCII when representable, bounded Latin transliteration and NATO letter spellings. Original Unicode remains intact. Accented Latin, Greek and Cyrillic characters have basic character mappings; unsupported scripts remain unchanged and are listed as unmapped. This is not language-aware translation or a universal romanization standard. NATO words spell Latin letters; punctuation and digits are preserved. Ordered particle byte groups are decoded together as strict UTF-8; incomplete or malformed sequences show an error instead of inventing a Unicode character.
+
+## Six-bit and trained visual fields (0.4.0)
+
+The same app now includes six-bit tier compilation, geometry routing, photo-to-observation input, trained INT8 coordinate/RGBA readouts, and generated-image preview/PNG export. See [implementation, usage and remaining visual requirements](../synthia-dual-swarm/docs/SIX-BIT-VISUAL-TRAINING.md). These changes do not yet deliver general photorealistic image/video generation or 3D reconstruction.

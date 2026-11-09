@@ -1,3 +1,5 @@
+import {VisualField} from './visual-field.js';
+import {stepSixBitSwarm} from './six-bit-swarm.js';
 import {stepParticleField,particleDistance} from './particle-field.js';
 import {DEFAULT_RULES,ACTIONS,validateRules,validateAgent} from './swarm-rules.js';
 import {RELAY_DEMO} from './swarm-scenarios.js';
@@ -129,8 +131,11 @@ export class AutonomousSwarm {
   this.core.change('autonomy',{tick:this.state.tick+1},'fixed simulation clock');
   for(const a of this.agents()){this.core.change(a.id,{ties:Object.fromEntries(Object.entries(a.state.ties||{}).map(([id,value])=>[id,Math.max(0,value-this.rules.relationshipDecay)]).filter(([,value])=>value>0))},'unused social ties weaken and dissolve');this.perceive(a);const choice=this.decide(a);if(choice)this.act(a,choice);}
   stepParticleField(this);
+  stepSixBitSwarm(this);
+  new VisualField(this).tick();
   if(this.core.entities.has('production'))new LocalProduction(this).tick();
-  const pending=this.core.entities.get('production')?.state.tasks?.some(t=>['queued','blocked'].includes(t.status)),completed=!this.rules.continuous&&this.structures().every(e=>e.state.health>=e.state.required)&&!pending,exhausted=this.state.tick>=this.state.budget;
+  const visualPending=this.state.visualField?.status==='training';
+  const pending=visualPending||this.core.entities.get('production')?.state.tasks?.some(t=>['queued','blocked'].includes(t.status)),completed=!this.rules.continuous&&this.structures().every(e=>e.state.health>=e.state.required)&&!pending,exhausted=this.state.tick>=this.state.budget;
   this.core.change('autonomy',{completed,running:!completed&&!exhausted,summary:completed?'All infrastructure restored through permitted actions.':exhausted?'Execution budget reached.':'Agents perceiving, selecting tools and learning from consequences.'},'shared consequence assessment');return true;
  }
  fingerprint(){return hash(this.core.snapshot());}

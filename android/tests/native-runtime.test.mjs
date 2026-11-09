@@ -12,5 +12,6 @@ test('bundled native dispatcher ticks, restores, deduplicates and rolls back inv
  const saved=api.save();api.open(saved);assert.equal(api.save(),saved);
  assert.throws(()=>command({action:'particleState',id:'absent',open:true,requestId:'bad'}));assert.equal(api.save(),saved);
  api.tick();assert.equal(JSON.parse(api.state()).tick,6);
- command({action:'pause',requestId:'pause'});api.tick();assert.equal(JSON.parse(api.state()).tick,6);
+ command({action:'trainVisual',requestId:'visual',training:{epochs:20,samples:Array.from({length:40},(_,i)=>({point:[i/39,0,0,0],rgba:[i/39,.25,.5,1]}))}});for(let i=0;i<5;i++)api.tick();assert.equal(JSON.parse(api.state()).visualModel.status,'ready');assert.equal(JSON.parse(command({action:'visualFrame',requestId:'frame',frame:{width:2,height:3}})).frame.rgba.length,24);
+ const stoppedTick=JSON.parse(api.state()).tick;command({action:'pause',requestId:'pause'});api.tick();assert.equal(JSON.parse(api.state()).tick,stoppedTick);
 });

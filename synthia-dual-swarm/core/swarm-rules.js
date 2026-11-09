@@ -1,6 +1,7 @@
 // These are physical/decision rules, not an action schedule. Stored in replay.
 export const DEFAULT_RULES = Object.freeze({
  continuous:false,
+ sixBit:{enabled:false,radius:3,contactRadius:.32,alpha:1,maxSignalSpeed:4,midDensity:2,highDensity:5,gain:.1,decay:.02,pruneThreshold:.02,signalLeak:.5,inputGain:.2},
  energyReserve:.2, recovery:6, actionCost:1, learningCost:1,
  relationshipGain:.25, relationshipDecay:.01, clusterThreshold:.2, clusterRadius:6,
  field:{enabled:false,radius:2,strength:.02,pairs:{'00':-1,'01':1,'10':1,'11':-1},colors:{'0':[0,0,0],'1':[255,255,255]},asciiGroups:[]},
@@ -12,7 +13,7 @@ export const ACTIONS = Object.freeze(['inspect','communicate','gather','repair',
 export function validateRules(input={}){
  const rules={...DEFAULT_RULES,...input,priorities:{...DEFAULT_RULES.priorities,...input.priorities}};
  const limits={energyReserve:[.01,1],recovery:[1,100],actionCost:[.01,100],learningCost:[.01,100],relationshipGain:[0,1],relationshipDecay:[0,1],clusterThreshold:[.01,1],clusterRadius:[0,1000]};
- for(const key of Object.keys(input))if(!(key in limits)&&key!=='priorities'&&key!=='components'&&key!=='field'&&key!=='continuous')throw Error('Unknown swarm rule: '+key);
+ for(const key of Object.keys(input))if(!(key in limits)&&key!=='priorities'&&key!=='components'&&key!=='field'&&key!=='continuous'&&key!=='sixBit')throw Error('Unknown swarm rule: '+key);
  for(const [key,[min,max]] of Object.entries(limits))if(!Number.isFinite(rules[key])||rules[key]<min||rules[key]>max)throw Error('Invalid swarm rule: '+key);
  for(const [key,value] of Object.entries(rules.priorities))if(!(key in DEFAULT_RULES.priorities)||!Number.isFinite(value)||value<0||value>100)throw Error('Invalid goal priority');
  if(!Array.isArray(rules.components)||rules.components.length>32||new Set(rules.components.map(c=>c.id)).size!==rules.components.length)throw Error('Invalid component catalog');
@@ -27,6 +28,9 @@ export function validateRules(input={}){
  for(const key of ['00','01','10','11'])if(!Number.isFinite(f.pairs?.[key])||Math.abs(f.pairs[key])>1)throw Error('Invalid binary interaction table');
  for(const key of ['0','1'])if(!Array.isArray(f.colors?.[key])||f.colors[key].length!==3||f.colors[key].some(x=>!Number.isInteger(x)||x<0||x>255))throw Error('Invalid binary color');
  if(!Array.isArray(f.asciiGroups)||f.asciiGroups.length>8||f.asciiGroups.some(g=>!Array.isArray(g)||g.length!==8||new Set(g).size!==8||g.some(id=>typeof id!=='string')))throw Error('Invalid ASCII grouping');
+ const n=rules.sixBit;if(!n||typeof n.enabled!=='boolean')throw Error('Invalid six-bit mode');
+ for(const [key,min,max] of [['radius',.01,100],['contactRadius',.001,100],['alpha',.001,10],['maxSignalSpeed',.001,100],['midDensity',1,63],['highDensity',1,63],['gain',0,1],['decay',0,1],['pruneThreshold',0,1],['signalLeak',0,.99],['inputGain',0,1]])if(!Number.isFinite(n[key])||n[key]<min||n[key]>max)throw Error('Invalid six-bit rule '+key);
+ if(n.contactRadius>n.radius||n.midDensity>=n.highDensity||!Number.isInteger(n.midDensity)||!Number.isInteger(n.highDensity))throw Error('Invalid six-bit density or contact thresholds');
  return structuredClone(rules);
 }
 export function validateAgent(spec){
