@@ -1,43 +1,40 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {attachKleinResolver} from '../core/klein-resolver-bridge.js';
+import {attachKleinObserver} from '../core/klein-resolver-bridge.js';
 
-function fakeSwarm() {
- const agent={id:'a',state:{position:0,generatedGoals:[{kind:'restore',target:'wall'}],ties:{},experiences:[]}};
- const swarm={
-  state:{tick:1}, agent,
-  candidates(){return [{action:'inspect',target:'wall',utility:1},{action:'rest',target:'a',utility:2}];},
-  validate(_agent,c){return c.action==='inspect'||c.action==='rest';},
-  decide(){return {action:'rest',target:'a'};}
+function world(){
+ const listeners=new Set(),events=[],entities=new Map([['a',{id:'a',dimension:'Being',address:{gate:1},state:{word:1}}]]),relations=new Map();
+ const core={entities,relations,events,
+  onChange(fn){listeners.add(fn);return()=>listeners.delete(fn);},
+  record(type,data){const event={seq:events.length+1,type,data};events.push(event);for(const fn of listeners)fn(event);return event;}
  };
+ const swarm={core,decide(){return 'native-choice';}};
  return swarm;
 }
-test('real sourced resolver can select existing validated candidate',()=>{
- const swarm=fakeSwarm();
- const attached=attachKleinResolver(swarm,observation=>({
-  context_id:observation.context_id,source_tool:'klein-original',choice:{action:'inspect',target:'wall'}
+test('records original sourced Klein reading from committed world transition',()=>{
+ const swarm=world(),observer=attachKleinObserver(swarm,input=>({
+  context_id:input.context_id,source_tool:'original-klein',relations:[{kind:'contact',from:'a',to:'a'}]
  }));
- assert.deepEqual(swarm.decide(swarm.agent),{action:'inspect',target:'wall',utility:1});
- assert.equal(attached.evidence[0].status,'accepted');
- attached.detach();
- assert.equal(swarm.decide(swarm.agent).action,'rest');
+ swarm.core.record('entity.changed',{id:'a',patch:{word:2}});
+ assert.equal(swarm.core.events.length,2);
+ assert.equal(swarm.core.events[1].data.kind,'klein-world-reading');
+ assert.equal(observer.observations[0].status,'recorded');
+ assert.equal(swarm.decide(),'native-choice');
+ observer.detach();
+ swarm.core.record('entity.changed',{id:'a',patch:{word:3}});
+ assert.equal(swarm.core.events.length,3);
 });
-test('fabricated or unpermitted choices fall back to original decision',()=>{
- for(const resolver of [
-  ()=>({choice:{action:'inspect',target:'wall'}}),
-  o=>({context_id:o.context_id,source_tool:'klein-original',choice:{action:'delete',target:'wall'}}),
-  ()=>{throw Error('offline');},
-  async o=>({context_id:o.context_id,source_tool:'klein-original',choice:{action:'inspect',target:'wall'}})
+test('unverified and failed readings cannot change world or invent meaning',()=>{
+ for(const interpret of [
+  ()=>({source_tool:'unverified',relations:[]}),
+  ()=>{throw Error('unavailable');},
+  async input=>({context_id:input.context_id,source_tool:'klein',relations:[]})
  ]) {
-  const swarm=fakeSwarm();const h=attachKleinResolver(swarm,resolver);
-  assert.equal(swarm.decide(swarm.agent).action,'rest');
-  assert.notEqual(h.evidence[0].status,'accepted');
+  const swarm=world(),observer=attachKleinObserver(swarm,interpret);
+  swarm.core.record('relation.created',{source:'a',target:'a'});
+  assert.equal(swarm.core.events.length,1);
+  assert.notEqual(observer.observations[0].status,'recorded');
+  assert.equal(swarm.decide(),'native-choice');
+  observer.detach();
  }
-});
-test('resolver cannot attach twice and must be explicit',()=>{
- const swarm=fakeSwarm();
- assert.throws(()=>attachKleinResolver(swarm,null),TypeError);
- const h=attachKleinResolver(swarm,()=>null);
- assert.throws(()=>attachKleinResolver(swarm,()=>null));
- h.detach();
 });
