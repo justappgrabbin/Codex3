@@ -28,7 +28,7 @@ def build():
   if directory.exists():shutil.rmtree(directory)
   directory.mkdir()
  run([tools/'aapt2','compile','--dir',ROOT/'android/app/src/main/res','-o',OUT/'resources.zip'])
- run([tools/'aapt2','link','-o',OUT/'resources.ap_','-I',android,'--manifest',ROOT/'android/app/src/main/AndroidManifest.xml','--java',OUT/'generated','-A',OUT/'assets','--min-sdk-version','24','--debug-mode','--target-sdk-version','35','--version-code','3','--version-name','0.5.0','-0','glb','-0','mjs',OUT/'resources.zip'])
+ run([tools/'aapt2','link','-o',OUT/'resources.ap_','-I',android,'--manifest',ROOT/'android/app/src/main/AndroidManifest.xml','--java',OUT/'generated','-A',OUT/'assets','--min-sdk-version','24','--debug-mode','--target-sdk-version','35','--version-code','4','--version-name','0.6.0','-0','glb','-0','mjs',OUT/'resources.zip'])
  sources=list((ROOT/'android/app/src/main/java').rglob('*.java'))+list((OUT/'generated').rglob('*.java'))
  run([javac,'--release','8','-classpath',str(android)+os.pathsep+str(deps/'quickjs.jar'),'-d',OUT/'classes',*sources])
  run([tools/'d8','--lib',android,'--min-api','24','--output',OUT/'dex',*list((OUT/'classes').rglob('*.class')),deps/'quickjs.jar'])
@@ -45,6 +45,6 @@ def build():
   keystore.chmod(0o600)
  run([tools/'apksigner','sign','--ks',keystore,'--ks-key-alias','androiddebugkey','--ks-pass','pass:android','--key-pass','pass:android',apk])
  run([tools/'apksigner','verify','--verbose',apk])
- receipt={'package':'com.synthia.codex3','version':'0.5.0','minSdk':24,'targetSdk':35,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'bytes':apk.stat().st_size,'signing':'development key; not the installed Adaptive app signing identity','runtimeSha256':(OUT/'assets/runtime.sha256').read_text().strip()}
+ receipt={'package':'com.synthia.codex3','version':'0.6.0','minSdk':24,'targetSdk':35,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'bytes':apk.stat().st_size,'signing':'development key; not the installed Adaptive app signing identity','runtimeSha256':(OUT/'assets/runtime.sha256').read_text().strip()}
  (OUT/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt,indent=2))
 if __name__=='__main__':build()

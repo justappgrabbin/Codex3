@@ -1,4 +1,4 @@
-import {wordToBoolean,booleanToWord,xorBoolean,andBoolean} from './boolean-state.js';
+import {wordToBoolean,booleanToWord,xorBoolean,andBoolean,applyBoolean,requireBooleanOperator} from './boolean-state.js';
 import {advanceBodies,closestBodies,repartitionBodies,bodyMoments,reactContact} from './fragment-bodies.js';
 import {DEFAULT_RULES} from './swarm-rules.js';
 // Phone-sized structural experiment. Geometry features are not semantic vectors.
@@ -28,10 +28,16 @@ export function stepSixBitSwarm(swarm){
  const deltas=new Map(agents.map(a=>[a.id,wordToBoolean(0)]));
  for(const p of pairs)if(p.distance<=rule.contactRadius){contacts.push(p.key);reactContact(p,rule.restitution);if(!oldContacts.has(p.key)){const wa=nodes.get(p.a.id).word,wb=nodes.get(p.b.id).word,maskA=impactMask(p.normal,p.relative)&(((1<<p.first.lineWidth)-1)<<p.first.lineStart),maskB=impactMask(p.normal.map(v=>-v),p.relative.map(v=>-v))&(((1<<p.second.lineWidth)-1)<<p.second.lineStart),difference=xorBoolean(nodes.get(p.a.id).vector,nodes.get(p.b.id).vector),da=andBoolean(difference,wordToBoolean(maskA)),db=andBoolean(difference,wordToBoolean(maskB));deltas.set(p.a.id,xorBoolean(deltas.get(p.a.id),da));deltas.set(p.b.id,xorBoolean(deltas.get(p.b.id),db));transitions.push({a:p.a.id,b:p.b.id,before:[wa,wb],masks:[maskA,maskB],deltas:[booleanToWord(da),booleanToWord(db)],deltaVectors:[da,db],beforeVectors:[nodes.get(p.a.id).vector,nodes.get(p.b.id).vector],fragments:[p.first.id,p.second.id]});}}
  const edges=[],incoming=new Map(agents.map(a=>[a.id,0]));
- for(const p of pairs){const old=oldEdges.get(p.key),localDensity=(density.get(p.a.id)+density.get(p.b.id))/2,speed=Math.min(rule.maxSignalSpeed,rule.alpha*localDensity/Math.max(.001,p.distance)),changed=deltas.get(p.a.id).some(Boolean)||deltas.get(p.b.id).some(Boolean),affinity=1-xorBoolean(xorBoolean(nodes.get(p.a.id).vector,deltas.get(p.a.id)),xorBoolean(nodes.get(p.b.id).vector,deltas.get(p.b.id))).filter(Boolean).length/6;
-  // Contacts with changed lines rebuild locally; otherwise retain and decay.
-  const weight=changed?affinity:(old?old.weight*(1-rule.decay)+rule.gain*affinity:rule.gain*affinity);
-  if(weight>=rule.pruneThreshold){edges.push({key:p.key,a:p.a.id,b:p.b.id,weight:Math.min(1,weight),fragments:[p.first.id,p.second.id],speed,distance:p.distance,density:localDensity});const strength=Math.min(1,speed)*weight;incoming.set(p.a.id,incoming.get(p.a.id)+strength*(previous.activations[p.b.id]||0));incoming.set(p.b.id,incoming.get(p.b.id)+strength*(previous.activations[p.a.id]||0));}
+ const defaultMode=requireBooleanOperator(rule.relationOperator);
+ for(const p of pairs){
+  const mode=requireBooleanOperator(p.a.state.relationOperator??defaultMode),reverseMode=requireBooleanOperator(p.b.state.relationOperator??defaultMode);
+  const old=oldEdges.get(p.key),localDensity=(density.get(p.a.id)+density.get(p.b.id))/2,speed=Math.min(rule.maxSignalSpeed,rule.alpha*localDensity/Math.max(.001,p.distance)),left=xorBoolean(nodes.get(p.a.id).vector,deltas.get(p.a.id)),right=xorBoolean(nodes.get(p.b.id).vector,deltas.get(p.b.id)),forward=applyBoolean(mode,left,right),reverse=applyBoolean(reverseMode,right,left),mutated=deltas.get(p.a.id).some(Boolean)||deltas.get(p.b.id).some(Boolean);
+  const evolve=(relation,prior,changed)=>{const affinity=relation.filter(Boolean).length/6;return Math.min(1,changed?affinity:prior===undefined?rule.gain*affinity:prior*(1-rule.decay)+rule.gain*affinity);};
+  const weight=evolve(forward,old?.weight,mutated||!!old&&(old.operator??'xnor')!==mode),reverseWeight=evolve(reverse,old?.reverseWeight??old?.weight,mutated||!!old&&(old.reverseOperator??old.operator??'xnor')!==reverseMode);
+  if(weight>=rule.pruneThreshold||reverseWeight>=rule.pruneThreshold){
+   const edge={key:p.key,a:p.a.id,b:p.b.id,operator:mode,reverseOperator:reverseMode,relationVector:forward,reverseVector:reverse,weight:weight>=rule.pruneThreshold?weight:0,reverseWeight:reverseWeight>=rule.pruneThreshold?reverseWeight:0,fragments:[p.first.id,p.second.id],speed,distance:p.distance,density:localDensity};edges.push(edge);
+   incoming.set(p.b.id,incoming.get(p.b.id)+Math.min(1,speed)*edge.weight*(previous.activations[p.a.id]||0));incoming.set(p.a.id,incoming.get(p.a.id)+Math.min(1,speed)*edge.reverseWeight*(previous.activations[p.b.id]||0));
+  }
  }
  const activations={};
  for(const a of agents){const n=nodes.get(a.id),wordVector=xorBoolean(n.vector,deltas.get(a.id)),word=booleanToWord(wordVector),count=density.get(a.id),current=n.parts[0].tier;let tier=current;

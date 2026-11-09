@@ -37,3 +37,7 @@ The same app now includes six-bit tier compilation, geometry routing, photo-to-o
 ## Physical Boolean fragments (0.5.0)
 
 Six-bit states now expose strict Boolean vectors. Their ordered fragments have separate bodies, velocities and masses; lossless tier changes conserve physical moments. Contacts/routing and new visual models use fragment geometry. Legacy checkpoints initialize the new representation on their next six-bit tick. The complete implementation and remaining visual goals are documented in the linked architecture file above.
+
+## Source-backed operators and World workspace (0.6.0)
+
+Codex3 now uses the sixteen Boolean functions from the existing Generative-address-system repository, with global defaults and per-participant selection. Directional connections retain separate forward/reverse semantics. The World screen exposes simulation controls, photo-training entry, results navigation and an orbitable/zoomable fragment inspector. The old person-and-wolf demonstration is no longer its default scene. Complete swarm-built world construction remains unconnected; see [the source audit and exact integration gap](../synthia-dual-swarm/docs/GENERATIVE-STATE-SPACE-AUDIT.md).

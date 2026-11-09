@@ -5,7 +5,7 @@ function inputPoint(point){if(!Array.isArray(point)||point.length!==4||point.som
 function validateSamples(samples){if(!Array.isArray(samples)||samples.length<8||samples.length>4096)throw Error('Visual training requires 8–4096 samples per job');const seen=new Set();for(const row of samples){inputPoint(row?.point);if(!Array.isArray(row.rgba)||row.rgba.length!==4||row.rgba.some(x=>!Number.isFinite(x)||x<0||x>1))throw Error('Visual target requires normalized RGBA');const key=JSON.stringify(row.point);if(seen.has(key))throw Error('Duplicate sample coordinates would leak into evaluation');seen.add(key);}}
 function features(topology,point){
  inputPoint(point);const x=point.map((v,i)=>(v-topology.center[i])/topology.scale[i]),raw=topology.nodes.map(n=>{const r=n.position.reduce((sum,v,i)=>sum+(x[i]-v)**2,0);return Math.exp(-r/2)*(1+.1*n.activation+.1*n.word/63);}),routed=[...raw];
- for(const edge of topology.edges){const a=topology.index[edge.a],b=topology.index[edge.b];if(a===undefined||b===undefined)continue;const gain=.2*edge.weight;routed[a]+=gain*raw[b];routed[b]+=gain*raw[a];}
+ for(const edge of topology.edges){const a=topology.index[edge.a],b=topology.index[edge.b];if(a===undefined||b===undefined)continue;routed[a]+=.2*(edge.reverseWeight??edge.weight)*raw[b];routed[b]+=.2*edge.weight*raw[a];}
  return [1,...x,...x.map(v=>Math.sin(v)),...routed,...routed.map(v=>v*x[3])];
 }
 const predictRows=(rows,x)=>rows.map(row=>row.reduce((sum,w,i)=>sum+w*x[i],0));

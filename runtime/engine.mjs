@@ -1,3 +1,4 @@
+import {BINARY_BOOLEAN_FUNCTIONS,BOOLEAN_ALIASES,applyBoolean,requireBooleanOperator} from '../synthia-dual-swarm/core/boolean-state.js';
 import {VisualField} from '../synthia-dual-swarm/core/visual-field.js';
 import {DEFAULT_RULES} from '../synthia-dual-swarm/core/swarm-rules.js';
 import {representText} from '../synthia-dual-swarm/core/representations.js';
@@ -16,7 +17,7 @@ export class RuntimeEngine {
  checkpoint(){return this.swarm.checkpoint();}
  snapshot(){
   const {state}=this.swarm;
-  return {schema:'synthia.runtime/v1',tick:state.tick,budget:state.budget,running:state.running,completed:state.completed,summary:state.summary,
+  return {schema:'synthia.runtime/v1',booleanAlgebra:{operators:[...BINARY_BOOLEAN_FUNCTIONS],aliases:{...BOOLEAN_ALIASES},source:'justappgrabbin/Generative-address-system',sourceCommit:'ce1704d5d53d5729b499463f7eeaf5dcd5091550'},tick:state.tick,budget:state.budget,running:state.running,completed:state.completed,summary:state.summary,
    agents:this.swarm.agents().map(a=>({id:a.id,label:a.label,...structuredClone(a.state)})),
    structures:this.swarm.structures().map(e=>({id:e.id,...e.state})),supplies:this.swarm.supplies().map(e=>({id:e.id,...e.state})),
    clusters:this.production.clusters(),production:structuredClone(this.production.state),permissions:{...state.permissions},rules:structuredClone(this.swarm.rules),field:structuredClone(state.field||{pairs:[],encodings:[]}),sixBit:structuredClone(state.sixBit||null),visualModel:state.visualField?{status:state.visualField.status,epoch:state.visualField.epoch,epochs:state.visualField.epochs,metrics:structuredClone(state.visualField.metrics),scope:state.visualField.scope}:null,
@@ -26,7 +27,8 @@ export class RuntimeEngine {
  tick(){return this.swarm.step();}
  command(command){
   const {action}=command;let result={};
-  if(action==='sixBitMode')this.swarm.setRules({sixBit:{...DEFAULT_RULES.sixBit,...this.swarm.rules.sixBit,enabled:command.enabled===true}});
+  if(action==='evaluateBoolean')result={vector:applyBoolean(command.operator,command.left,command.right)};
+  else if(action==='sixBitMode')this.swarm.setRules({sixBit:{...DEFAULT_RULES.sixBit,...this.swarm.rules.sixBit,enabled:command.enabled===true}});
   else if(action==='trainVisual')new VisualField(this.swarm).queue(command.training);
   else if(action==='visualFrame')result={frame:new VisualField(this.swarm).frame(command.frame)};
   else if(action==='representText')result={representation:representText(command.text)};
@@ -38,6 +40,7 @@ export class RuntimeEngine {
   else if(action==='rules')this.swarm.setRules(command.rules);
   else if(action==='addAgent')this.swarm.addAgent(command.agent);
   else if(action==='particleState'){if(this.swarm.rules.sixBit?.enabled)throw Error('Six-bit mode changes lines through contacts; disable it to edit binary state directly');const agent=this.core.require(command.id);if(!this.swarm.agents().includes(agent)||typeof command.open!=='boolean')throw Error('Invalid virtual-particle state');this.core.change(command.id,{open:command.open},'particle open/closed state changed');}
+  else if(action==='agentBooleanOperator'){const a=this.core.require(command.id);if(!a.state.autonomous)throw Error('Not a swarm participant');this.core.change(a.id,{relationOperator:command.operator===null?null:requireBooleanOperator(command.operator)},'participant Boolean relation selected from source authority');}
   else if(action==='agentActive')this.swarm.setAgentActive(command.id,command.active);
   else if(action==='addObject')this.swarm.addObject(command.object);
   else if(action==='bind')this.production.bind(command.toolId,command.target);
