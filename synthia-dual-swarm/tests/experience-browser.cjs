@@ -1,0 +1,35 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');const path=require('node:path');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:8000/'+(process.env.STANDALONE?'Synthia-Dual-Swarm.html':''));
+ await page.waitForFunction(()=>window.synthia?.getStatus().fieldReady);
+ await page.click('#experience-start');await page.waitForSelector('.experience-assessment');
+ await page.fill('.experience-assessment input','010000');await page.click('.experience-assessment button[type=submit]');
+ await page.waitForFunction(()=>window.synthia.getState().entities.find(e=>e.id==='experience.lesson').state.completed.length===1);
+ const lesson=await page.evaluate(()=>window.synthia.getState().entities.find(e=>e.id==='experience.lesson'));
+ await page.screenshot({path:path.join(__dirname,'../docs/experience-game.png')});
+ // A retained DOM component must actually survive the reconfiguration.
+ await page.evaluate(()=>{window.retainedPurpose=document.querySelector('[data-experience-component="experience.component.purpose"]');});
+ await page.fill('#experience-instruction',"I don't want to play a game. Teach me with slides.");await page.click('#experience-request button');
+ await page.waitForSelector('#experience-host[data-layout=sequential]');
+ assert.equal(await page.locator('.experience-assessment').count(),0);assert.equal(await page.locator('.experience-world').count(),0);
+ assert.equal(await page.locator('#field-canvas').isVisible(),false);
+ assert.equal(await page.evaluate(()=>window.retainedPurpose===document.querySelector('[data-experience-component="experience.component.purpose"]')),true);
+ const slid=await page.evaluate(()=>{const e=window.synthia.getState().entities;return {lesson:e.find(x=>x.id==='experience.lesson'),world:e.find(x=>x.id==='experience.component.world')};});
+ assert.equal(slid.lesson.id,lesson.id);assert.deepEqual(slid.lesson.state.completed,lesson.state.completed);assert.equal(slid.world.state.active,false);assert.equal(slid.world.state.resources,0);
+ await page.screenshot({path:path.join(__dirname,'../docs/experience-slides.png')});
+ await page.fill('#experience-instruction','Now show me an interactive demonstration.');await page.click('#experience-request button');
+ await page.waitForSelector('.experience-parameters');assert.equal(await page.locator('#field-canvas').isVisible(),true);
+ await page.fill('.experience-parameters input[name=C]','001010');await page.click('.experience-parameters button');
+ await page.waitForFunction(()=>window.synthia.getState().entities.find(e=>e.id==='experience.lesson').state.experiment?.result==='100101');
+ await page.waitForFunction(()=>window.synthia.getState().entities.find(e=>e.id==='experience.component.world').state.artifact);await page.waitForFunction(()=>window.synthia.getStatus().fieldObjects===6);
+ const demo=await page.evaluate(()=>window.synthia.getState().entities.find(e=>e.id==='experience.lesson'));
+ assert.equal(demo.state.subject,lesson.state.subject);assert.equal(demo.state.objective,lesson.state.objective);assert.deepEqual(demo.state.completed,lesson.state.completed);
+ assert.equal(await page.evaluate(()=>window.synthia.verifyReplay()),true);
+ await page.screenshot({path:path.join(__dirname,'../docs/experience-demonstration.png')});
+ await page.setViewportSize({width:390,height:844});await page.waitForTimeout(200);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await page.screenshot({path:path.join(__dirname,'../docs/experience-mobile.png')});
+ assert.deepEqual(errors,[]);console.log(JSON.stringify({standalone:!!process.env.STANDALONE,gameToSlidesToDemonstration:true,retainedIdentity:true,retainedProgress:true,releasedWorld:true,reusedDOM:true,replay:true,mobile:true}));await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

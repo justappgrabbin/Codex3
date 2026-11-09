@@ -4,12 +4,14 @@ Open `Synthia-Dual-Swarm.html` in a WebGL browser, or run `npm start` and visit 
 
 ## Try this build
 
-1. Use **Morph body** to dissolve and reassemble the actual skinned human. The wolf uses the supplied Unity asset.
-2. Use **Train** to fit an assembly controller, compare its held-out cost, then invoke the resulting assembly capability. Its graph architecture comes from registered clusters and relations.
-3. Use **Morph interface** to animate interface objects individually. The seed page is compiled into the same entity substrate as bodies and tools.
-4. Inspect a dimension, then a named quality. Each nested frame exposes all five dimensions again, with twelve named qualities per dimension. Identity remains unchanged through the frame path.
-5. Upload an image to learn its local color regions and boundary relations. The observed image stays flat; brightness does not fabricate mountains.
-6. Switch to Function to inspect actual relations. Expand the optional activity fixtures for the three authored games. Export/import and retained history support deterministic state replay.
+1. The default view is a full-window relational world: 64 canonical hexagrams with six independently addressed lines each. Select any constituent, inspect it, enter it, and switch dimensional perspective without making a second copy of the object.
+2. Open **Tools** for the source-based Klein A:B::C:D composer and the retained assembly/image tools. Open **Inspect** for named dimensional qualities and constituent history. **Bodies** keeps the optional human/wolf preview separate from the world.
+3. Click **Start learning activity** and answer the first question with `010000`.
+4. In the request box, enter **I don't want to play a game. Teach me with slides.** The environment is recomposed and the 1/3 progress survives.
+5. Request **Now show me an interactive demonstration.** Change C to `001010` and demonstrate the result. Its actual addressed geometry is constructed while the same objective and progress remain.
+6. Save/export the event history to restore the activity and its current composition. Replay is read-only.
+
+See [Adaptive experiences](docs/ADAPTIVE-EXPERIENCES.md) for the composition contract, acceptance test, and current limits.
 
 ## What is implemented
 
@@ -39,4 +41,4 @@ Controls include pause, single-step, a morphology permission, a 120-tick budget,
 
 This is a bounded local multi-agent scenario with authored legal actions, body mechanics, rewards and goal utilities. It does not accept arbitrary natural-language tasks, invent arbitrary tools, or prove open-ended intelligence. The three agents are functional entities shown in the graph and activity log; they are not three newly rigged visual characters. Their tool morphology currently affects simulation mechanics, not visible hand reconstruction. Existing 5D frames and the separate neural assembly controller remain in place.
 
-Other repositories mentioned as potential integrations (Simlish, Generative-address-system, Synthcodex1, Language-contact-model/Klein and Codex2) have not been connected by this milestone.
+The Boolean ATO, structural topology, recursive address space, and masked update operator from Generative-address-system are now connected, together with the recovered tool factory. The other proposed repository integrations remain unverified. Source provenance and unresolved boundaries are in vendor/generative/README.md.

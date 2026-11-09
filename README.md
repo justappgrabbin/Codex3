@@ -13,7 +13,7 @@ cd synthia-dual-swarm
 npm start
 ```
 
-Open http://localhost:8000. Run `npm test` for the 22 core regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
+Open http://localhost:8000. Run `npm test` for the 35 core regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
 
 ## Included
 
@@ -24,3 +24,11 @@ Browser checks passed for assets, learned assembly, recursive frame exploration,
 ## Continuous-agent milestone
 
 The browser now includes three functional agents operating on a bounded shared clock. Use **Start agents** to observe communication, finite-resource gathering, failed repairs, experience-based action values and tool morphology with operational consequences. Pause, single-step, morphology permission and checkpoint reversal are available. The scenario uses authored legal operators and local goals; it does not establish arbitrary-task intelligence. Runs while the page is active, not as a background server. See the browser README for limits and verification.
+
+## Adaptive experiences and relational world
+
+The default browser view now fills the window with addressed Yi Jing assemblies. Five dimensional perspectives share the same objects, recursive constituents, and event history. Tools and inspection open on demand; the optional body preview preserves its material colors and repairs the invisible wolf body.
+
+The capability composer supports the requested game → slides → interactive demonstration flow while retaining the same subject, objective, information, and assessed progress. Shared components are reused and unnecessary components are released. The supplied learning example implements Sheldon Klein’s six-feature visual analogy and constructs the computed result’s geometry. No personality or goal is assigned to a fixed game.
+
+See [adaptive experience behavior and boundaries](synthia-dual-swarm/docs/ADAPTIVE-EXPERIENCES.md) and [verification](synthia-dual-swarm/docs/ADAPTIVE-VERIFICATION.md). These changes do not complete unrestricted semantic world generation or the unresolved directional glyph rules.
