@@ -1,3 +1,4 @@
+import {particleDistance} from './particle-field.js';
 import {OPERATIONS} from './swarm-rules.js';
 import {exampleAddress,hash} from './ontology.js';
 
@@ -35,7 +36,7 @@ export class LocalProduction {
    if(visited.has(first.id))continue;
    const members=[],queue=[first];visited.add(first.id);
    while(queue.length){const a=queue.shift();members.push(a.id);
-    for(const b of agents)if(!visited.has(b.id)&&Math.abs(a.state.position-b.state.position)<=this.swarm.rules.clusterRadius&&Math.max(a.state.ties?.[b.id]||0,b.state.ties?.[a.id]||0)>=this.swarm.rules.clusterThreshold){visited.add(b.id);queue.push(b);}
+    for(const b of agents)if(!visited.has(b.id)&&(this.swarm.rules.field.enabled?particleDistance(a,b):Math.abs(a.state.position-b.state.position))<=this.swarm.rules.clusterRadius&&Math.max(a.state.ties?.[b.id]||0,b.state.ties?.[a.id]||0)>=this.swarm.rules.clusterThreshold){visited.add(b.id);queue.push(b);}
    }
    if(members.length>1)clusters.push({members:members.sort(),operations:[...new Set(members.flatMap(id=>this.core.require(id).state.primitives||[]))].sort()});
   }

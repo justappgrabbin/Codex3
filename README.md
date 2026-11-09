@@ -1,4 +1,8 @@
-# Synthia — Adaptive Dual Swarm
+# Synthia — Native Android Swarm
+
+The primary app is an Android APK with native controls and an embedded background swarm service. Virtual particles carry binary states, qualities and positions; editable proximity rules apply reciprocal impulses, alongside relationship learning and collective function discovery.
+
+Build and operating instructions: [android/README.md](android/README.md). No Docker, Termux or external server is required. The browser project below remains a preview and development surface.
 
 Function and embodiment share an addressed entity substrate, typed relations and retained history.
 

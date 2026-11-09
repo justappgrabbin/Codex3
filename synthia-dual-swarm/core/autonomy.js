@@ -1,3 +1,4 @@
+import {stepParticleField,particleDistance} from './particle-field.js';
 import {DEFAULT_RULES,ACTIONS,validateRules,validateAgent} from './swarm-rules.js';
 import {RELAY_DEMO} from './swarm-scenarios.js';
 import {LocalProduction} from './production.js';
@@ -21,11 +22,11 @@ export class AutonomousSwarm {
   for(const o of [...scenario.structures,...scenario.supplies])this.addObject(o);
   for(const a of scenario.agents)this.addAgent(a);
  }
- agentSpec(spec){return {position:0,speed:1,reach:2,energy:40,maxEnergy:40,capacity:3,capabilities:[...ACTIONS],primitives:[],...spec};}
+ agentSpec(spec){return {position:0,open:true,mass:1,speed:1,reach:2,energy:40,maxEnergy:40,capacity:3,capabilities:[...ACTIONS],primitives:[],...spec};}
  addAgent(spec){
-  const a=validateAgent(this.agentSpec(spec));if(this.agents().length>=64)throw Error('Agent limit reached');
+  const a=validateAgent(this.agentSpec(spec));if(a.position3D)a.position=a.position3D[0];if(this.agents().length>=64)throw Error('Agent limit reached');
   const {id,label, ...body}=a;
-  this.core.create({id,label:label||id,dimension:'Being',address:exampleAddress(),functions:body.capabilities,state:{...body,autonomous:true,active:true,goal:'observe needs',inventory:0,memories:[],ties:{},generatedGoals:[],known:false,tool:'hands',toolFeatures:[],policy:{},sequencePolicy:{},experiences:[],lastAction:'waiting'}});
+  this.core.create({id,label:label||id,dimension:'Being',address:exampleAddress(),functions:body.capabilities,state:{...body,position3D:body.position3D||[body.position,0,0],velocity:[0,0,0],autonomous:true,active:true,goal:'observe needs',inventory:0,memories:[],ties:{},generatedGoals:[],known:false,tool:'hands',toolFeatures:[],policy:{},sequencePolicy:{},experiences:[],lastAction:'waiting'}});
   this.core.change('autonomy',{completed:false},'new participant changes available capabilities');return this.core.require(id);
  }
  setAgentActive(id,active){const a=this.core.require(id);if(!a.state.autonomous&&!Array.isArray(a.state.capabilities))throw Error('Not a swarm agent');this.core.change(id,{active:!!active},'participant availability changed');this.core.change('autonomy',{completed:false},'reconsider available teams');}
@@ -71,7 +72,7 @@ export class AutonomousSwarm {
   const production=this.core.entities.get('production')?.state;
   if(production&&(production.tasks?.some(t=>['queued','blocked'].includes(t.status))||production.bindings.length)){
    goals.push({kind:'coordinate',target:'production'});
-   for(const other of this.agents())if(other!==agent&&Math.abs(s.position-other.state.position)<=this.rules.clusterRadius&&(s.primitives||[]).some(op=>!other.state.primitives?.includes(op))&&Math.max(s.ties?.[other.id]||0,other.state.ties?.[agent.id]||0)<this.rules.clusterThreshold+this.rules.relationshipDecay)add('communicate',weights.cooperate,other.id);
+   for(const other of this.agents())if(other!==agent&&(this.rules.field.enabled?particleDistance(agent,other):Math.abs(s.position-other.state.position))<=this.rules.clusterRadius&&(s.primitives||[]).some(op=>!other.state.primitives?.includes(op))&&Math.max(s.ties?.[other.id]||0,other.state.ties?.[agent.id]||0)<this.rules.clusterThreshold+this.rules.relationshipDecay)add('communicate',weights.cooperate,other.id);
   }
   this.core.change(agent.id,{generatedGoals:goals,goal:goals.map(g=>g.kind+' '+g.target).join(', ')||'observe world'},'derive temporary goals from current needs and observations');
   return actions.filter(choice=>this.validate(agent,choice));
@@ -81,7 +82,7 @@ export class AutonomousSwarm {
   const s=agent.state,t=this.core.entities.get(choice.target),action=choice.action;
   if(!t||!this.state.permissions[action]||!s.capabilities.includes(action)||(action!=='rest'&&action!=='morph'&&(s.energy??40)<this.rules.actionCost))return false;
   if(action==='rest')return t===agent;
-  if(action==='communicate'&&this.agents().includes(t))return t!==agent&&Math.abs(s.position-t.state.position)<=this.rules.clusterRadius;
+  if(action==='communicate'&&this.agents().includes(t))return t!==agent&&(this.rules.field.enabled?particleDistance(agent,t):Math.abs(s.position-t.state.position))<=this.rules.clusterRadius;
   if(action==='transfer')return this.agents().includes(t)&&t!==agent&&s.inventory>0&&t.state.inventory<(t.state.capacity??3);
   if(action==='gather')return this.supplies().includes(t)&&t.state.parts>0&&s.inventory<(s.capacity??3);
   if(action==='morph'){const component=this.rules.components.find(c=>c.id===choice.component);if(!component||s.inventory<component.partsCost||(s.energy??40)<component.energyCost)return false;}
@@ -127,8 +128,9 @@ export class AutonomousSwarm {
  step(){if(!this.state.running||this.state.completed||this.state.tick>=this.state.budget||this.core.events.length>45000){if(this.state.running)this.control(false);return false;}
   this.core.change('autonomy',{tick:this.state.tick+1},'fixed simulation clock');
   for(const a of this.agents()){this.core.change(a.id,{ties:Object.fromEntries(Object.entries(a.state.ties||{}).map(([id,value])=>[id,Math.max(0,value-this.rules.relationshipDecay)]).filter(([,value])=>value>0))},'unused social ties weaken and dissolve');this.perceive(a);const choice=this.decide(a);if(choice)this.act(a,choice);}
+  stepParticleField(this);
   if(this.core.entities.has('production'))new LocalProduction(this).tick();
-  const pending=this.core.entities.get('production')?.state.tasks?.some(t=>['queued','blocked'].includes(t.status)),completed=this.structures().every(e=>e.state.health>=e.state.required)&&!pending,exhausted=this.state.tick>=this.state.budget;
+  const pending=this.core.entities.get('production')?.state.tasks?.some(t=>['queued','blocked'].includes(t.status)),completed=!this.rules.continuous&&this.structures().every(e=>e.state.health>=e.state.required)&&!pending,exhausted=this.state.tick>=this.state.budget;
   this.core.change('autonomy',{completed,running:!completed&&!exhausted,summary:completed?'All infrastructure restored through permitted actions.':exhausted?'Execution budget reached.':'Agents perceiving, selecting tools and learning from consequences.'},'shared consequence assessment');return true;
  }
  fingerprint(){return hash(this.core.snapshot());}

@@ -8,3 +8,9 @@ export const RELAY_DEMO = {
   {id:'autonomy.builder',position:5,speed:1,reach:2,primitives:['clamp']}
  ]
 };
+
+// Reproducible starting conditions, not a prescribed reaction sequence.
+export const PARTICLE_FIELD = {structures:[],supplies:[],agents:Array.from({length:8},(_,i)=>({
+ id:'autonomy.particle.'+i,label:'Particle '+(i+1),position3D:[Math.cos(i*2.39996)*2,Math.sin(i*1.7)*.5,Math.sin(i*2.39996)*2],
+ open:i%2===0,primitives:[['scale','bias','sin','clamp'][i%4]]
+}))};
