@@ -31,3 +31,16 @@ test('ATO selector cannot bypass a denied permission',()=>{const r=swarm();r.set
 test('checkpoint restore with selector replays identically',()=>{const r=swarm();r.control(true);for(let i=0;i<5;i++)r.step();r.control(false);const restored=AutonomousSwarm.restore(r.checkpoint(),{selector:new AtoToolSelector()});assert.equal(restored.fingerprint(),r.fingerprint());r.control(true);restored.control(true);while(r.step()){}while(restored.step()){}assert.equal(restored.fingerprint(),r.fingerprint());});
 
 test('without a selector the swarm behaves exactly as before',()=>{const a=new AutonomousSwarm(new Substrate()),b=swarm({weight:0});a.control(true);b.control(true);while(a.step()){}while(b.step()){}assert.equal(a.state.tick,b.state.tick);assert.equal(a.state.completed,b.state.completed);});
+
+test('ATO explanation preserves named axes and original Boolean evidence',()=>{
+ const s=new AtoToolSelector();
+ const vector=[1,1,1,1,1,1,1],e=s.explain('repair',vector);
+ assert.equal(e.source,'ATO-Core/boolean-ato.mjs:hammingDistance');
+ assert.equal(e.distance,0);assert.equal(e.bonus,2);
+ assert.deepEqual(e.axes,SWARM_AXES);assert.equal(e.situation,'1111111');
+ assert.equal(s.explain('unknown',vector).bonus,0);
+});
+test('invalid selector weights and modes cannot override Swarm utility',()=>{
+ for(const weight of [Infinity,NaN,-1,3])assert.throws(()=>new AtoToolSelector({weight}));
+ assert.throws(()=>new AtoToolSelector({mode:'arbitrary'}));
+});
