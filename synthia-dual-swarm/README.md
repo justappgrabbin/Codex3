@@ -40,3 +40,37 @@ Controls include pause, single-step, a morphology permission, a 120-tick budget,
 This is a bounded local multi-agent scenario with authored legal actions, body mechanics, rewards and goal utilities. It does not accept arbitrary natural-language tasks, invent arbitrary tools, or prove open-ended intelligence. The three agents are functional entities shown in the graph and activity log; they are not three newly rigged visual characters. Their tool morphology currently affects simulation mechanics, not visible hand reconstruction. Existing 5D frames and the separate neural assembly controller remain in place.
 
 Other repositories mentioned as potential integrations (Simlish, Generative-address-system, Synthcodex1, Language-contact-model/Klein and Codex2) have not been connected by this milestone.
+
+## Rule-based dynamic swarm
+
+The autonomy runtime now derives temporary restoration and recovery goals from
+world state. It discovers multiple structures, chooses among finite supplies,
+learns action values from consequences, transfers existing materials to peers,
+and retains social ties which weaken when unused. These ties are agent memory;
+the substrate's historical interaction edges remain as an audit trail.
+
+`AutonomousSwarm.addObject({id, position, health, required})` adds infrastructure;
+`addObject({id, position, parts})` adds a supply. IDs must start with `autonomy.`.
+Adding an object reopens completion, subject to the original tick budget. Example:
+
+```js
+const runtime = new AutonomousSwarm(core);
+runtime.addObject({id:'autonomy.pump', position:-8, health:0, required:2});
+runtime.addObject({id:'autonomy.scrap', position:-4, parts:4});
+runtime.control(true);
+while (runtime.step()) {}
+```
+
+Every direct action is validated for permission, agent capability, target type,
+energy, inventory and capacity. Out-of-range physical actions spend energy on
+movement first. Agents start with 40 energy, spend one per non-rest action, and
+recover six per rest; inventory capacity is three. Grippers still follow the
+existing reach/speed tradeoff. Morphing does not manufacture materials.
+Checkpoint replay includes goals, observations, policies, energy and social ties.
+
+This remains a bounded local simulation with authored operators and repair-oriented
+utilities, three initial agents and a one-dimensional world. It does not yet learn
+reusable plans, invent components, negotiate teams, or implement the proposed four
+ability pairs. Resource scarcity or denied permissions can prevent completion.
+`npm test` covers unfamiliar layouts, direct-action denials, recovery, conservation,
+tie decay, new damage and deterministic replay alongside the existing regressions.

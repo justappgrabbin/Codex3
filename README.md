@@ -13,7 +13,7 @@ cd synthia-dual-swarm
 npm start
 ```
 
-Open http://localhost:8000. Run `npm test` for the 22 core regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
+Open http://localhost:8000. Run `npm test` for the 29 core and autonomy regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
 
 ## Included
 
