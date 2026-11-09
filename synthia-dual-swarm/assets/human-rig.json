@@ -1,0 +1,9 @@
+{
+  "source": "UniRig-main/examples/skeleton/tira.fbx",
+  "sourceHadWeights": false,
+  "binding": "four nearest bone segments, inverse distance^6, normalized",
+  "animation": "authored human idle and walking cycles on supplied skeleton",
+  "adaptation": "animal costume details removed; actual human mesh retained",
+  "bones": 44,
+  "vertices": 24061
+}

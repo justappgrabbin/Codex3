@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "id": "synthia",
+    "visibleBodies": 1,
+    "definition": "identity + continuity + shared state-space + process relationships"
+  },
+  "bodyModel": "swarm",
+  "baseProcessCount": 46,
+  "withYNIAndPhoneLinuxHands": 51,
+  "workerContract": [
+    "id",
+    "capabilities",
+    "lifecycle",
+    "state checkpoint",
+    "location",
+    "maxConcurrency"
+  ],
+  "coordination": [
+    "capability discovery",
+    "task assignment",
+    "parallel dispatch",
+    "checkpoint",
+    "wake/restore"
+  ],
+  "physiologyProcesses": [
+    "physiology-metabolism",
+    "physiology-inner-life",
+    "physiology-hypothesis-life",
+    "physiology-world-memory",
+    "physiology-autonomous-cycle"
+  ],
+  "foundryProcesses": [
+    "foundry-core",
+    "foundry-selector",
+    "foundry-builder",
+    "foundry-vault"
+  ],
+  "externalHands": [
+    "YOU-N-I-VERSE DOM",
+    "YOU-N-I-VERSE browser",
+    "YOU-N-I-VERSE network",
+    "YOU-N-I-VERSE files",
+    "phone selfhosted Linux"
+  ],
+  "knownHostBoundary": "Android selfhosted APK rootfs extension mismatch remains outside this source checkpoint"
+}

@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+synthia-unity/Library/
+synthia-unity/Temp/
+synthia-unity/Logs/
+synthia-unity/Obj/

@@ -1,0 +1,10 @@
+{
+  "name": "pure-synthia-swarm-body",
+  "version": "0.3.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "verify": "node VERIFY-SWARM.mjs",
+    "start": "node START-SWARM.mjs"
+  }
+}

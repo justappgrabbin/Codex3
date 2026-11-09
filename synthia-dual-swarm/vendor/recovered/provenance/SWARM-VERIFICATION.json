@@ -1,0 +1,66 @@
+{
+  "version": "synthia.swarm-body.v0.3.0-physiology",
+  "donor_behavior_regression": {
+    "canonical_complete_behavior_tests_before_release_audit": {
+      "tests": 97,
+      "pass": 97,
+      "fail": 0
+    },
+    "additional_address_klein_real_problem_labs_organism_tests": {
+      "tests": 13,
+      "pass": 13,
+      "fail": 0
+    },
+    "total_behavioral_tests_run": 110,
+    "pass": 110,
+    "fail": 0,
+    "release_audit": "blocked by donor fixture: root config.xml absent; no synthetic config invented"
+  },
+  "swarm_regression": {
+    "tests": 7,
+    "pass": 7,
+    "fail": 0,
+    "includes_physio_end_to_end": true
+  },
+  "source_delta_from_v0.2_wired": {
+    "new_physio_modules": 5,
+    "modified_existing_source_files": [
+      "src/synthia/synthiaRuntime.mjs",
+      "src/synthia/morph-chat/runtime.mjs",
+      "src/synthia/morph-chat/providers.mjs",
+      "src/synthia/swarm/bootstrap.mjs"
+    ],
+    "missing_existing_source_files": 0
+  },
+  "process_counts": {
+    "bootstrap_internal": 46,
+    "with_selfhosted_linux_hand": 47,
+    "with_yni_four_hands_and_selfhosted": 51
+  },
+  "physiology": {
+    "processes": [
+      "physiology-metabolism",
+      "physiology-inner-life",
+      "physiology-hypothesis-life",
+      "physiology-world-memory",
+      "physiology-autonomous-cycle"
+    ],
+    "explicit_gate_regression": true,
+    "conversation_receives_felt_state": true,
+    "per_process_checkpoint_restore": true
+  },
+  "properties": {
+    "one_visible_identity": true,
+    "parallel_batch_dispatch": true,
+    "per_process_checkpoint": true,
+    "per_process_restore": true,
+    "foundry_actual_generation_integrated": true,
+    "foundry_processes": [
+      "foundry-core",
+      "foundry-selector",
+      "foundry-builder",
+      "foundry-vault"
+    ],
+    "android_rootfs_packaging_defect_still_open": true
+  }
+}

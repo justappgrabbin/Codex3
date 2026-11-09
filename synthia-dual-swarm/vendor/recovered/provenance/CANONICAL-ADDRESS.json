@@ -1,0 +1,21 @@
+{
+  "artifact": "Pure-Synthia-Swarm-Body-v0.3.0-PHYSIOLOGY",
+  "canonicalAddress": "Moon:Being:G3.L1.C1.T1.B1:135°48′16″:Desc:Gemini:H3",
+  "parts": {
+    "planetary": "Moon",
+    "dimension": "Being",
+    "gate": 3,
+    "line": 1,
+    "color": 1,
+    "tone": 1,
+    "base": 1,
+    "degree": 135,
+    "minute": 48,
+    "second": 16,
+    "arcAxis": "Desc",
+    "zodiac": "Gemini",
+    "house": 3
+  },
+  "resolver": "current-package canonicalState.resolve()",
+  "status": "verified"
+}
