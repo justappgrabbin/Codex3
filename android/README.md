@@ -33,3 +33,7 @@ Runtime → Text representations converts up to 4,096 UTF-16 units into UTF-8 bi
 ## Six-bit and trained visual fields (0.4.0)
 
 The same app now includes six-bit tier compilation, geometry routing, photo-to-observation input, trained INT8 coordinate/RGBA readouts, and generated-image preview/PNG export. See [implementation, usage and remaining visual requirements](../synthia-dual-swarm/docs/SIX-BIT-VISUAL-TRAINING.md). These changes do not yet deliver general photorealistic image/video generation or 3D reconstruction.
+
+## Physical Boolean fragments (0.5.0)
+
+Six-bit states now expose strict Boolean vectors. Their ordered fragments have separate bodies, velocities and masses; lossless tier changes conserve physical moments. Contacts/routing and new visual models use fragment geometry. Legacy checkpoints initialize the new representation on their next six-bit tick. The complete implementation and remaining visual goals are documented in the linked architecture file above.

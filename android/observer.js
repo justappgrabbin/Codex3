@@ -14,7 +14,7 @@ window.receiveSnapshot=snapshot=>{
  scene.production={state:production.state,sample:(target)=>production.sample(target,swarm.state.tick+(swarm.state.running?Math.min(1,(performance.now()-received)/1000):0)),feedback:(target,value)=>window.SynthiaObservation?.feedback(target,value)};
  if(scene.virtualParticles){scene.virtualParticles.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});scene.scene.remove(scene.virtualParticles);}
  scene.virtualParticles=new T.Group();scene.scene.add(scene.virtualParticles);
- for(const agent of swarm.agents()){const s=agent.state,p=s.position3D||[s.position,0,0],rgb=s.binaryColor||(s.open===false?[0,0,0]:[255,255,255]);const mesh=new T.Mesh(new T.SphereGeometry(.16,12,8),new T.MeshStandardMaterial({color:new T.Color(...rgb.map(v=>v/255)),roughness:.45}));mesh.position.set(p[0],p[1]+1,p[2]);scene.virtualParticles.add(mesh);}
+ for(const agent of swarm.agents()){const s=agent.state,bodies=s.wordFragments?.every(p=>p.position)?s.wordFragments:[{position:s.position3D||[s.position,0,0],mass:s.mass||1}];for(const body of bodies){const p=body.position,rgb=s.binaryColor||(s.open===false?[0,0,0]:[255,255,255]),radius=.11*Math.cbrt(body.mass||1),mesh=new T.Mesh(new T.SphereGeometry(radius,12,8),new T.MeshStandardMaterial({color:new T.Color(...rgb.map(v=>v/255)),roughness:.45}));mesh.position.set(p[0],p[1]+1,p[2]);scene.virtualParticles.add(mesh);}}
  const activeImage=world.state.activeImage;if(activeImage&&scene.imageFieldId!==activeImage)scene.showImageField(core.require(activeImage).state.field,activeImage);
  document.getElementById('status').textContent='Service tick '+swarm.state.tick+' · '+(swarm.state.running?'running':'paused');
 };

@@ -18,11 +18,11 @@ export class VisualField {
   if(!Number.isInteger(epochs)||epochs<1||epochs>1000||!Number.isFinite(rate)||rate<=0||rate>.2||!Number.isFinite(maxQuantizationMse)||maxQuantizationMse<0||maxQuantizationMse>.1||!Number.isFinite(maxReconstructionMse)||maxReconstructionMse<0||maxReconstructionMse>1)throw Error('Invalid training controls');
   if(referenceFrame!==null&&(!Number.isInteger(referenceFrame.width)||!Number.isInteger(referenceFrame.height)||referenceFrame.width<1||referenceFrame.height<1||referenceFrame.width*referenceFrame.height>65536))throw Error('Invalid visual reference dimensions');
   if(this.state?.status==='training')throw Error('A visual training job is already active');
-  if(!this.swarm.state.sixBit||this.swarm.agents().some(a=>!Number.isInteger(a.state.word)))stepSixBitSwarm(this.swarm);
+  if(!this.swarm.state.sixBit||this.swarm.agents().some(a=>!Number.isInteger(a.state.word)||!a.state.wordFragments?.every(p=>p.position&&p.id)))stepSixBitSwarm(this.swarm);
   const agents=this.swarm.agents();if(!agents.length)throw Error('Visual training needs active swarm particles');
   const train=samples.filter((_,i)=>i%5!==0),validation=samples.filter((_,i)=>i%5===0),center=[0,1,2,3].map(i=>train.reduce((sum,r)=>sum+r.point[i],0)/train.length),scale=center.map((c,i)=>Math.max(1,...train.map(r=>Math.abs(r.point[i]-c))));
-  const nodes=agents.map(a=>({id:a.id,position:(a.state.position3D||[a.state.position,0,0]).map((v,i)=>Math.max(-3,Math.min(3,(v-center[i])/scale[i]))),word:a.state.word,activation:a.state.neuralActivation||0}));
-  const topology={nodes,edges:structuredClone(this.swarm.state.sixBit.edges),index:Object.fromEntries(nodes.map((n,i)=>[n.id,i])),center,scale,sourceTick:this.swarm.state.tick};
+  const nodes=agents.flatMap(a=>a.state.wordFragments.map(part=>({id:part.id,owner:a.id,slot:part.slot,lineWidth:part.lineWidth,fragmentValue:part.value,position:part.position.map((v,i)=>Math.max(-3,Math.min(3,(v-center[i])/scale[i]))),word:a.state.word,activation:a.state.neuralActivation||0})));
+  const topology={nodes,edges:this.swarm.state.sixBit.edges.filter(e=>e.fragments).map(e=>({...structuredClone(e),a:e.fragments[0],b:e.fragments[1]})),index:Object.fromEntries(nodes.map((n,i)=>[n.id,i])),center,scale,sourceTick:this.swarm.state.tick};
   const weights=Array.from({length:4},()=>Array(9+nodes.length*2).fill(0)),model={schema:'synthia.swarm-visual/v1',status:'training',referenceFrame,topology,weights,epochs,epoch:0,cursor:0,rate,maxQuantizationMse,maxReconstructionMse,updates:0,scope:'coordinate-conditioned RGBA field; depth/camera recovery and photorealism unverified'};
   model.metrics={before:loss(model,validation),validationSamples:validation.length,trainingSamples:train.length};
   this.core.change('autonomy',{visualField:model,visualObservations:{train,validation}},'visual reconstruction training queued on measured swarm topology');

@@ -1,5 +1,6 @@
+import {closestBodies} from './fragment-bodies.js';
 import {representBytes} from './representations.js';
-export function particleDistance(a,b){const p=a.state.position3D||[a.state.position,0,0],q=b.state.position3D||[b.state.position,0,0];return Math.hypot(a.state.position-b.state.position,p[1]-q[1],p[2]-q[2]);}
+export function particleDistance(a,b){if(a.state.wordFragments?.every(p=>p.position)&&b.state.wordFragments?.every(p=>p.position))return closestBodies(a.state.wordFragments,b.state.wordFragments).distance;const p=a.state.position3D||[a.state.position,0,0],q=b.state.position3D||[b.state.position,0,0];return Math.hypot(a.state.position-b.state.position,p[1]-q[1],p[2]-q[2]);}
 // Virtual particles only. Pair impulses are equal and opposite; no device control.
 export function encodeBits(agents,order){
  if(!Array.isArray(order)||order.length!==8||new Set(order).size!==8)throw Error('ASCII groups need eight distinct particle identities');
