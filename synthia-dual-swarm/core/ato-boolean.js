@@ -21,6 +21,8 @@ export const TOOL_PROTOTYPES=Object.freeze({
 
 export class AtoToolSelector{
  constructor({axes=SWARM_AXES,prototypes=TOOL_PROTOTYPES,mode='equivalence',weight=2}={}){
+  if (!Number.isFinite(weight) || weight < 0 || weight > 2) throw new RangeError('ATO bonus weight must be finite and between 0 and 2');
+  if (!['equivalence','xor'].includes(mode)) throw new TypeError('Unknown ATO analogy mode');
   this.space=new FeatureSpace(axes);this.mode=mode;this.weight=weight;
   for(const [tool,vector] of Object.entries(prototypes))this.space.add(tool,vector,{kind:'tool-prototype'});
  }
@@ -31,8 +33,13 @@ export class AtoToolSelector{
  ].map(Number);}
  // All tools ranked nearest-first by Hamming distance (ATO-Core FeatureSpace.nearest).
  rank(vector){return this.space.nearest(vector,{limit:this.space.entries.size}).map(e=>({tool:e.id,distance:e.distance}));}
- // Score bonus for one tool: 0 (all axes differ) .. weight (exact match).
- bonus(tool,vector){const p=this.space.get(tool);if(!p)return 0;const w=this.axes.length;return this.weight*(w-hammingDistance(vector,p.vector))/w;}
+ // Explain the existing original ATO-Core calculation; no invented semantic reading.
+ explain(tool,vector){const p=this.space.get(tool);if(!p)return {tool,matched:false,bonus:0,reason:'NO_PROTOTYPE'};
+  const distance=hammingDistance(vector,p.vector),width=this.axes.length;
+  return {tool,matched:true,axes:[...this.axes],prototype:toBitString(p.vector),situation:toBitString(vector),distance,bonus:this.weight*(width-distance)/width,source:'ATO-Core/boolean-ato.mjs:hammingDistance',interpretation:'tool-feature similarity only'};
+ }
+ // Optional ranking evidence never grants permission or creates an action.
+ bonus(tool,vector){return this.explain(tool,vector).bonus;}
  // Klein analogy over tool prototypes: A is to B as C is to ? (nearest tools to D).
  analogy(a,b,c){const r=this.space.analogy(a,b,c,this.mode);return {relation:toBitString(r.relation),result:toBitString(r.result),candidates:r.candidates.map(e=>({tool:e.id,distance:e.distance}))};}
  // Analogy on raw situation vectors.
