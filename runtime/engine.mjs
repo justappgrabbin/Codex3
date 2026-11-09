@@ -1,3 +1,4 @@
+import {representText} from '../synthia-dual-swarm/core/representations.js';
 import {PARTICLE_FIELD} from '../synthia-dual-swarm/core/swarm-scenarios.js';
 import {Substrate} from '../synthia-dual-swarm/core/substrate.js';
 import {World} from '../synthia-dual-swarm/core/world.js';
@@ -23,7 +24,8 @@ export class RuntimeEngine {
  tick(){return this.swarm.step();}
  command(command){
   const {action}=command;let result={};
-  if(action==='start')this.swarm.control(true);
+  if(action==='representText')result={representation:representText(command.text)};
+  else if(action==='start')this.swarm.control(true);
   else if(action==='pause')this.swarm.control(false);
   else if(action==='step'){this.swarm.control(true);this.swarm.step();this.swarm.control(false);}
   else if(action==='request')result={taskId:this.production.request(command.request)};

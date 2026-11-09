@@ -10,3 +10,5 @@
 - Emulator System UI experienced ANRs during software-only boot; this is not physical-device performance validation. No physical ARM device, Android35 runtime, Play Store qualification or signed release validation was performed. Optional 3D observer and full visual generation are not qualified by these background-service checks.
 
 The final build receipt records the APK/runtime hashes. CI repeats core, dispatcher and APK build checks; CI emulator tests are not configured. The checked-in APK build uses a development signing key and installs as a separate app from Synthia Adaptive.
+
+Representation update: four additional tests verify ASCII/NATO agreement, multibyte UTF-8 and supplementary Unicode round trips, bounded transliteration with explicit unmapped characters, and rejection of malformed UTF-8/surrogates. The native dispatcher and actual QuickJS JVM also verify Unicode conversion. The APK was rebuilt and signature verification passed. The new conversion dialog has not been manually exercised on a device.

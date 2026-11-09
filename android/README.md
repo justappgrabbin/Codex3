@@ -25,3 +25,7 @@ Output: `android/build/synthia-codex3-debug.apk` and `receipt.json`. QuickJS is 
 The optional `runtime/server.mjs` is a Node development adapter for the same core, not the APK's runtime or a deployment requirement. The Java `tests/NativeCoreTest.java` can additionally exercise the bundle with QuickJS JVM 0.9.2 and its host native dependencies.
 
 QuickJS Android dependency: https://github.com/cashapp/quickjs-java (Apache-2.0); underlying QuickJS is MIT licensed. Existing scene assets and vendored components retain their original provenance.
+
+## Text representations
+
+Runtime → Text representations converts up to 4,096 UTF-16 units into UTF-8 binary bytes, Unicode scalar labels, ASCII when representable, bounded Latin transliteration and NATO letter spellings. Original Unicode remains intact. Accented Latin, Greek and Cyrillic characters have basic character mappings; unsupported scripts remain unchanged and are listed as unmapped. This is not language-aware translation or a universal romanization standard. NATO words spell Latin letters; punctuation and digits are preserved. Ordered particle byte groups are decoded together as strict UTF-8; incomplete or malformed sequences show an error instead of inventing a Unicode character.

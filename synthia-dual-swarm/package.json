@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs && node --test tests/production.test.mjs",
+    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs && node --test tests/production.test.mjs && node --test tests/representations.test.mjs",
     "build": "node scripts/build.mjs"
   },
   "devDependencies": {

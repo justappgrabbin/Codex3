@@ -1,3 +1,4 @@
+import {representBytes} from './representations.js';
 export function particleDistance(a,b){const p=a.state.position3D||[a.state.position,0,0],q=b.state.position3D||[b.state.position,0,0];return Math.hypot(a.state.position-b.state.position,p[1]-q[1],p[2]-q[2]);}
 // Virtual particles only. Pair impulses are equal and opposite; no device control.
 export function encodeBits(agents,order){
@@ -22,5 +23,6 @@ export function stepParticleField(swarm){
   swarm.core.change(a.id,{position:position[0],position3D:position,velocity:b.v,qualities,bit:s.open===false?0:1,binaryColor:[...rule.colors[s.open===false?'0':'1']]},'particle integrates reciprocal proximity impulses and self-assesses current qualities');
  }
  const encodings=[];for(const order of rule.asciiGroups){try{encodings.push(encodeBits(agents,order));}catch(error){encodings.push({order,error:error.message});}}
- swarm.core.change('autonomy',{field:{pairs,netInternalImpulse:net,encodings}},'measured virtual-particle reactions and explicit binary representation');
+ let representation=null;if(encodings.length){try{if(encodings.some(e=>e.error))throw Error('Unavailable particle in byte group');representation=representBytes(encodings.map(e=>e.value));}catch(error){representation={error:error.message};}}
+ swarm.core.change('autonomy',{field:{pairs,netInternalImpulse:net,encodings,representation}},'measured virtual-particle reactions and explicit binary representation');
 }
