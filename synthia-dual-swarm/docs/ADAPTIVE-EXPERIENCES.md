@@ -1,64 +1,76 @@
-# Adaptive experience composition
+# Primitive swarm composition
 
-The activity is `experience.lesson`. Its subject, objective, information units,
-assessment attempts, completed units, and presentation cursor survive every
-environment change. Presentation environments are separate, retained compositions.
+The active runtime is `PrimitiveSwarm`, not a set of named experience recipes.
+It searches over registered pure functions and typed observations. There is no
+game/slides/demo dispatch table, sample lesson, or personality-to-format mapping.
+`ExperienceSession` retains actual subject, objective, information and progress
+separately from the produced arrangement.
 
-`composeCapabilities` covers explicitly requested affordances from an available
-capability catalog under a resource budget. It supports new contracts and catalogs;
-there is no assignment from a Human Design type, personality, or goal to a game.
-The prior keyword-to-fixture recommendation has been removed. Original activities
-remain optional regression fixtures that require explicit selection.
+## Rules and primitives
 
-The initial presentation contracts request these affordances:
+A primitive declares an identity, version, typed input ports, output type, cost,
+optional precondition, and trusted synchronous implementation. Types have value
+validators. The default library contains Boolean XOR, equivalence, complement,
+Hamming distance, text splitting/reversal/joining, record projection/partitioning,
+text-node materialization, nesting and arrangement. Templates and layout values
+are observations, not names of experiences. New primitives can be registered
+without editing the search algorithm or adding a scenario.
 
-| Request | Additional affordances |
-| --- | --- |
-| Game | World, challenge, response |
-| Slides | Sequential navigation |
-| Interactive demonstration | Controls, visualization, feedback |
+Each bounded step binds compatible observed or produced values to primitive ports,
+executes one candidate, validates its result and records the consequence. The
+scheduler prefers shallow graphs, then cost adjusted by recorded feedback, then
+a stable ordering. Failed executions reduce later selection preference. This
+feedback measures execution validity; a person or external evaluator can supply
+additional feedback in [-1,1]. It does not automatically establish educational
+success or semantic understanding.
 
-All request objective, information, and progress. These are requirements for the
-planner, not three stored screen trees. `ExperienceView` mounts the selected
-component roles, retains shared DOM identities, removes released components,
-and applies the resulting layout. Components excluded by the new composition
-have `active:false` and zero allocated resources. Their previous state remains
-recoverable from history. When slides release the world renderer, its geometry
-is disposed; the persistent world data remains available for a later composition.
+A goal specifies an output type and optional value constraints (`equals`,
+`includes`, `minimum`, `maximum` at an explicit `path`). A matching executed graph
+is promoted to a callable cluster. Its typed external ports, intermediate bindings,
+primitive versions and constituent identities remain inspectable. The cluster is
+registered as a primitive at the next scale, so later searches can discover larger
+compositions using it. Invocation executes the graph on fresh input data; it does
+not replay an old answer. Changed observations invalidate derived values, while
+retaining feedback, learned clusters, activity purpose and progress.
 
-## Acceptance test
+## Browser controls
 
-1. Click **Start learning activity**. The supplied example teaches Sheldon Klein's
-   Boolean analogy using the iconographic example on pp. 2–3 of his paper.
-2. Enter `010000` as the first answer and check it. Progress becomes 1/3.
-3. Request: **I don't want to play a game. Teach me with slides.**
-4. The assessment and world components are released. Navigation is assembled.
-   The subject, objective, information, attempt, and 1/3 progress remain intact.
-5. Request: **Now show me an interactive demonstration.**
-6. The visualization capability is reused and parameter controls are assembled.
-   Changing C to `001010` computes D=`100101` and constructs that result's
-   actual addressed six-line geometry. The lesson remains at 1/3 progress.
+**Observe selection** supplies records from the actual selected entity and its
+children, with a basic text-node template and layout as explicit initial data.
+The default output contract is `{"type":"artifact"}`. This is an inspection adapter,
+not a fabricated lesson. **World geometry** returns to the addressed atlas.
 
-`tests/experience-browser.cjs` performs this sequence using the request box,
-verifies retained DOM identity and released resources, and checks exact replay.
+In **Tools**, the typed-observations JSON field can replace those selection inputs.
+For example, supplying records, a template, a layout and a numeric partition size
+allows the search to find either a flat or grouped artifact according to the output
+constraints. No named format renderer is selected. The single DOM adapter renders
+the verified node tree using a small permitted element vocabulary and text nodes.
+It never evaluates HTML, scripts or event handlers from the produced data.
 
-## Content independence and limits
+The output-contract field accepts JSON. Natural-language format interpretation is
+not implemented: unsupported prose reports a gap and leaves the current
+arrangement intact. Finding a new arrangement does not erase subject or progress;
+the previous cluster becomes inactive and remains in history. Interactive controls
+currently have no synthesized behavior. General semantic grounding and arbitrary
+application generation remain future work.
 
-The supplied Boolean lesson is an explicit source-based example, not a universal
-lesson generator. `ExperienceSession.start(lesson, format)` accepts a separate
-subject, objective, and identified information units. A gardening lesson is tested
-with the same composer. The currently registered interactive experiment adapter
-implements six-bit Boolean analogy. Arbitrary subject-specific simulations require
-their own registered executable capabilities and teaching content.
+## Supervision and boundaries
 
-Request recognition currently recognizes explicit game, slides/presentation, and
-interactive demonstration requests. Unknown requests preserve the current activity
-and report that no supported interpretation was resolved. This is not a general
-natural-language understanding system. Capability plans fail before releasing the
-current environment if their requirements cannot be met.
+Search pauses during replay, hidden tabs and global pause. Controls provide pause,
+single-step and a whole-substrate checkpoint restored paused. Defaults bound
+working values to 96, attempts to 384, depth to 7, candidate inspection and nested
+cluster invocation. Reaching a bound reports `exhausted`, not a claim that no
+solution exists. Pure functions must be trusted bounded implementations: JavaScript
+cannot forcibly interrupt a synchronously hanging registered function. No shell,
+network tools or generated JavaScript execute during search.
 
-The separate relational-world preview uses the recovered masked structural update
-operator with explicitly authored numerical coefficients. Those coefficients and
-the geometry layout are demonstration choices, not laws transcribed from the
-Black Book, Klein, Govinda, or the author's directional glyph system. Exact 45°
-letter traversal remains unimplemented rather than being silently invented.
+Checkpoint data preserves graphs and observations, not function source. Built-in
+implementations are re-registered on restoration, and original primitive versions
+are checked when invoking a graph. Additional host primitives must be re-registered
+by that host. Exact event replay is separate from continuation of execution.
+
+The atlas retains 64 canonical Yi Jing assemblies and recursive addressed
+constituents across five **dimensions**, each of which can contain multiple levels.
+The former automatic seeded tensor animation has been removed. Available source
+operators are not treated as invented physical or psychological laws. Exact 45°
+directional glyph traversal remains unresolved, not silently supplied.

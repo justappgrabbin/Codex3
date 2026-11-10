@@ -1,41 +1,54 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Substrate} from '../core/substrate.js';
-import {ExperienceSession,composeCapabilities,interpretExperienceRequest,BOOLEAN_LESSON} from '../core/experience.js';
-const make=()=>{const core=new Substrate(),session=new ExperienceSession(core);session.start();return session;};
-test('game → requested slides → interactive demonstration preserves purpose and demonstrated progress',()=>{
- const r=make(),identity=r.core.require('experience.lesson').id,subject=r.state.subject,objective=r.state.objective;
- assert.equal(r.environment.state.format,'game');assert.equal(r.submit('010000').correct,true);
- const before=structuredClone(r.state),game=r.environment.id,heading='experience.component.purpose';
- const change=r.request("I don't want to play a game. Teach me with slides.");
- assert.equal(change.accepted,true);assert.equal(r.environment.state.format,'slides');
- assert.ok(change.retained.includes(heading));assert.ok(change.released.includes('experience.component.challenge'));assert.ok(change.released.includes('experience.component.world'));
- assert.equal(r.core.require('experience.component.world').state.resources,0);assert.equal(r.core.require(game).state.active,false);
- assert.deepEqual(r.state.completed,before.completed);assert.deepEqual(r.state.attempts,before.attempts);assert.equal(r.state.cursor,before.cursor);
- r.request('Show me an interactive demonstration.');assert.equal(r.environment.state.format,'demonstration');
- assert.equal(r.core.require('experience.lesson').id,identity);assert.equal(r.state.subject,subject);assert.equal(r.state.objective,objective);assert.deepEqual(r.state.completed,['relation']);
- assert.ok(r.environment.children.includes('experience.component.parameters'));assert.equal(r.core.require('experience.component.world').state.active,true);
+import {ExperienceSession} from '../core/experience.js';
+import {PrimitiveSwarm} from '../core/primitive-swarm.js';
+import {primitiveSwarm} from '../core/primitives.js';
+const finish=r=>{for(let i=0;i<500&&r.state.running;i++)r.step();return r.state.result;};
+const observations=[{id:'content',type:'records',value:[{label:'Actual supplied content'},{label:'Retained content'}]},{id:'template',type:'template',value:{tag:'p',text:'{label}'}},{id:'layout',type:'layout',value:{axis:'row',columns:1}}];
+const custom=()=>new PrimitiveSwarm(new Substrate()).registerType('number',x=>typeof x==='number'&&Number.isFinite(x));
+test('discovers a previously unspecified graph, executes it on fresh inputs and promotes it to a primitive',()=>{
+ const r=custom();
+ r.register({id:'double',inputs:{n:'number'},output:'number',run:({n})=>n*2});
+ r.register({id:'increase',inputs:{n:'number'},output:'number',run:({n})=>n+1});
+ r.observe([{id:'seed',type:'number',value:3}]).seek({type:'number',constraints:[{equals:8}]});
+ const result=finish(r);assert.equal(result.value,8);assert.ok(result.cluster);assert.equal(r.invoke(result.cluster,{seed:7}),16);
+ const graph=r.core.require(result.cluster).state.graph;assert.equal(graph.steps.length,2);
+ assert.ok(r.registry.has('cluster.'+result.cluster.split('.').at(-1)));
+ assert.ok([...r.core.relations.values()].some(x=>x.kind==='primitive-port-binding'));
+ // The promoted graph is eligible as an input-producing primitive at the next scale.
+ r.observe([{id:'seed',type:'number',value:10}]).seek({type:'number',constraints:[{equals:23}]});finish(r);
+ assert.equal(r.state.result.value,23);assert.ok(r.core.require(r.state.result.cluster).state.graph.steps.some(s=>s.primitive.startsWith('cluster.')));
 });
-test('planning is driven by affordances and budgets, including new capability combinations',()=>{
- const catalog=[{id:'talk',role:'heading',provides:['audio'],cost:2},{id:'read',role:'reading',provides:['text'],cost:1},{id:'combine',role:'reading',provides:['audio','text'],cost:2}];
- const plan=composeCapabilities({needs:['audio','text'],layout:'flow'},catalog,2);assert.deepEqual(plan.components.map(c=>c.id),['combine']);assert.equal(plan.cost,2);
- const r=make(),count=r.core.events.length,env=r.environment.id;assert.throws(()=>r.reconfigure({needs:['unavailable']},'test',catalog));assert.equal(r.environment.id,env);assert.equal(r.core.events.length,count);
+test('new primitive closes a real capability gap without a recipe',()=>{
+ const r=custom().registerType('text',x=>typeof x==='string');r.observe([{id:'n',type:'number',value:9}]).seek({type:'text'});finish(r);assert.equal(r.state.status,'blocked');
+ r.register({id:'stringify',inputs:{n:'number'},output:'text',run:({n})=>String(n)});assert.equal(r.state.running,true);assert.equal(finish(r).value,'9');
 });
-test('purpose and content are supplied independently from the composition mechanism',()=>{
- const r=new ExperienceSession(new Substrate());r.start({subject:'Gardening',objective:'Understand water retention',units:[{id:'soil',title:'Soil',information:'Observe the supplied soil sample.'}]},'slides');
- assert.equal(r.state.subject,'Gardening');assert.equal(r.state.objective,'Understand water retention');assert.deepEqual(r.state.units,[{id:'soil',title:'Soil',information:'Observe the supplied soil sample.'}]);
+test('invalid outputs and guards cannot become claimed capabilities; budgets stop search',()=>{
+ const r=custom();r.register({id:'broken',inputs:{n:'number'},output:'number',run:()=> 'wrong'});
+ r.observe([{id:'n',type:'number',value:1}]).seek({type:'number',constraints:[{equals:2}]});finish(r);assert.equal(r.state.status,'blocked');assert.equal(r.state.clusters.length,0);assert.equal(r.state.feedback.broken.value,-1);
+ const bounded=new PrimitiveSwarm(new Substrate(),{maxAttempts:2}).registerType('number',x=>typeof x==='number');bounded.register({id:'next',inputs:{n:'number'},output:'number',run:({n})=>n+1});bounded.observe([{id:'n',type:'number',value:0}]).seek({type:'number',constraints:[{equals:100}]});finish(bounded);assert.equal(bounded.state.status,'exhausted');assert.equal(bounded.state.executions,2);
 });
-test('unknown requests leave the environment and progress unchanged; negated requests are not positive choices',()=>{
- const r=make(),snapshot=r.core.snapshot();assert.equal(r.request('Make this smell like cinnamon.').accepted,false);assert.deepEqual(r.core.snapshot(),snapshot);
- assert.equal(interpretExperienceRequest("I don't want slides. Give me an interactive demonstration.").format,'demonstration');
- assert.equal(interpretExperienceRequest("Don't use slides.").format,null);
+test('observed feedback changes which compatible primitive runs next',()=>{
+ const r=custom();for(const id of ['a','b'])r.register({id,inputs:{n:'number'},output:'number',run:({n})=>n+1});
+ r.observe([{id:'n',type:'number',value:0}]).seek({type:'number',constraints:[{equals:2}]});assert.equal(r.nextCandidate().spec.id,'a');r.feedback('a',-1);r.feedback('b',1);assert.equal(r.nextCandidate().spec.id,'b');
 });
-test('interactive feedback changes the demonstration without resetting mastery or content',()=>{
- const r=make();r.submit('010000');r.request('interactive demonstration');const before=structuredClone(r.state.completed);
- r.experiment({C:'100101'});assert.equal(r.state.experiment.result,'001010');r.experiment({C:'001010'});assert.equal(r.state.experiment.result,'100101');
- assert.deepEqual(r.state.completed,before);assert.deepEqual(r.state.units,BOOLEAN_LESSON.units);
+test('reconfiguration is data-driven and retains purpose/progress; stale observations are discarded',()=>{
+ const s=new ExperienceSession(new Substrate());assert.throws(()=>s.start());
+ s.start({subject:'User content',objective:'Preserve supplied information',progress:{completed:2}},observations,{type:'artifact'});finish(s.runtime);s.synchronize();const first=s.state.activeCluster;
+ assert.equal(s.state.artifact.nodes.length,2);
+ s.recordProgress({completed:3});
+ const changed=[...observations.filter(x=>x.id!=='layout'),{id:'layout',type:'layout',value:{axis:'column',columns:2}},{id:'size',type:'number',value:1}];
+ s.start({subject:'Ignored replacement',objective:'Ignored replacement'},changed,{type:'artifact',constraints:[{path:['nodes',0,'tag'],equals:'section'}]});
+ finish(s.runtime);s.synchronize();assert.equal(s.state.artifact.nodes[0].children[0].text,'Actual supplied content');assert.equal(s.state.artifact.layout.columns,2);assert.equal(s.state.progress.completed,3);assert.equal(s.state.objective,'Preserve supplied information');assert.equal(s.core.require(first).state.active,false);
+ const before=s.core.snapshot();assert.equal(s.request('teach me with slides').accepted,false);assert.deepEqual(s.core.snapshot(),before);
 });
-test('the transformed experience restores exactly from the retained event log',()=>{
- const r=make();r.submit('010000');r.request('teach me with slides');r.navigate(1);r.request('interactive demonstration');r.experiment({A:'000000'});
- const restored=Substrate.replay(r.core.export()),next=new ExperienceSession(restored);assert.deepEqual(restored.snapshot(),r.core.snapshot());assert.equal(next.state.cursor,1);assert.deepEqual(next.state.completed,['relation']);assert.equal(next.environment.state.format,'demonstration');
+test('checkpoint replays exactly and restored clusters execute fresh inputs; versions and pause are respected',()=>{
+ const core=new Substrate(),r=primitiveSwarm(core);r.observe(observations).seek({type:'artifact'});const result=finish(r);r.control(false);assert.equal(r.step(),false);
+ const restored=Substrate.replay(core.export());assert.deepEqual(restored.snapshot(),core.snapshot());const next=primitiveSwarm(restored);
+ const input=Object.fromEntries(observations.map(x=>[x.id,x.value]));input.content=[{label:'Fresh data'}];assert.equal(next.invoke(result.cluster,input).nodes[0].text,'Fresh data');
+ next.register({id:'materialize',version:2,inputs:{items:'records',template:'template'},output:'nodes',run:()=>[]});assert.throws(()=>next.invoke(result.cluster,input),/original primitive contract/);
+});
+test('Boolean operators compose an analogy through executed constraints rather than a fixed analogy recipe',()=>{
+ const r=primitiveSwarm(new Substrate());r.observe([{id:'a',type:'bits',value:[1,1,1,1,1,0]},{id:'b',type:'bits',value:[0,1,0,0,0,1]},{id:'c',type:'bits',value:[1,0,0,1,0,1]}]).seek({type:'bits',constraints:[{equals:[0,0,1,0,1,0]}]});const result=finish(r);assert.deepEqual(result.value,[0,0,1,0,1,0]);assert.ok(result.cluster);
 });

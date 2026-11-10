@@ -28,12 +28,7 @@ test('masked interaction conditions change the outcome; Space is derived',()=>{
  assert.notDeepEqual(open.vectors,closed.vectors);assert.equal(closed.P.value,null);assert.equal(open.P.role,'emergent');assert.equal(Object.hasOwn(open.vectors,'P'),false);
  assert.throws(()=>advanceStructuralState({...options,vectors:{P:[1]}}));assert.equal(JUT_TOPOLOGY.nodes.length,4);
 });
-test('experience changes coupling gains and the complete event history replays',()=>{
- const r=make();r.step();const before=structuredClone(r.state.couplings);r.impulse('field.gate.1');r.step();assert.ok(Object.keys(before).length>0);
- assert.ok(Object.entries(r.state.couplings).some(([id,v])=>before[id]&&v.observations>before[id].observations&&v.gain!==before[id].gain));
- assert.ok(r.state.activity.every(x=>x.hamming===1));assert.deepEqual(Substrate.replay(r.core.export()).snapshot(),r.core.snapshot());
- r.control(false);const tick=r.state.tick;assert.equal(r.step(),false);assert.equal(r.state.tick,tick);
-});
+test('the atlas does not invent numerical world dynamics or seed activity',()=>{const r=make();assert.equal(r.state.running,false);assert.equal(r.step(),false);assert.ok(r.gates().every(e=>e.state.energy===0));assert.deepEqual(r.state.activity,[]);});
 test('recursive address resolution is idempotent and preserves its parent identity',()=>{
  const r=make(),id='field.gate.11.line.1',original=structuredClone(r.core.require(id));r.focus(id);assert.equal(r.children().length,6);const count=r.core.entities.size;
  r.focus(id);assert.equal(r.core.entities.size,count);assert.deepEqual(r.core.require(id).address,original.address);

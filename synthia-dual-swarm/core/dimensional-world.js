@@ -4,19 +4,10 @@ import {DIMENSION_NAMES} from './dimensional-frames.js';
 import {FeatureSpace,hammingDistance,completeAnalogy,normalizeVector} from '../vendor/generative/boolean-ato.js';
 import {gateFromBits} from '../vendor/recovered/src/synthia/semantic-mesh/state-space/addressing.js';
 import {JUT_TOPOLOGY,FIELD_VECTORS,DIRECTIONAL_CLAIMS,FractalAddressSpace} from '../vendor/generative/structural-topology.mjs';
-import {advanceStructuralState} from '../vendor/generative/structural-dynamics.mjs';
 import {ToolFactory} from '../vendor/recovered/src/synthia/semantic-mesh/merged/tool-factory.js';
 
 export {JUT_TOPOLOGY,DIRECTIONAL_CLAIMS};
 export const FIELD_ID='field';
-const contributing=Object.values(FIELD_VECTORS);
-const clamp=x=>Math.max(0,Math.min(1,x));
-// An explicit, bounded demonstration configuration for the existing update
-// operator, NOT a source-derived equation for consciousness or letter rotation.
-export const PREVIEW_TENSOR=Object.freeze([
- Object.freeze([.78,.06,.06,.06]),Object.freeze([.06,.78,.06,.06]),
- Object.freeze([.06,.06,.78,.06]),Object.freeze([.06,.06,.06,.78])
-]);
 export class DimensionalWorld {
  constructor(core){this.core=core;this.features=new FeatureSpace(['line1','line2','line3','line4','line5','line6']);for(let gate=1;gate<=64;gate++)this.features.add('field.gate.'+gate,gateBits(gate),{gate});this.factory=new ToolFactory();if(!core.entities.has(FIELD_ID))this.setup();}
  setup(){
@@ -25,14 +16,14 @@ export class DimensionalWorld {
    const children=[],bits=gateBits(gate);
    for(let i=0;i<6;i++){const id=`field.gate.${gate}.line.${i+1}`;children.push(id);c.create({id,label:`Gate ${gate} / line ${i+1} · ${bits[i]?'yang':'yin'}`,address:{...exampleAddress(gate),line:i+1},dimension:'Being',functions:['inspect','transition'],state:{scale:'line',bit:bits[i],active:true}});}
    const id='field.gate.'+gate;gates.push(id);c.compose({id,label:`Gate ${gate}`,children,address:exampleAddress(gate),dimension:'Being',functions:['inspect','enter','impulse','analyze'],embodied:{shape:'hexagram-assembly'}});
-   c.change(id,{scale:'gate',energy:.18+(gate%7)*.035,active:true,vectors:Object.fromEntries(Object.keys(FIELD_VECTORS).map((f,i)=>[f,[.15+((gate*(i+3))%17)/40]])),expression:0,position:[0,0,0]},'authored initial conditions; canonical gate bits, not generated semantics');
+   c.change(id,{scale:'gate',energy:0,active:true,vectors:Object.fromEntries(Object.keys(FIELD_VECTORS).map((f,i)=>[f,[0]])),expression:0,position:[0,0,0]},'authored initial conditions; canonical gate bits, not generated semantics');
    children.forEach(child=>c.move(child,id,'Being','line belongs to its hexagram'));
   }
   c.compose({id:FIELD_ID,label:'Yi Jing relational world',children:gates,address:exampleAddress(),dimension:'Design',functions:['inspect','enter'],embodied:{shape:'relational-world'}});
-  c.change(FIELD_ID,{scale:'world',tick:0,budget:240,running:true,view:'Space',focus:FIELD_ID,openEdges:JUT_TOPOLOGY.relations.map(e=>e.id),tensor:PREVIEW_TENSOR.map(r=>[...r]),summary:'64 hexagram assemblies · one world, five perspectives',lastInteraction:null,activity:[],couplings:{},physics:'explicit demonstration tensor; directional letter traversal unresolved'},'bounded world initialized from the existing Yi Jing and structural operators');
+  c.change(FIELD_ID,{scale:'world',tick:0,budget:240,running:false,view:'Space',focus:FIELD_ID,openEdges:JUT_TOPOLOGY.relations.map(e=>e.id),summary:'64 hexagram assemblies · one world, five perspectives',lastInteraction:null,activity:[],couplings:{},physics:'no inferred physical law; directional letter traversal unresolved'},'bounded world initialized from the existing Yi Jing and structural operators');
   gates.forEach(id=>c.move(id,FIELD_ID,'Being','same identity in one shared world'));
   if(c.entities.has('world'))c.move(FIELD_ID,'world','Design','recursive world inside existing substrate');
-  this.seed();
+
  }
  get state(){return this.core.require(FIELD_ID).state;}
  gates(){return this.core.require(FIELD_ID).children.map(id=>this.core.require(id));}
@@ -66,7 +57,6 @@ export class DimensionalWorld {
   return {id,...result};
  }
  setEdge(id,enabled){if(!JUT_TOPOLOGY.relations.some(e=>e.id===id))throw Error('Unknown structural edge');const edges=new Set(this.state.openEdges);enabled?edges.add(id):edges.delete(id);this.core.change(FIELD_ID,{openEdges:[...edges]},'explicit interaction condition changed');}
- seed(){for(const gate of [1,2,11,24,43,57])this.impulse('field.gate.'+gate,.85);}
  impulse(id,amount=1){const e=this.core.require(id);if(e.state.scale!=='gate'||!Number.isFinite(amount)||amount<0||amount>1)throw Error('Signal requires a hexagram and an intensity in 0..1');const vectors=structuredClone(e.state.vectors);vectors.I=[amount];this.core.change(id,{energy:amount,vectors,active:true},'observed external signal changes current condition');this.core.change(FIELD_ID,{lastInteraction:id},'world input retained');}
  toggle(id){const e=this.core.require(id);if(e.state.scale!=='gate')throw Error('Choose a hexagram');this.core.change(id,{active:!e.state.active},'constituent activation changed; existence and lineage retained');}
  neighbors(id){const e=this.core.require(id);return this.features.nearest(gateBits(e.address.gate),{limit:64}).filter(x=>x.id!==id&&x.distance===1);}
@@ -78,32 +68,8 @@ export class DimensionalWorld {
   this.core.record('observation.recorded',{kind:'world-tool-factory',tool:tool.id,address:tool.addressKey,entity:id,input,output});
   this.core.change(id,{analysis:{tool:tool.id,output}},'existing tool factory analyzer result');return output;
  }
- step(){
-  if(!this.state.running)return false;
-  if(this.state.tick>=this.state.budget||this.core.events.length>=44000){this.control(false);return false;}
-  const c=this.core,prior=new Map(this.gates().map(e=>[e.id,structuredClone(e.state)])),couplings={...this.state.couplings},activity=[],tick=this.state.tick+1;
-  // Synchronous observation: all decisions read the same previous state.
-  for(const e of this.gates()){
-   const s=prior.get(e.id);if(!s.active)continue;
-   const candidates=this.neighbors(e.id).filter(n=>prior.get(n.id).active).map(n=>({id:n.id,distance:n.distance,energy:prior.get(n.id).energy}));
-   const best=candidates.sort((a,b)=>b.energy-a.energy||a.id.localeCompare(b.id))[0];
-   const key=best?[e.id,best.id].sort().join('|'):null,gain=key?couplings[key]?.gain??.08:0;
-   const vectors=structuredClone(s.vectors);if(best)vectors.I=[clamp(vectors.I[0]+Math.max(0,best.energy-s.energy)*gain)];
-   const next=advanceStructuralState({vectors,tensor:this.state.tensor,openEdges:this.state.openEdges,readout:{MI:1,EB:1}});
-   const values=Object.values(next.vectors).map(v=>v[0]),energy=values.reduce((a,b)=>a+b,0)/4,expression=next.P.value?.[0]??0;
-   if(best&&best.energy-s.energy>.04){
-    const old=couplings[key]||{gain:.08,observations:0,value:0},reward=energy-s.energy;
-    couplings[key]={gain:Math.max(.02,Math.min(.2,old.gain+reward*.04)),observations:old.observations+1,value:old.value+(reward-old.value)/(old.observations+1)};
-    let r=[...c.relations.values()].find(r=>r.kind==='one-line-interaction'&&r.source===best.id&&r.target===e.id);
-    if(!r)r=c.relate({source:best.id,target:e.id,kind:'one-line-interaction',dimension:'Evolution',projection:'causal',context:{hamming:1,rule:'preview-neighbor-feedback/v1',semanticClaim:false}});
-    c.signal(r.id,Math.max(0,best.energy-s.energy));
-    activity.push({from:best.id,to:e.id,relation:r.id,hamming:hammingDistance(gateBits(e.address.gate),gateBits(c.require(best.id).address.gate))});
-   }
-   c.change(e.id,{energy,vectors:next.vectors,expression},'existing masked structural update; emergent Space readout');
-  }
-  c.change(FIELD_ID,{tick,couplings,activity:activity.slice(-32),running:tick<this.state.budget,summary:`${activity.length} local interactions · ${Object.keys(couplings).length} remembered couplings`},'perceive, match, update, retain consequences');
-  return true;
- }
+ // Dynamics belong to registered primitives and observed contracts, not atlas animation.
+ step(){return false;}
  signature(){return hash(this.core.snapshot());}
  capacity(depth=1){return new FractalAddressSpace({depth}).snapshot();}
 }

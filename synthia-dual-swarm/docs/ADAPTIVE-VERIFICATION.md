@@ -1,31 +1,36 @@
-# Adaptive world and experience verification
+# Primitive composition verification
 
-Verified in this change:
+`npm test` passes 36 checks: 17 substrate/legacy regressions, 5 optional legacy
+agent-fixture regressions, 7 dimensional atlas/source-operator checks and 7
+primitive-composition checks. The legacy relay agents and activities are fixtures;
+the active composition runtime does not instantiate the relay scenario.
 
-- `npm test`: 35 checks pass (17 core, 5 bounded-agent, 7 dimensional-world,
-  6 experience-composition tests).
-- `npm run build`: the downloadable standalone is rebuilt from the updated source.
-- `tests/dimensional-world-browser.cjs`: 64 visible world assemblies, five views
-  over the same identities, recursive constituents, actual factory execution,
-  replay equality, body assets, and mobile overflow checks.
-- `tests/experience-browser.cjs`: the requested game → slides → interactive
-  demonstration flow, persistent subject/objective/progress, retained DOM
-  component identity, released world resources, computed geometry, and replay.
-- Both browser flows pass against the embedded standalone in Chromium with
-  software WebGL. Screenshots in this directory show their actual rendered states.
+The primitive checks demonstrate:
 
-Browser test dependencies are development tools, not application runtime
-dependencies. Set `NODE_PATH` to a Playwright installation if it is not installed
-locally. `STANDALONE=1` tests `Synthia-Dual-Swarm.html`; otherwise tests use the
-source page. Run the repository's local server on port 8000 first.
+- Discovery of an unspecified multi-step graph, execution on fresh inputs, and
+  reuse of its promoted cluster inside another discovered capability.
+- A new primitive resolving a previously blocked type contract.
+- Rejected invalid outputs, bounded execution and feedback changing selection.
+- Data-driven regrouping and layout changes retaining purpose and recorded progress.
+- Exact checkpoint replay, restored graph invocation, and primitive-version checks.
+- A Boolean result found by composing source operators against an explicit goal,
+  without registering an analogy recipe in the search kernel.
 
-The material repair preserves glTF transparency settings and corrects zero-opacity
-alpha-cutout wolf materials. Ordinary body viewing no longer overlays surface
-particles or automatically tints clothing by simulation weights. The human remains
-the existing stylized, locally bound asset; these changes do not claim photorealism
-or new learned anatomy.
+`npm run build` creates the embedded standalone from the same source.
+`tests/experience-browser.cjs` checks actual selection composition, supplied-data
+regrouping, retained activity data, released prior arrangement, checkpoint/replay,
+unsupported prose and mobile overflow. It runs against source and standalone.
+Screenshots `primitive-composition.png`, `primitive-recomposition.png`, and
+`primitive-mobile.png` show these rendered outputs. `primitive-cluster.png` shows
+the discovered graph in Function view.
 
-Unity was not changed or Editor-tested by this work. The passing browser tests do
-not establish unrestricted semantic world generation, arbitrary format synthesis,
-or a complete implementation of the author's directional glyph rules. See
-`ADAPTIVE-EXPERIENCES.md` and `vendor/generative/README.md` for the exact boundary.
+`tests/dimensional-world-browser.cjs` checks the full viewport atlas, stable
+identities across dimensional perspectives, recursive constituents, the existing
+factory analyzer, body loading, replay and mobile layout. Atlas observations enter
+the primitive runtime; the atlas no longer claims fabricated numerical dynamics.
+
+Use a local server on port 8000 and a development Playwright/Chromium installation.
+Set `STANDALONE=1` to target the embedded file. Those are verification dependencies,
+not runtime dependencies. Unity was not changed or Editor-tested. These checks do
+not establish unrestricted world generation, general language understanding or a
+complete implementation of the author's directional glyph rules.
