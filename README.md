@@ -8,20 +8,26 @@ The six-bit compiler, geometry-derived network, trained INT8 visual readout, and
 
 Build and operating instructions: [android/README.md](android/README.md). No Docker, Termux or external server is required. The browser project below remains a preview and development surface.
 
-Function and embodiment share an addressed entity substrate, typed relations and retained history.
+- [Browser source](synthia-dual-swarm/)
+- [Standalone browser build](synthia-dual-swarm/Synthia-Dual-Swarm.html)
+- [Unity scaffold](synthia-unity/) — unverified in Unity Editor
 
-- **Browser source:** [`synthia-dual-swarm/`](synthia-dual-swarm/)
-- **Standalone browser build:** [`synthia-dual-swarm/Synthia-Dual-Swarm.html`](synthia-dual-swarm/Synthia-Dual-Swarm.html) — download and open, or serve locally.
-- **Unity project:** [`synthia-unity/`](synthia-unity/) — open with Unity 2022.3 LTS.
+Run `npm start` in `synthia-dual-swarm`, then open http://localhost:8000.
+`npm test` runs 36 checks; `npm install` and `npm run build` rebuild the standalone.
+Runtime code and models are vendored.
 
-## Run the browser project
+The active swarm discovers executable compositions from typed primitive functions,
+current observations and explicit output contracts. A successful graph becomes a
+callable cluster, usable as a primitive in later compositions, with its constituents
+and history retained. Feedback influences subsequent selection. Preset experience
+paths and the sample lesson have been removed.
 
-```sh
-cd synthia-dual-swarm
-npm start
-```
-
-Open http://localhost:8000. Run `npm test` for the 46 core, autonomy and production regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
+The full viewport Yi Jing atlas retains one addressed identity across five
+**dimensions**, with recursive levels inside them. Selection inspection supplies real
+observations to the composition runtime. Tools provide pause, step, learned cluster
+inspection and checkpoint restoration. Purpose and progress persist separately from
+arrangements. Existing body morphing, local assembly learning and image-region
+learning remain available; old scenarios are optional fixtures.
 
 ## Included
 
@@ -36,3 +42,10 @@ The browser now includes three functional agents operating on a bounded shared c
 ## Dynamic rule-based branch
 
 Configurable participants and physical rules, relationship-enabled numerical tool composition, retained consequence learning, local Synthia model proposals, and scene/code/media exports are described in [DYNAMIC-SWARM.md](synthia-dual-swarm/docs/DYNAMIC-SWARM.md). Existing generator sources remain separate until their actual runtime integrations are verified.
+
+## Adaptive composition boundaries
+
+This is bounded primitive composition, not completed unrestricted world generation.
+Natural-language grounding and exact directional glyph traversal remain unfinished.
+See [runtime behavior](synthia-dual-swarm/docs/ADAPTIVE-EXPERIENCES.md) and
+[verification](synthia-dual-swarm/docs/ADAPTIVE-VERIFICATION.md).

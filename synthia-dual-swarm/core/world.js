@@ -21,8 +21,7 @@ export class World{
  get state(){return this.core.require('world').state;}
  get room(){return this.state.room;}
  saveProfile(goal,pace){const text=String(goal).trim().slice(0,240);if(!text)fail('GOAL_REQUIRED','Choose a goal to begin');if(!['gentle','exploratory','focused'].includes(pace))fail('PACE_UNKNOWN','Unknown pace');this.core.change('world',{profile:{goal:text,pace}},'user chosen journey');this.core.record('profile.saved',{goal:text,pace});this.prepare();}
- prepare(){const c=this.core;const goal=(this.state.profile?.goal||'').toLowerCase();const scores=BRANCHES.map(b=>({id:b.id,score:goal.includes(b.id)||((/music|listen|memory/.test(goal))&&b.id==='resonance')||((/build|connect/.test(goal))&&b.id==='structure')||((/explor|travel|drive/.test(goal))&&b.id==='movement')?1:0}));
-  const recommended=scores.find(s=>s.score===1)?.id||'resonance';c.change('world',{recommended},'transparent keyword heuristic; not inferred personality');
+ prepare(){const c=this.core;c.change('world',{recommended:null},'objectives do not prescribe a fixed experience; fixtures require explicit selection');
   for(const b of BRANCHES){const id='door.'+b.id;if(!c.require(id).state.prepared)c.change(id,{prepared:true},'branch recipe available before entry');}
  }
  enter(id){const c=this.core;const branch=BRANCHES.find(b=>b.id===id);if(!branch)fail('BRANCH_UNKNOWN','Choose an existing door');if(!c.require('door.'+id).state.prepared)this.prepare();
