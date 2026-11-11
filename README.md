@@ -13,7 +13,7 @@ Build and operating instructions: [android/README.md](android/README.md). No Doc
 - [Unity scaffold](synthia-unity/) — unverified in Unity Editor
 
 Run `npm start` in `synthia-dual-swarm`, then open http://localhost:8000.
-`npm test` runs 36 checks; `npm install` and `npm run build` rebuild the standalone.
+`npm test` runs 90 checks across 7 test files; `npm install` and `npm run build` rebuild the standalone.
 Runtime code and models are vendored.
 
 The active swarm discovers executable compositions from typed primitive functions,

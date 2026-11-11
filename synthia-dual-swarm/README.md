@@ -28,7 +28,7 @@ See [the runtime contract and boundaries](docs/ADAPTIVE-EXPERIENCES.md),
 [verification](docs/ADAPTIVE-VERIFICATION.md), and
 [source provenance](vendor/generative/README.md).
 
-`npm test` runs 36 checks, including primitive discovery, recursive cluster reuse,
+`npm test` runs 90 checks across 7 test files, including primitive discovery, recursive cluster reuse,
 feedback, invalid output rejection and exact replay. Browser checks also exercise
 source and standalone composition, the addressed atlas, bodies and mobile layout.
 
