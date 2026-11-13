@@ -99,6 +99,14 @@ export function centre(active){
  return {dimension:'Space',present:corners.length===4,from:corners.sort(),words:null,status:'open: word rule not decided'};
 }
 
+// The centre is the reader's origin (owner, 2026-11-13): whoever reads sits at the centre,
+// and the other four dimensions surround it as what makes them. Ra's square is read from
+// Space; the four si xiang images are read from Being (Generative fragments.js). Same rule.
+export function squareFrom(origin){
+ if(!DIMENSIONS.includes(origin))throw Error('Unknown origin dimension: '+origin);
+ return {centre:origin,around:DIMENSIONS.filter(d=>d!==origin),status:'owner'};
+}
+
 export const SOURCE_DIMENSIONS=Object.freeze({
  'Human Design':Object.freeze({dimension:'Being',status:'owner'}),
  Zhouyi:Object.freeze({dimension:'Movement',status:'open'}),

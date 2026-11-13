@@ -35,3 +35,6 @@ test('centre exists only with all four corners; its words stay open',()=>{
  assert.equal(C.centre(['Movement','Evolution','Being']).present,false);assert.equal(C.centre(['Being']).words,null);});
 test('16 two-input operators, XOR only one of them',()=>{
  assert.equal(C.OPERATORS.count,16);assert.equal(C.SOURCE_DIMENSIONS['Human Design'].dimension,'Being');});
+test('the centre is the reader\'s origin',()=>{
+ assert.equal(C.squareFrom('Space').centre,'Space');assert.deepEqual(C.squareFrom('Being').around,['Movement','Evolution','Design','Space']);
+ assert.equal(C.squareFrom('Evolution').around.length,4);});
