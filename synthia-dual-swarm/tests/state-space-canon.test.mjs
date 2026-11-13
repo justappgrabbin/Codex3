@@ -38,3 +38,7 @@ test('16 two-input operators, XOR only one of them',()=>{
 test('the centre is the reader\'s origin',()=>{
  assert.equal(C.squareFrom('Space').centre,'Space');assert.deepEqual(C.squareFrom('Being').around,['Movement','Evolution','Design','Space']);
  assert.equal(C.squareFrom('Evolution').around.length,4);});
+test('letters read one or two at a time by dimension',()=>{
+ assert.deepEqual(C.readLetters('HEXAGRAM','Evolution'),['HE','XA','GR','AM']);
+ assert.deepEqual(C.readLetters('BHANTUGH','Design'),['BH','AN','TU','GH']);
+ assert.equal(C.readLetters('HEXAGRAM','Movement').length,8);});

@@ -124,6 +124,15 @@ export const COUPLING=Object.freeze({secondSlotChannel:'hearing',minuteSlotChann
  visibility:'colour/tone/base are seen only from Being (3rd dimension, Human Design); colour, sound and shape (early channels) switch on only when the DMS alignment brings the reading into Being',
  house:'where we hear; arc-second and house carry hearing, seeing, shape (tentative)',status:'owner'});
 
+// Letters per reading unit (owner, 2026-11-13): a general I Ching rule, applied for now
+// and refined once words-as-qualities are worked out. Evolution and Design read in pairs
+// (HE, XA, GR, AM / BH, AN, TU, GH); Movement and Being read one letter at a time.
+export const LETTERS_PER_UNIT=Object.freeze({Movement:1,Being:1,Evolution:2,Design:2,status:'owner',note:'working rule; Space and word-level refinements come later'});
+export function readLetters(word,dimension){
+ const n=LETTERS_PER_UNIT[dimension];if(!n)throw Error('No letter rule yet for '+dimension);
+ const w=[...String(word)],out=[];for(let i=0;i<w.length;i+=n)out.push(w.slice(i,i+n).join(''));return out;
+}
+
 export const SOURCE_DIMENSIONS=Object.freeze({
  'Human Design':Object.freeze({dimension:'Being',status:'owner'}),
  Zhouyi:Object.freeze({dimension:'Movement',status:'open'}),
