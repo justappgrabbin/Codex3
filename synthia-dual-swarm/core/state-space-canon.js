@@ -107,6 +107,21 @@ export function squareFrom(origin){
  return {centre:origin,around:DIMENSIONS.filter(d=>d!==origin),status:'owner'};
 }
 
+// The field after Second is one slot read five ways (owner, 2026-11-13).
+export const AFTER_SECOND=Object.freeze({
+ Movement:Object.freeze({name:'Axiom',status:'owner',note:'defines everything; matches keynote "I Define"; may shift along the spectrum'}),
+ Design:Object.freeze({name:'Axis',status:'owner',note:'structure'}),
+ Evolution:Object.freeze({name:'Axon',status:'tentative',note:'paired with Space: Space is a property of Evolution'}),
+ Space:Object.freeze({name:'Axion',status:'tentative',note:'paired with Axon; the physics axion is hypothetical, a name only'}),
+ Being:Object.freeze({name:Object.freeze(['Axle','Arc-second']),status:'owner',note:'changes over time between the two (Being is the When)'})
+});
+
+// DMS keep what they are and their place can move; colour/tone/base keep their place and
+// their look changes with the coupling. Whatever sits at the Second controls what is heard.
+export const COUPLING=Object.freeze({secondSlotChannel:'hearing',minuteSlotChannel:'shape (tentative)',degreeSlotChannel:null,
+ readings:Object.freeze([Object.freeze({element:'base',slot:'own place',reads:'environment'}),Object.freeze({element:'base',slot:'second',reads:'sound'}),Object.freeze({element:'tone',slot:'second',reads:'sound'})]),
+ selection:'open: not simply one coupling per dimension',status:'owner'});
+
 export const SOURCE_DIMENSIONS=Object.freeze({
  'Human Design':Object.freeze({dimension:'Being',status:'owner'}),
  Zhouyi:Object.freeze({dimension:'Movement',status:'open'}),
