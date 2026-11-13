@@ -12,3 +12,10 @@ assert.throws(()=>unitsOf({gate:65,line:1,color:1,tone:1,base:1}));
 const m=layout([...unitsOf({gate:1,line:1,color:1,tone:1,base:1},0),...unitsOf({gate:2,line:1,color:1,tone:1,base:3},1)]);
 const s=step(m);assert.ok(s[0].y<m[0].y);assert.ok(s[3].y>m[3].y);
 console.log('word-swarm ok');
+import {ingest,sections} from '../scripts/ingest-hatcher.mjs';
+const txt=`14.M DA4 YOU3 (5943, 7533): BIG DOMAIN\n14.0 Gua Ci\n14.1 Chu Jiu\n14.1x Xiao Xiang (Fan Yao 50.1: cauldron's upturned feet, expelling the stagnant)`;
+assert.equal(sections(txt).length,3); // 14.1x stays inside the 14.1 section
+const {words,fragments}=ingest([txt]);assert.ok(fragments>=3);
+assert.equal(words[14].name,'BIG DOMAIN');assert.equal(words[50].lines[1],"cauldron's upturned feet, expelling the stagnant");
+const ub=unitsOf({gate:50,line:1,color:1,tone:1,base:1},0,{bookWords:words});assert.equal(ub[0].words[1],"cauldron's upturned feet, expelling the stagnant");
+console.log('book words ok');

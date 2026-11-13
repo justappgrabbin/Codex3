@@ -30,10 +30,11 @@ const ta=document.getElementById('input'),note=document.getElementById('note');
 // Sample input only, so the page runs before a chart is pasted: one activation per base.
 const SAMPLE=[1,2,3,4,5].map(b=>({gate:[1,2,57,13,35][b-1],line:b,color:b,tone:b,base:b,degree:10,minute:20,second:30,arcsecond:50,house:b+2}));
 ta.value=JSON.stringify(SAMPLE,null,1);
-let units=[];
+let units=[],bookWords=null;
+try{const r=await fetch('../assets/book-words.json');if(r.ok)bookWords=(await r.json()).words;}catch{}
 function load(){
  try{const acts=JSON.parse(ta.value);if(!Array.isArray(acts))throw Error('expect a list');
-  units=layout(acts.flatMap((a,i)=>unitsOf(a,i)),{width:1,height:1});
+  units=layout(acts.flatMap((a,i)=>unitsOf(a,i,{bookWords})),{width:1,height:1});
   note.textContent=acts.length===26?'26 activations':`${acts.length} activations — paste a full chart (26) under Activations`;
  }catch(e){note.textContent='Input error: '+e.message;}
 }

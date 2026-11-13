@@ -20,13 +20,15 @@ export function validate(a){
 }
 
 // The three spaces of one activation, with the words each shows on its own dimension.
-export function unitsOf(a,index=0){
+// bookWords: optional index from scripts/ingest-hatcher.mjs ({gate:{name,lines:{n:phrase}}}); book words win.
+export function unitsOf(a,index=0,{bookWords=null}={}){
   validate(a);
   const dimension=dimensionOfBase(a.base),active=a.active!==false;
-  const lineName=LINE_NAMES[a.gate]?.[a.line-1]??null; // null where the source has no line name
+  const book=bookWords?.[a.gate];
+  const lineName=book?.lines?.[a.line]??LINE_NAMES[a.gate]?.[a.line-1]??null; // null where no source has it
   const dms=['degree','minute','second'].filter(k=>a[k]!==undefined).map(k=>a[k]).join('.');
   return [
-    {space:'gate-line',words:[GATE_NAMES[a.gate],lineName].filter(Boolean)},
+    {space:'gate-line',words:[book?.name??GATE_NAMES[a.gate],lineName].filter(Boolean)},
     {space:'ctb-dms',words:[`C${a.color} T${a.tone} B${a.base}`,dms].filter(Boolean)},
     {space:'arcsec-house',words:[a.arcsecond!==undefined?`${a.arcsecond}″`:null,a.house!==undefined?`house ${a.house}`:null].filter(Boolean)}
   ].map((u,k)=>({...u,id:`${index}.${k}`,activation:index,gate:a.gate,dimension,active,side:a.side??null,body:a.body??null}));
