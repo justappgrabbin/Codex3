@@ -21,3 +21,12 @@ test('design profile gives an address and its bodies',()=>{
  const r=profileToBodies({Movement:5,Evolution:3,Being:2,Design:1});
  assert.equal(r.bodies.length,3);assert.equal(bodiesToGate(r.bodies),r.address.gate);assert.equal(r.leading,'Movement');});
 test('figure 63 is gate 1 and 0 is gate 2',()=>{assert.equal(gateOfFigure(63),1);assert.equal(gateOfFigure(0),2);});
+import {gateBits} from '../vendor/generative-state-space/addressing.js';
+import {readAddress,meaningOf} from '../core/address-swarm-bridge.js';
+test('Generative gate bits and the rule-derived wheel agree on all 64 gates',()=>{
+ for(let g=1;g<=64;g++)gateBits(g).forEach((bit,i)=>assert.equal(bit,(figureOfGate(g)>>i)&1));});
+test('packs and trigrams read their meanings from the Generative fragment algebra',()=>{
+ const one=readAddress({gate:1,line:1},3);assert.ok(one.every(p=>p.meaning.emblem==='tai yang (greater yang)'));
+ const two=readAddress({gate:2,line:1},2);assert.ok(two.every(t=>t.meaning.id==='kun'));
+ const t3=readAddress({gate:3,line:1},2);assert.equal(t3[0].meaning.id,'zhen');assert.equal(t3[1].meaning.id,'kan');
+ assert.equal(meaningOf({tier:1,value:63}).gate,1);});

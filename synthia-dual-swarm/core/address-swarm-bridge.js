@@ -8,6 +8,7 @@
 import {KING_WEN_BY_TRIGRAMS} from './semantic-address.js';
 import {profileToAddress} from './profile-address.js';
 import {splitWord,compileWord,changeTier} from './six-bit-swarm.js';
+import {SI_XIANG,TRIGRAM_MATRIX} from '../vendor/generative-state-space/fragments.js';
 
 const FIGURE_BY_GATE=new Map([...KING_WEN_BY_TRIGRAMS].map(([figure,gate])=>[gate,figure]));
 const WIDTH={1:6,2:3,3:2};
@@ -47,3 +48,22 @@ export function changedGate(gate,line){
 // Things with no birth moment: design profile -> address -> bodies.
 export function profileToBodies(counts,tier=3){
  const {address,leading}=profileToAddress(counts);return {leading,address,bodies:addressToBodies(address,tier)};}
+
+// Meaning layer: the owner's Generative fragment algebra, vendored byte-identical
+// (vendor/generative-state-space/fragments.js, page-cited to Hatcher, Govinda, Adler,
+// Wen, Rutt). Lookup is by the body's own bits, bottom line = least significant bit,
+// the same convention both sources use (all 64 gates cross-checked in tests).
+const PACK_BY_VALUE=new Map(SI_XIANG.rows.map(r=>[r.bits[0]|(r.bits[1]<<1),r]));
+const TRIGRAM_BY_VALUE=new Map(TRIGRAM_MATRIX.trigrams.map(t=>[t.valueCode,t]));
+
+export function meaningOf(body){
+ if(body.tier===3){const r=PACK_BY_VALUE.get(body.value);
+  return {kind:'si xiang (two-line image)',emblem:r.emblem,element:r.element,season:r.season,direction:r.direction,dimension:r.primaryDimension,source:SI_XIANG.source};}
+ if(body.tier===2){const t=TRIGRAM_BY_VALUE.get(body.value);
+  return {kind:body.slot===0?'lower (inner) trigram':'upper (outer) trigram',id:t.id,image:t.natureImage,quality:t.quality,family:t.family,dimension:t.dimension,sources:t.sources};}
+ if(body.tier===1)return {kind:'whole hexagram',gate:gateOfFigure(body.value)};
+ throw new RangeError('body must have tier 1, 2 or 3');
+}
+export function readAddress(address,tier=3){
+ return addressToBodies(address,tier).map(b=>({lines:b.lines,carriesActiveLine:b.carriesActiveLine,bits:b.value,meaning:meaningOf(b)}));
+}
