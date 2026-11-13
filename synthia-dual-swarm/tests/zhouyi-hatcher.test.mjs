@@ -17,3 +17,10 @@ assert.equal(ying(1,1),false);assert.deepEqual(bi(63,1),[2]);
 assert.equal(sanCai(3),'human');assert.equal(banXiang(11).inner.trigram,7);
 assert.deepEqual(binomial(6),[1,6,15,20,15,6,1]);assert.equal(binomial(6).reduce((a,b)=>a+b),64);
 console.log('yao de ok');
+import {transitional,RESPONSES,ODDS} from '../core/zhouyi.js';
+const tr=transitional([8,7,6,8,8,9]);
+assert.equal(tr.ben,4);assert.equal(tr.zhi,46);
+assert.deepEqual(tr.steps.map(s=>s.read==='line'?`${s.gate}.${s.line}`:s.gate),[4,'4.3',18,'18.6',46]);
+assert.equal(RESPONSES,4096);
+assert.deepEqual(Object.values(ODDS.coins).map(n=>n/16),[1/8,3/8,3/8,1/8]); // Hatcher/Gardner coin odds
+console.log('transitional ok');

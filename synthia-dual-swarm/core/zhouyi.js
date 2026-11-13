@@ -113,3 +113,13 @@ export const THREE_SYSTEMS=Object.freeze({Lianshan:{opens:52,dynasty:'Xia'},Guic
 // Changing one line gives the resultant figure; the reciprocal line is that same place in it.
 export function zhiGua(gate,line){check(line>=1&&line<=6,'line must be 1-6');const z=gateOf(figureOf(gate)^(1<<(line-1)));return {gate:z,name:`${gate} zhi ${z}`};}
 export const fanYao=(gate,line)=>({gate:zhiGua(gate,line).gate,line});
+
+// ---- Ben Gua -> Zhi Gua through transitional gua (Hatcher, "Structure of the Diagrams", after Secter) ----
+// Change the lowest changing line first; read only that line in each gua along the way.
+export function transitional(xiangLines){
+  check(xiangLines.length===6&&xiangLines.every(n=>n>=6&&n<=9),'need six numbers 6-9');
+  let f=figureFromLines(xiangLines.map(n=>n%2));const ben=gateOf(f),steps=[{gate:ben,read:'gua'}];
+  xiangLines.forEach((n,i)=>{if(n===6||n===9){steps.push({gate:gateOf(f),read:'line',line:i+1});f^=1<<i;steps.push({gate:gateOf(f),read:'gua'});}});
+  return {ben,zhi:gateOf(f),steps};
+}
+export const RESPONSES=64*64; // every gua x every changing-line pattern, including no change
