@@ -97,3 +97,14 @@ export const olsvangerValue=gate=>figureFromLines(linesOf(figureOf(gate)).revers
 export function olsvangerGrid(){
  return Array.from({length:8},(_,row)=>Array.from({length:8},(_,col)=>olsvangerValue(row*8+(8-col))));
 }
+
+// ---- The calendar the oracles count in (Rutt pp.19-20) ----
+// Ten stems and twelve branches combine into the sixty-day cycle (six ten-day weeks).
+export const STEMS=Object.freeze(['jia','yi','bing','ding','wu','ji','geng','xin','ren','gui']);
+export const BRANCHES=Object.freeze(['zi','chou','yin','mao','chen','si','wu','wei','shen','you','xu','hai']);
+export function cycleDay(n){check(Number.isInteger(n)&&n>=1&&n<=60,'day must be 1-60');return {stem:STEMS[(n-1)%10],branch:BRANCHES[(n-1)%12],week:Math.ceil(n/10)};}
+// Moon quarters, in use from about 975 BC.
+export const MOON_QUARTERS=Object.freeze(['chuji (beginning of good luck)','jishengpo (already waxing)','jiwang (already full)','jisipo (already waning)']);
+// Zhouli names three sixty-four-figure systems; their opening hexagrams are tradition
+// (Zheng Xuan via Kong Yingda), and Rutt treats the two lost books as speculative.
+export const THREE_SYSTEMS=Object.freeze({Lianshan:{opens:52,dynasty:'Xia'},Guicang:{opens:2,dynasty:'Shang'},Zhouyi:{opens:1,dynasty:'Zhou'},status:'tradition; Lianshan and Guicang do not survive'});

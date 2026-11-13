@@ -41,3 +41,6 @@ test('Olsvanger grid: total 2016; 63 and 0 top right; 55 then 25 beneath 0; top-
  assert.deepEqual([g[0][7],g[0][6]],[63,0]);assert.deepEqual([g[1][6],g[2][6]],[55,25]);
  assert.deepEqual([g[0][0],g[0][1],g[1][0],g[1][1],g[2][0],g[2][1]].sort((a,b)=>a-b),[1,2,4,8,16,32]);
  assert.deepEqual(g[0],[2,16,23,58,17,34,0,63]);});
+test('sixty-day cycle matches Table 1 (p.19)',()=>{
+ assert.deepEqual([Z.cycleDay(1),Z.cycleDay(21),Z.cycleDay(41),Z.cycleDay(60)].map(d=>d.stem+'-'+d.branch),['jia-zi','jia-shen','jia-chen','gui-hai']);
+ assert.equal(Z.cycleDay(11).stem+'-'+Z.cycleDay(11).branch,'jia-xu');assert.equal(Z.cycleDay(60).week,6);});
