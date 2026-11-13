@@ -4,3 +4,7 @@ synthia-unity/Library/
 synthia-unity/Temp/
 synthia-unity/Logs/
 synthia-unity/Obj/
+android/build/
+*.keystore
+*.jks
+artifacts/

@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {representText,representBytes} from '../core/representations.js';
+test('ASCII, UTF-8 binary and NATO agree',()=>{const r=representText('Az');assert.equal(r.binary,'01000001 01111010');assert.deepEqual(r.unicode,['U+0041','U+007A']);assert.equal(r.nato,'Alfa Zulu');assert.equal(r.ascii,'Az');});
+test('Unicode survives UTF-8 round trip including supplementary scalars',()=>{for(const text of ['é','Ω','Привет','🌍','中文','\0']){const r=representText(text);assert.equal(representBytes(r.utf8).text,text);}assert.equal(representText('é').ascii,null);assert.equal(representText('🌍').binary,'11110000 10011111 10001100 10001101');});
+test('bounded transliteration keeps unsupported characters and reports them',()=>{assert.equal(representText('Café Straße').transliteration,'Cafe Strasse');assert.equal(representText('Привет').transliteration,'Privet');assert.deepEqual(representText('中文').unmapped,['中','文']);});
+test('malformed UTF-8 and unpaired surrogates are rejected',()=>{for(const bytes of [[192,128],[237,160,128],[244,144,128,128],[195],[128]])assert.throws(()=>representBytes(bytes),/UTF-8|Unicode/);assert.throws(()=>representText('\ud800'),/surrogate/);});
