@@ -10,7 +10,7 @@ import {Substrate} from './substrate.js';
 // Bounded local autonomy. Operators define physics/capabilities; choices are made
 // from observations and experience. No network, shell or arbitrary-code tools.
 export class AutonomousSwarm {
- constructor(core,{budget=120,scenario=RELAY_DEMO,rules={}}={}){this.core=core;if(!core.entities.has('autonomy'))this.setup(budget,scenario,rules);}
+ constructor(core,{budget=120,scenario=RELAY_DEMO,rules={},selector=null}={}){this.core=core;this.selector=selector;if(!core.entities.has('autonomy'))this.setup(budget,scenario,rules);}
  setup(budget,scenario,rules){
   if(!Number.isInteger(budget)||budget<1||budget>1000)throw Error('Budget must be 1–1000 ticks');
   const validatedRules=validateRules(rules);
@@ -39,7 +39,7 @@ export class AutonomousSwarm {
  control(running){const next=!!running&&!this.state.completed&&this.state.tick<this.state.budget;if(next!==this.state.running)this.core.change('autonomy',{running:next},'supervisor control');}
  setPermission(action,enabled){if(!(action in this.state.permissions))throw Error('Unknown permission');this.core.change('autonomy',{permissions:{...this.state.permissions,[action]:!!enabled}},'supervisor permission');}
  checkpoint(){return {kind:'synthia-autonomy-checkpoint/v1',log:this.core.export()};}
- static restore(checkpoint){if(checkpoint?.kind!=='synthia-autonomy-checkpoint/v1')throw Error('Unknown checkpoint');const core=Substrate.replay(checkpoint.log);if(!core.entities.has('autonomy'))throw Error('Checkpoint has no autonomy state');const runtime=new AutonomousSwarm(core);runtime.control(false);return runtime;}
+ static restore(checkpoint,{selector=null}={}){if(checkpoint?.kind!=='synthia-autonomy-checkpoint/v1')throw Error('Unknown checkpoint');const core=Substrate.replay(checkpoint.log);if(!core.entities.has('autonomy'))throw Error('Checkpoint has no autonomy state');const runtime=new AutonomousSwarm(core,{selector});runtime.control(false);return runtime;}
  structures(){return [...this.core.entities.values()].filter(e=>e.id.startsWith('autonomy.')&&Number.isFinite(e.state.health)&&Number.isFinite(e.state.required));}
  supplies(){return [...this.core.entities.values()].filter(e=>e.id.startsWith('autonomy.')&&Number.isFinite(e.state.parts));}
  objectState({id,position,health,required,parts,requiredCapability='grip'}){
@@ -90,7 +90,7 @@ export class AutonomousSwarm {
   if(action==='morph'){const component=this.rules.components.find(c=>c.id===choice.component);if(!component||s.inventory<component.partsCost||(s.energy??40)<component.energyCost)return false;}
   return this.structures().includes(t)&&(action==='inspect'||(s.memories||[]).includes(t.id))&&(action!=='repair'||s.inventory>0&&t.state.health<t.state.required);
  }
- decide(agent){const s=agent.state;return this.candidates(agent).map(c=>{const q=s.policy[c.action]||{n:0,value:0};return {...c,score:c.utility+q.value+(s.sequencePolicy?.[(s.previousAction||'start')+'>'+c.action]?.value||0)*.25+1/Math.sqrt(q.n+1)};}).sort((a,b)=>b.score-a.score||a.action.localeCompare(b.action))[0];}
+ decide(agent){const s=agent.state;return this.candidates(agent).map(c=>{const q=s.policy[c.action]||{n:0,value:0};const ato=this.selector?this.selector.bonus(agent,c,this):0;return {...c,score:c.utility+q.value+(s.sequencePolicy?.[(s.previousAction||'start')+'>'+c.action]?.value||0)*.25+1/Math.sqrt(q.n+1)+ato,...(this.selector?{ato}:{})};}).sort((a,b)=>b.score-a.score||a.action.localeCompare(b.action))[0];}
  relation(source,target,kind){let r=[...this.core.relations.values()].find(r=>r.source===source&&r.target===target&&r.kind===kind);if(!r)r=this.core.relate({source,target,kind,projection:'causal',dimension:'Evolution',context:{createdBy:'autonomous interaction',tick:this.state.tick}});return r;}
  act(agent,choice){if(!this.validate(agent,choice))return false;const s=structuredClone(agent.state),target=this.core.require(choice.target).state;let reward=0,outcome='';
   const component=choice.action==='morph'?this.rules.components.find(c=>c.id===choice.component):null;
