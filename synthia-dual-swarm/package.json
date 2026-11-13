@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs && node tests/dimensional-world.test.mjs && node tests/experience.test.mjs && node --test tests/production.test.mjs && node --test tests/representations.test.mjs && node --test tests/six-bit-swarm.test.mjs tests/fragment-bodies.test.mjs tests/boolean-state.test.mjs tests/generative-boolean.test.mjs tests/visual-field.test.mjs tests/semantic-address.test.mjs",
+    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs && node tests/dimensional-world.test.mjs && node tests/experience.test.mjs && node --test tests/production.test.mjs && node --test tests/representations.test.mjs && node --test tests/six-bit-swarm.test.mjs tests/fragment-bodies.test.mjs tests/boolean-state.test.mjs tests/generative-boolean.test.mjs tests/visual-field.test.mjs tests/semantic-address.test.mjs tests/profile-address.test.mjs",
     "build": "node scripts/build.mjs"
   },
   "devDependencies": {
