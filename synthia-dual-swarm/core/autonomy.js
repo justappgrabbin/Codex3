@@ -5,7 +5,7 @@ import {DEFAULT_RULES,ACTIONS,validateRules,validateAgent} from './swarm-rules.j
 import {RELAY_DEMO} from './swarm-scenarios.js';
 import {LocalProduction} from './production.js';
 import {exampleAddress,hash} from './ontology.js';
-import {agentProfile,objectProfile,addressForProfile,settleEntity} from './semantic-agents.js';
+import {agentProfile,objectProfile,addressForProfile,settleEntity,followWord,wordGate} from './semantic-agents.js';
 import {Substrate} from './substrate.js';
 
 // Bounded local autonomy. Operators define physics/capabilities; choices are made
@@ -29,7 +29,7 @@ export class AutonomousSwarm {
  addAgent(spec){
   const a=validateAgent(this.agentSpec(spec));if(a.position3D)a.position=a.position3D[0];if(this.agents().length>=64)throw Error('Agent limit reached');
   const {id,label, ...body}=a;
-  const born=addressForProfile(agentProfile({}));this.core.create({id,label:label||id,dimension:born.leading,address:born.address,functions:body.capabilities,state:{...body,position3D:body.position3D||[body.position,0,0],velocity:[0,0,0],autonomous:true,active:true,goal:'observe needs',inventory:0,memories:[],ties:{},generatedGoals:[],known:false,tool:'hands',toolFeatures:[],policy:{},sequencePolicy:{},experiences:[],lastAction:'waiting'}});
+  const born=addressForProfile(agentProfile({}));this.core.create({id,label:label||id,dimension:born.leading,address:{...born.address,gate:wordGate(body.open===false?0:63),filter:'swarm-unit-word'},functions:body.capabilities,state:{...body,position3D:body.position3D||[body.position,0,0],velocity:[0,0,0],autonomous:true,active:true,goal:'observe needs',inventory:0,memories:[],ties:{},generatedGoals:[],known:false,tool:'hands',toolFeatures:[],policy:{},sequencePolicy:{},experiences:[],lastAction:'waiting'}});
   this.core.change('autonomy',{completed:false},'new participant changes available capabilities');return this.core.require(id);
  }
  setAgentActive(id,active){const a=this.core.require(id);if(!a.state.autonomous&&!Array.isArray(a.state.capabilities))throw Error('Not a swarm agent');this.core.change(id,{active:!!active},'participant availability changed');this.core.change('autonomy',{completed:false},'reconsider available teams');}
@@ -131,10 +131,10 @@ export class AutonomousSwarm {
  step(){if(!this.state.running||this.state.completed||this.state.tick>=this.state.budget||this.core.events.length>45000){if(this.state.running)this.control(false);return false;}
   this.core.change('autonomy',{tick:this.state.tick+1},'fixed simulation clock');
   for(const a of this.agents()){this.core.change(a.id,{ties:Object.fromEntries(Object.entries(a.state.ties||{}).map(([id,value])=>[id,Math.max(0,value-this.rules.relationshipDecay)]).filter(([,value])=>value>0))},'unused social ties weaken and dissolve');this.perceive(a);const choice=this.decide(a);if(choice)this.act(a,choice);}
-  for(const a of this.agents())settleEntity(this.core,a.id,agentProfile(this.core.require(a.id).state));
   for(const o of [...this.structures(),...this.supplies()])settleEntity(this.core,o.id,objectProfile(o.state));
   stepParticleField(this);
   stepSixBitSwarm(this);
+  for(const a of this.agents()){const st=this.core.require(a.id).state;if(Number.isInteger(st.word))followWord(this.core,a.id,st.word,agentProfile(st));}
   new VisualField(this).tick();
   if(this.core.entities.has('production'))new LocalProduction(this).tick();
   const visualPending=this.state.visualField?.status==='training';

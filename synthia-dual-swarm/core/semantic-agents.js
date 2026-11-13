@@ -51,3 +51,17 @@ export function settleEntity(core,id,profile){
  if(line)core.changeLine(id,line);
  return {gate:core.require(id).address.gate,target:address.gate,leading,moved:!!line};
 }
+
+// A swarm unit IS a gate: its 3-2-1 word (six-bit-swarm.js) is the gate's figure.
+// The address follows the word exactly; every differing line is flipped through a
+// recorded gate.changed event (lowest first), so the log stays lawful and replayable.
+// The profile decides only the leading dimension, never a second gate.
+import {gateOfFigure} from './address-swarm-bridge.js';
+export function wordGate(word){return gateOfFigure(word);}
+export function followWord(core,id,word,profile){
+ const e=core.require(id),target=gateOfFigure(word);
+ const {leading}=addressForProfile(profile);
+ if(e.state.leading!==leading)core.change(id,{leading,profile},'leading dimension follows the unit\'s own links');
+ let line;while((line=nextLine(core.require(id).address.gate,target)))core.changeLine(id,line);
+ return {gate:core.require(id).address.gate,leading};
+}
