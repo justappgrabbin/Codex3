@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Word Swarm</title>
+<style>
+body{margin:0;background:#0d0d12;color:#ddd;font:13px system-ui,sans-serif;overflow:hidden}
+#bar{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:6px;background:#0d0d12cc;z-index:2}
+textarea{position:fixed;bottom:0;left:0;width:100%;height:0;transition:height .2s;background:#111;color:#ccc;border:0;font:12px monospace;z-index:2}
+textarea.open{height:40vh}
+canvas{display:block}
+button,select,input{background:#222;color:#ddd;border:1px solid #444;border-radius:4px;padding:3px 6px}
+#note{opacity:.7}
+</style></head><body>
+<div id="bar">
+ Viewing from <select id="viewer"></select>
+ zoom <input id="zoom" type="range" min="0.1" max="1.5" step="0.05" value="1">
+ <button id="edit">Activations</button><span id="note"></span>
+</div>
+<canvas id="c"></canvas>
+<textarea id="input" spellcheck="false"></textarea>
+<script type="module">
+import {BASES} from '../core/state-space-canon.js';
+import {unitsOf,layout,step,appearance} from '../core/word-swarm.js';
+const COLORS={Movement:'#ff6b6b',Evolution:'#7b7bff',Being:'#5fbf6a',Design:'#bbbbbb',Space:'#c8a96a'};
+const viewer=document.getElementById('viewer');
+for(const b of BASES)viewer.add(new Option(b.dimension,b.dimension));
+viewer.value='Being';
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const resize=()=>{cv.width=innerWidth;cv.height=innerHeight;};resize();addEventListener('resize',resize);
+const ta=document.getElementById('input'),note=document.getElementById('note');
+// Sample input only, so the page runs before a chart is pasted: one activation per base.
+const SAMPLE=[1,2,3,4,5].map(b=>({gate:[1,2,57,13,35][b-1],line:b,color:b,tone:b,base:b,degree:10,minute:20,second:30,arcsecond:50,house:b+2}));
+ta.value=JSON.stringify(SAMPLE,null,1);
+let units=[];
+function load(){
+ try{const acts=JSON.parse(ta.value);if(!Array.isArray(acts))throw Error('expect a list');
+  units=layout(acts.flatMap((a,i)=>unitsOf(a,i)),{width:1,height:1});
+  note.textContent=acts.length===26?'26 activations':`${acts.length} activations — paste a full chart (26) under Activations`;
+ }catch(e){note.textContent='Input error: '+e.message;}
+}
+load();ta.addEventListener('change',load);
+document.getElementById('edit').onclick=()=>ta.classList.toggle('open');
+function frame(){
+ units=step(units,{dt:1});
+ const z=+document.getElementById('zoom').value,w=cv.width,h=cv.height;
+ ctx.fillStyle='#0d0d12';ctx.fillRect(0,0,w,h);
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ for(const u of units){
+  const a=appearance(u,{viewer:viewer.value,zoom:z}),x=u.x*w,y=u.y*h;
+  ctx.globalAlpha=u.active?1:0.35;ctx.fillStyle=COLORS[u.dimension];
+  if(a.kind==='dot'){ctx.beginPath();ctx.arc(x,y,3,0,7);ctx.fill();}
+  else{ctx.font=`${a.kind==='words'?14*z:11*z}px ${a.kind==='binary'?'monospace':'system-ui'}`;ctx.fillText(a.text,x,y);}
+ }
+ ctx.globalAlpha=1;requestAnimationFrame(frame);
+}
+frame();
+</script></body></html>
