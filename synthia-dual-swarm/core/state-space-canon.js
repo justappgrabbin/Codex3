@@ -147,3 +147,7 @@ export const OPEN=Object.freeze([
  'Tone-level visibility','How the centre takes its words from all four corners','Edge directions (owner: Movement bottom->top, Being top->bottom)',
  'What capitals change in behaviour beyond wheel labels','12 or 13 placements for things','Which of the 16 operators serve which quarter/dimension','Source-to-dimension assignments other than Human Design'
 ]);
+
+// Colour order (owner's sources, 2026-11-13): dark/light first (xuanhuang, the gray stage
+// of dimensions 1-2), then red, yellow, green/blue as colour appears at the 3rd dimension.
+export const COLOR_ORDER=Object.freeze(['dark/light','red','yellow','green/blue']);

@@ -9,3 +9,11 @@ const t=twelveBranches(),s=t.indexOf(11);
 assert.deepEqual([...t.slice(s),...t.slice(0,s)],[11,34,43,1,44,33,12,20,23,2,24,19]);
 assert.equal(xianTianValue(1),63);assert.equal(xianTianValue(24),32);assert.equal(xianTianValue(23),1);
 console.log('zhouyi-hatcher ok');
+import {pangTong,dang,ying,bi,sanCai,banXiang,binomial} from '../core/zhouyi-later.js';
+assert.equal(pangTong(1),2);assert.equal(pangTong(63),64);
+assert.equal(dang(63,1),true);assert.equal(dang(63,2),true);assert.equal(dang(64,1),false); // Jiji all correct, Weiji none
+for(let l=1;l<=6;l++){assert.equal(dang(63,l),true);assert.equal(dang(64,l),false);assert.equal(ying(63,l),true);}
+assert.equal(ying(1,1),false);assert.deepEqual(bi(63,1),[2]);
+assert.equal(sanCai(3),'human');assert.equal(banXiang(11).inner.trigram,7);
+assert.deepEqual(binomial(6),[1,6,15,20,15,6,1]);assert.equal(binomial(6).reduce((a,b)=>a+b),64);
+console.log('yao de ok');
