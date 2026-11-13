@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs && node tests/dimensional-world.test.mjs && node tests/experience.test.mjs && node --test tests/production.test.mjs && node --test tests/representations.test.mjs && node --test tests/six-bit-swarm.test.mjs tests/fragment-bodies.test.mjs tests/boolean-state.test.mjs tests/generative-boolean.test.mjs tests/visual-field.test.mjs tests/semantic-address.test.mjs tests/profile-address.test.mjs tests/state-space-canon.test.mjs tests/address-swarm-bridge.test.mjs && node tests/ato-boolean.test.mjs && node --test tests/ato-dynamic.test.mjs tests/klein-resolver-bridge.test.mjs tests/particle-field.test.mjs",
+    "test": "node tests/core.test.mjs && node tests/autonomy.test.mjs && node tests/dimensional-world.test.mjs && node tests/experience.test.mjs && node --test tests/production.test.mjs && node --test tests/representations.test.mjs && node --test tests/six-bit-swarm.test.mjs tests/fragment-bodies.test.mjs tests/boolean-state.test.mjs tests/generative-boolean.test.mjs tests/visual-field.test.mjs tests/semantic-address.test.mjs tests/profile-address.test.mjs tests/state-space-canon.test.mjs tests/address-swarm-bridge.test.mjs && node tests/ato-boolean.test.mjs && node --test tests/ato-dynamic.test.mjs tests/klein-resolver-bridge.test.mjs tests/particle-field.test.mjs tests/spacetime-semantics.test.mjs",
     "test:ato-core": "node --test vendor/ato-core/test/*.test.mjs",
     "build": "node scripts/build.mjs"
   },
