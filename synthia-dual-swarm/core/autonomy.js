@@ -5,6 +5,7 @@ import {DEFAULT_RULES,ACTIONS,validateRules,validateAgent} from './swarm-rules.j
 import {RELAY_DEMO} from './swarm-scenarios.js';
 import {LocalProduction} from './production.js';
 import {exampleAddress,hash} from './ontology.js';
+import {agentProfile,objectProfile,addressForProfile,settleEntity} from './semantic-agents.js';
 import {Substrate} from './substrate.js';
 
 // Bounded local autonomy. Operators define physics/capabilities; choices are made
@@ -20,7 +21,7 @@ export class AutonomousSwarm {
   for(const object of [...scenario.structures,...scenario.supplies,...scenario.agents]){if(!object?.id||ids.has(object.id)||this.core.entities.has(object.id))throw Error('Duplicate scenario identity');ids.add(object.id);}
   for(const a of scenario.agents)validateAgent(this.agentSpec(a));
   for(const o of [...scenario.structures,...scenario.supplies])this.objectState(o);
-  this.core.create({id:'autonomy',label:'Rule-governed local swarm',dimension:'Being',address:exampleAddress(),state:{tick:0,budget,rules:validatedRules,running:false,completed:false,permissions:Object.fromEntries(ACTIONS.map(a=>[a,true])),board:[],summary:'Ready: perceive needs and discover useful actions.'}});
+  this.core.create({id:'autonomy',label:'Rule-governed local swarm',dimension:'Being',address:addressForProfile({Movement:0,Evolution:0,Being:scenario.agents.length+scenario.structures.length+scenario.supplies.length,Design:0}).address,state:{tick:0,budget,rules:validatedRules,running:false,completed:false,permissions:Object.fromEntries(ACTIONS.map(a=>[a,true])),board:[],summary:'Ready: perceive needs and discover useful actions.'}});
   for(const o of [...scenario.structures,...scenario.supplies])this.addObject(o);
   for(const a of scenario.agents)this.addAgent(a);
  }
@@ -28,7 +29,7 @@ export class AutonomousSwarm {
  addAgent(spec){
   const a=validateAgent(this.agentSpec(spec));if(a.position3D)a.position=a.position3D[0];if(this.agents().length>=64)throw Error('Agent limit reached');
   const {id,label, ...body}=a;
-  this.core.create({id,label:label||id,dimension:'Being',address:exampleAddress(),functions:body.capabilities,state:{...body,position3D:body.position3D||[body.position,0,0],velocity:[0,0,0],autonomous:true,active:true,goal:'observe needs',inventory:0,memories:[],ties:{},generatedGoals:[],known:false,tool:'hands',toolFeatures:[],policy:{},sequencePolicy:{},experiences:[],lastAction:'waiting'}});
+  const born=addressForProfile(agentProfile({}));this.core.create({id,label:label||id,dimension:born.leading,address:born.address,functions:body.capabilities,state:{...body,position3D:body.position3D||[body.position,0,0],velocity:[0,0,0],autonomous:true,active:true,goal:'observe needs',inventory:0,memories:[],ties:{},generatedGoals:[],known:false,tool:'hands',toolFeatures:[],policy:{},sequencePolicy:{},experiences:[],lastAction:'waiting'}});
   this.core.change('autonomy',{completed:false},'new participant changes available capabilities');return this.core.require(id);
  }
  setAgentActive(id,active){const a=this.core.require(id);if(!a.state.autonomous&&!Array.isArray(a.state.capabilities))throw Error('Not a swarm agent');this.core.change(id,{active:!!active},'participant availability changed');this.core.change('autonomy',{completed:false},'reconsider available teams');}
@@ -52,7 +53,7 @@ export class AutonomousSwarm {
  addObject(spec){
   const state=this.objectState(spec);
   if(this.structures().length+this.supplies().length>=128)throw Error('World object limit reached');
-  this.core.create({id:spec.id,label:spec.label||spec.id,address:exampleAddress(),dimension:'Being',state});
+  const born=addressForProfile(objectProfile(state));this.core.create({id:spec.id,label:spec.label||spec.id,address:born.address,dimension:born.leading,state:{...state,leading:born.leading}});
   this.core.change('autonomy',{completed:false},'world conditions changed');
  }
  perceive(agent){const s=agent.state,memories=new Set(s.memories||[]);
@@ -130,6 +131,8 @@ export class AutonomousSwarm {
  step(){if(!this.state.running||this.state.completed||this.state.tick>=this.state.budget||this.core.events.length>45000){if(this.state.running)this.control(false);return false;}
   this.core.change('autonomy',{tick:this.state.tick+1},'fixed simulation clock');
   for(const a of this.agents()){this.core.change(a.id,{ties:Object.fromEntries(Object.entries(a.state.ties||{}).map(([id,value])=>[id,Math.max(0,value-this.rules.relationshipDecay)]).filter(([,value])=>value>0))},'unused social ties weaken and dissolve');this.perceive(a);const choice=this.decide(a);if(choice)this.act(a,choice);}
+  for(const a of this.agents())settleEntity(this.core,a.id,agentProfile(this.core.require(a.id).state));
+  for(const o of [...this.structures(),...this.supplies()])settleEntity(this.core,o.id,objectProfile(o.state));
   stepParticleField(this);
   stepSixBitSwarm(this);
   new VisualField(this).tick();
