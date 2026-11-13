@@ -40,7 +40,8 @@ export function binaryOf(gate){const f=figureOf(gate);let s='';for(let i=5;i>=0;
 export function appearance(unit,{viewer,zoom=1,farZoom=0.35}={}){
   if(zoom<farZoom)return {kind:'dot'};
   if(unit.dimension===viewer)return {kind:'words',text:unit.words.join(' · '),lines:unit.words.flatMap(w=>wrap(w))};
-  return {kind:'binary',text:binaryOf(unit.gate)};
+  const form=FORM_OF_VIEWER[viewer]??'binary';
+  return {kind:form,text:FORMS[form](unit)};
 }
 
 // Place units across the screen in reading order (linear, row by row) so they start apart.
@@ -80,3 +81,18 @@ export function senses(unit){
   if(unit.color===undefined)return null;
   return {hue:(unit.color-1)*60,pitchHz:220*2**((unit.tone-1)*2/12),corners:unit.base+2};
 }
+
+// The five forms a unit takes when seen from another dimension (owner's list, 2026-11-13:
+// Binary, ASCII, NATO, Transliteration, Unicode). Assigned to the viewer's dimension in the
+// order listed against Movement, Evolution, Being, Design, Space — that pairing is my reading, to confirm.
+const NATO=['Alfa','Bravo','Charlie','Delta','Echo','Foxtrot','Golf','Hotel','India','Juliett','Kilo','Lima','Mike','November','Oscar','Papa','Quebec','Romeo','Sierra','Tango','Uniform','Victor','Whiskey','Xray','Yankee','Zulu'];
+const LATIN_TO_GREEK={a:'α',b:'β',c:'κ',d:'δ',e:'ε',f:'φ',g:'γ',h:'η',i:'ι',j:'ι',k:'κ',l:'λ',m:'μ',n:'ν',o:'ο',p:'π',q:'κ',r:'ρ',s:'σ',t:'τ',u:'υ',v:'β',w:'ω',x:'ξ',y:'υ',z:'ζ'};
+export const FORMS=Object.freeze({
+  binary:u=>binaryOf(u.gate),
+  ascii:u=>unitText(u).split('').map(c=>c.charCodeAt(0)).slice(0,12).join(' '),
+  nato:u=>unitText(u).replace(/[^a-z]/gi,'').slice(0,4).toLowerCase().split('').map(c=>NATO[c.charCodeAt(0)-97]).join(' '),
+  transliteration:u=>unitText(u).toLowerCase().replace(/[a-z]/g,c=>LATIN_TO_GREEK[c]),
+  unicode:u=>String.fromCodePoint(0x4DC0+u.gate-1) // King Wen order ䷀..䷿
+});
+export const FORM_OF_VIEWER=Object.freeze({Movement:'binary',Evolution:'ascii',Being:'nato',Design:'transliteration',Space:'unicode'});
+const unitText=u=>u.words[0]??'';

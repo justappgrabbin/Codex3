@@ -5,7 +5,7 @@ const u=unitsOf({gate:2,line:5,color:3,tone:4,base:3,degree:12,minute:7,second:3
 assert.equal(u.length,3);assert.deepEqual(u[0].words,['The Receptive','Genius']);
 assert.deepEqual(u[1].words.slice(0,3),['Desire','Meditation','Being']);assert.equal(u[2].words[1],'house 8');
 assert.equal(appearance(u[0],{viewer:'Being'}).kind,'words');
-assert.equal(appearance(u[0],{viewer:'Movement'}).text,binaryOf(2));assert.equal(binaryOf(1),'111111');
+assert.equal(appearance(u[0],{viewer:'Movement'}).text,binaryOf(2));assert.equal(appearance(u[0],{viewer:'Space'}).text,'䷁');assert.equal(appearance(u[0],{viewer:'Evolution'}).kind,'ascii');assert.equal(binaryOf(1),'111111');
 assert.equal(appearance(u[0],{viewer:'Being',zoom:0.1}).kind,'dot');
 assert.throws(()=>unitsOf({gate:65,line:1,color:1,tone:1,base:1}));
 // Movement units rise, Being units sink
