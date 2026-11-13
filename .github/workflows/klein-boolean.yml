@@ -1,0 +1,25 @@
+name: Klein Boolean integration tests
+on:
+  push:
+    branches: [feature/klein-boolean-lcm-bridge]
+  pull_request:
+    paths:
+      - 'integrations/**'
+      - 'synthia-dual-swarm/core/klein-resolver-bridge.js'
+      - 'synthia-dual-swarm/tests/klein-resolver-bridge.test.mjs'
+      - '.github/workflows/klein-boolean.yml'
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Python bridge contract
+        run: python -m unittest discover -s integrations -p 'test_*.py' -v
+      - name: Swarm resolver contract
+        run: node --test synthia-dual-swarm/tests/klein-resolver-bridge.test.mjs
