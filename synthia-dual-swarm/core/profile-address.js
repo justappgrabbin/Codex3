@@ -84,6 +84,10 @@ export function proportionToCorpus(measured) {
       const equal = measured.filter(o => o.counts[d] === m.counts[d]).length;
       m.profile[d] = n > 1 ? (below + (equal - 1) / 2) / (n - 1) : 0.5;
     }
+    // Ties in standing are broken by how far the raw value reaches toward the
+    // corpus maximum (a sub-percentile nudge, never enough to reorder ranks).
+    const max = Math.max(...measured.map(m => m.counts[d])) || 1;
+    for (const m of measured) m.profile[d] += 1e-6 * (m.counts[d] / max);
   }
   for (const m of measured) if (DIMENSIONS.every(d => m.profile[d] === 0)) DIMENSIONS.forEach(d => (m.profile[d] = 1e-9));
   return measured;
