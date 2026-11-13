@@ -120,7 +120,9 @@ export const AFTER_SECOND=Object.freeze({
 // their look changes with the coupling. Whatever sits at the Second controls what is heard.
 export const COUPLING=Object.freeze({secondSlotChannel:'hearing',minuteSlotChannel:'shape (tentative)',degreeSlotChannel:null,
  readings:Object.freeze([Object.freeze({element:'base',slot:'own place',reads:'environment'}),Object.freeze({element:'base',slot:'second',reads:'sound'}),Object.freeze({element:'tone',slot:'second',reads:'sound'})]),
- selection:'open: not simply one coupling per dimension',status:'owner'});
+ selection:'open: not simply one coupling per dimension',
+ visibility:'colour/tone/base are seen only from Being (3rd dimension, Human Design); colour, sound and shape (early channels) switch on only when the DMS alignment brings the reading into Being',
+ house:'where we hear; arc-second and house carry hearing, seeing, shape (tentative)',status:'owner'});
 
 export const SOURCE_DIMENSIONS=Object.freeze({
  'Human Design':Object.freeze({dimension:'Being',status:'owner'}),
