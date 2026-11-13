@@ -108,3 +108,8 @@ export const MOON_QUARTERS=Object.freeze(['chuji (beginning of good luck)','jish
 // Zhouli names three sixty-four-figure systems; their opening hexagrams are tradition
 // (Zheng Xuan via Kong Yingda), and Rutt treats the two lost books as speculative.
 export const THREE_SYSTEMS=Object.freeze({Lianshan:{opens:52,dynasty:'Xia'},Guicang:{opens:2,dynasty:'Shang'},Zhouyi:{opens:1,dynasty:'Zhou'},status:'tradition; Lianshan and Guicang do not survive'});
+
+// ---- Zhi Gua and Fan Yao (Hatcher, "Image and Number": Zuozhuan names a line "X zhi Y") ----
+// Changing one line gives the resultant figure; the reciprocal line is that same place in it.
+export function zhiGua(gate,line){check(line>=1&&line<=6,'line must be 1-6');const z=gateOf(figureOf(gate)^(1<<(line-1)));return {gate:z,name:`${gate} zhi ${z}`};}
+export const fanYao=(gate,line)=>({gate:zhiGua(gate,line).gate,line});
