@@ -13,13 +13,13 @@ button,select,input{background:#222;color:#ddd;border:1px solid #444;border-radi
 <div id="bar">
  Viewing from <select id="viewer"></select>
  zoom <input id="zoom" type="range" min="0.1" max="1.5" step="0.05" value="1">
- <button id="edit">Activations</button><span id="note"></span>
+ <button id="edit">Activations</button> <button id="sound">Sound off</button><span id="note"></span>
 </div>
 <canvas id="c"></canvas>
 <textarea id="input" spellcheck="false"></textarea>
 <script type="module">
 import {BASES} from '../core/state-space-canon.js';
-import {unitsOf,layout,step,appearance} from '../core/word-swarm.js';
+import {unitsOf,layout,step,appearance,senses} from '../core/word-swarm.js';
 const COLORS={Movement:'#ff6b6b',Evolution:'#7b7bff',Being:'#5fbf6a',Design:'#bbbbbb',Space:'#c8a96a'};
 const viewer=document.getElementById('viewer');
 for(const b of BASES)viewer.add(new Option(b.dimension,b.dimension));
@@ -48,11 +48,20 @@ function frame(){
  for(const u of units){if(!u.words.length)continue;
   const a=appearance(u,{viewer:viewer.value,zoom:z}),x=u.x*w,y=u.y*h;
   ctx.globalAlpha=u.active?1:0.35;ctx.fillStyle=COLORS[u.dimension];
+  const sv=senses(u);
+  if(sv&&viewer.value==='Being'&&a.kind!=='dot'){ctx.save();ctx.globalAlpha*=0.35;ctx.fillStyle=`hsl(${sv.hue},70%,50%)`;shape(x,y,26*z,sv.corners);ctx.restore();}
   if(a.kind==='dot'){ctx.beginPath();ctx.arc(x,y,3,0,7);ctx.fill();}
   else if(a.kind==='words'){const fs=13*z;ctx.font=`${fs}px system-ui`;a.lines.forEach((t,k)=>ctx.fillText(t,x,y+(k-(a.lines.length-1)/2)*fs*1.2));}
   else{ctx.font=`${11*z}px monospace`;ctx.fillText(a.text,x,y);}
  }
  ctx.globalAlpha=1;requestAnimationFrame(frame);
 }
+let audio=null;
+document.getElementById('sound').onclick=e=>{if(audio){audio.close();audio=null;e.target.textContent='Sound off';return;}
+ audio=new AudioContext();e.target.textContent='Sound on';
+ const g=audio.createGain();g.gain.value=0.02;g.connect(audio.destination);
+ const pitches=[...new Set(units.map(senses).filter(Boolean).map(s=>s.pitchHz))];
+ for(const f of pitches){const o=audio.createOscillator();o.frequency.value=f;o.connect(g);o.start();}};
+function shape(x,y,r,n){ctx.beginPath();for(let k=0;k<n;k++){const t=k/n*Math.PI*2-Math.PI/2;ctx.lineTo(x+r*Math.cos(t),y+r*Math.sin(t));}ctx.closePath();ctx.fill();}
 frame();
 </script></body></html>

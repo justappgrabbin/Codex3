@@ -4,7 +4,7 @@
 // (canon base table) and decides how its units move (spacetime-semantics flow).
 // Viewed from the same dimension a unit shows words; from another dimension it shows the
 // gate's binary; from far away it is a dot.
-import {BASES} from './state-space-canon.js';
+import {BASES,COLORS,TONES} from './state-space-canon.js';
 import {flow} from './spacetime-semantics.js';
 import {figureOf} from './zhouyi.js';
 import {GATE_NAMES,LINE_NAMES} from '../vendor/recovered/src/synthia/sentenceRealization.mjs';
@@ -29,7 +29,7 @@ export function unitsOf(a,index=0,{bookWords=null}={}){
   const dms=['degree','minute','second'].filter(k=>a[k]!==undefined).map(k=>a[k]).join('.');
   return [
     {space:'gate-line',words:[book?.name??GATE_NAMES[a.gate],lineName].filter(Boolean)},
-    {space:'ctb-dms',words:[`C${a.color} T${a.tone} B${a.base}`,dms].filter(Boolean)},
+    {space:'ctb-dms',words:[COLORS[a.color-1].response,TONES[a.tone-1].theme,dimension,dms].filter(Boolean),color:a.color,tone:a.tone,base:a.base},
     {space:'arcsec-house',words:[a.arcsecond!==undefined?`${a.arcsecond}″`:null,a.house!==undefined?`house ${a.house}`:null].filter(Boolean)}
   ].map((u,k)=>({...u,id:`${index}.${k}`,activation:index,gate:a.gate,dimension,active,side:a.side??null,body:a.body??null}));
 }
@@ -70,4 +70,13 @@ export function step(units,{dt=1,speed=0.004,width=1,height=1}={}){
     x=((x%width)+width)%width;y=((y%height)+height)%height;
     return {...u,x,y};
   });
+}
+
+// How colour, tone and base show up (only seen from Being, the 3rd dimension; canon LEVEL_VISIBILITY).
+// PROVISIONAL spacing by rule until the owner gives the real values: 6 hues evenly round the
+// wheel, 6 steps of a whole-tone scale from A3, base n drawn as a polygon with n+2 corners.
+export const PROVISIONAL_SENSES=true;
+export function senses(unit){
+  if(unit.color===undefined)return null;
+  return {hue:(unit.color-1)*60,pitchHz:220*2**((unit.tone-1)*2/12),corners:unit.base+2};
 }
