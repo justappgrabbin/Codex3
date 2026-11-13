@@ -39,14 +39,21 @@ export function binaryOf(gate){const f=figureOf(gate);let s='';for(let i=5;i>=0;
 // What a unit looks like from a viewer's dimension and zoom (zoom<farZoom = far away).
 export function appearance(unit,{viewer,zoom=1,farZoom=0.35}={}){
   if(zoom<farZoom)return {kind:'dot'};
-  if(unit.dimension===viewer)return {kind:'words',text:unit.words.join(' · ')};
+  if(unit.dimension===viewer)return {kind:'words',text:unit.words.join(' · '),lines:unit.words.flatMap(w=>wrap(w))};
   return {kind:'binary',text:binaryOf(unit.gate)};
 }
 
-// Place units across the screen in reading order (linear), then let them move.
-export function layout(units,{width=1,height=1}={}){
-  const n=units.length;
-  return units.map((u,i)=>({...u,x:((i+0.5)/n)*width,y:height/2+((i%3)-1)*height*0.08}));
+// Place units across the screen in reading order (linear, row by row) so they start apart.
+export function layout(units,{width=1,height=1,cols=null}={}){
+  const n=units.length,c=cols??Math.max(1,Math.ceil(Math.sqrt(n*1.5))),r=Math.ceil(n/c);
+  return units.map((u,i)=>({...u,x:((i%c)+0.5)/c*width,y:(Math.floor(i/c)+0.5)/r*height}));
+}
+
+// Break a unit's text into short lines so long phrases stay readable.
+export function wrap(text,max=24){
+  const out=[];let cur='';
+  for(const w of String(text).split(/\s+/)){if(cur&&(cur+' '+w).length>max){out.push(cur);cur=w;}else cur=cur?cur+' '+w:w;}
+  if(cur)out.push(cur);return out;
 }
 
 // One time step. Each unit moves by its dimension's flow; inactive units drift slower.

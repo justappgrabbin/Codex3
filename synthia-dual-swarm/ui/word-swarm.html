@@ -45,11 +45,12 @@ function frame(){
  const z=+document.getElementById('zoom').value,w=cv.width,h=cv.height;
  ctx.fillStyle='#0d0d12';ctx.fillRect(0,0,w,h);
  ctx.textAlign='center';ctx.textBaseline='middle';
- for(const u of units){
+ for(const u of units){if(!u.words.length)continue;
   const a=appearance(u,{viewer:viewer.value,zoom:z}),x=u.x*w,y=u.y*h;
   ctx.globalAlpha=u.active?1:0.35;ctx.fillStyle=COLORS[u.dimension];
   if(a.kind==='dot'){ctx.beginPath();ctx.arc(x,y,3,0,7);ctx.fill();}
-  else{ctx.font=`${a.kind==='words'?14*z:11*z}px ${a.kind==='binary'?'monospace':'system-ui'}`;ctx.fillText(a.text,x,y);}
+  else if(a.kind==='words'){const fs=13*z;ctx.font=`${fs}px system-ui`;a.lines.forEach((t,k)=>ctx.fillText(t,x,y+(k-(a.lines.length-1)/2)*fs*1.2));}
+  else{ctx.font=`${11*z}px monospace`;ctx.fillText(a.text,x,y);}
  }
  ctx.globalAlpha=1;requestAnimationFrame(frame);
 }

@@ -19,17 +19,22 @@ export function sections(text){
   return out.map(s=>({...s,text:s.lines.join('\n')}));
 }
 
+const cleanName=n=>n.replace(/\s*\(.*?\)\s*$/,'').trim(); // drop notes like "(Also pronounced Tun2)"
+
 export function ingest(texts,{registry=new StateRegistry()}={}){
   const bridge=new BookIngestBridge({registry});
   const words={};
   const slot=g=>(words[g]??={name:null,lines:{}});
   for(const [i,text] of texts.entries()){
+    // A paste can start on a name line with its "NN.M" prefix cut off; it names the next gua.
+    const lead=text.match(/^\s*[A-Z][A-Z0-9 ,]*\([\d, ]+\):\s*(.+)\r?\n(\d\d)\.0\b/);
+    if(lead)slot(+lead[2]).name=cleanName(lead[1]);
     for(const s of sections(text)){
       const line=/^[1-6]$/.test(s.part)?+s.part:null;
       bridge.ingest({sourceId:`hatcher-matrix-${i}`,title:'Hatcher, Yijing Matrix',dimension:'Movement',text:s.text,
         addressResolver:()=>({dimension:'Movement',gate:s.gate,line})});
       const name=s.text.match(/^\d\d\.M\s+[A-Z0-9 ,]+\([\d, ]+\):\s*(.+)$/m);
-      if(name)slot(s.gate).name=name[1].trim();
+      if(name)slot(s.gate).name=cleanName(name[1]);
       for(const m of s.text.matchAll(/\(Fan Yao (\d\d)\.([1-6]): ([^)]+)\)/g))slot(+m[1]).lines[+m[2]]=m[3].trim();
     }
   }

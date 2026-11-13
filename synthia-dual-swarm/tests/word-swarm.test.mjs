@@ -19,3 +19,5 @@ const {words,fragments}=ingest([txt]);assert.ok(fragments>=3);
 assert.equal(words[14].name,'BIG DOMAIN');assert.equal(words[50].lines[1],"cauldron's upturned feet, expelling the stagnant");
 const ub=unitsOf({gate:50,line:1,color:1,tone:1,base:1},0,{bookWords:words});assert.equal(ub[0].words[1],"cauldron's upturned feet, expelling the stagnant");
 console.log('book words ok');
+{const {words:w2}=ingest([`KUN1 (3684): ACCEPTING\n02.0 Gua Ci\n03.M ZHUN1 (6592): RALLYING (Also pronounced Tun2)\n03.0 x`]);
+assert.equal(w2[2].name,'ACCEPTING');assert.equal(w2[3].name,'RALLYING');console.log('names ok');}
