@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthia · Dual Swarm</title>
+<style>
+:root{--bg:#0b0b12;--fg:#e8e6f0;--mut:#8a86a0;--line:#2a2838}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px system-ui,sans-serif;display:flex;flex-direction:column;height:100vh}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:end;padding:10px;border-bottom:1px solid var(--line)}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:6px 8px;display:flex;gap:6px;align-items:end;margin:0}
+legend{color:var(--mut);font-size:12px}label{display:flex;flex-direction:column;font-size:11px;color:var(--mut)}
+input,button,select{background:#15141f;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px;font:inherit}
+button{cursor:pointer}button.on{border-color:#b9a6ff;color:#fff}
+main{flex:1;display:flex;min-height:0}canvas{flex:1;min-width:0;touch-action:none}
+aside{width:300px;max-width:42vw;border-left:1px solid var(--line);padding:10px;overflow:auto;font-size:13px}
+.k{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+h3{margin:4px 0 6px;font-size:14px}.mut{color:var(--mut)}
+@media(max-width:700px){main{flex-direction:column}aside{width:auto;max-width:none;height:36vh;border-left:0;border-top:1px solid var(--line)}}
+</style></head><body>
+<header>
+ <fieldset><legend>You</legend>
+  <label>Birth date<input id="d1" type="date" value="1990-06-15"></label>
+  <label>Time<input id="t1" type="time" value="12:00"></label>
+  <label>UTC offset (h)<input id="z1" type="number" step="0.5" value="-7" style="width:70px"></label></fieldset>
+ <fieldset><legend>Someone else (optional)</legend>
+  <label>Birth date<input id="d2" type="date"></label>
+  <label>Time<input id="t2" type="time" value="12:00"></label>
+  <label>UTC offset (h)<input id="z2" type="number" step="0.5" value="0" style="width:70px"></label></fieldset>
+ <button id="go">Render</button>
+ <span>View:</span><button data-v="both" class="on">Both bodies</button><button data-v="inner">Inner (genotype)</button><button data-v="outer">Outer (phenotype)</button>
+</header>
+<main><canvas id="c"></canvas><aside id="info"></aside></main>
+<script type="module">
+import { calculateChart } from '../core/chart.js';
+import { buildSwarm, place, step, summary, angleOf } from '../core/dual-swarm.js';
+const COLOR={Movement:'#ff6b6b',Evolution:'#ffd166',Being:'#06d6a0',Design:'#4cc9f0',Space:'#b9a6ff'};
+const OWNER_TINT=['#ffffff','#f4a261'];
+const cv=document.getElementById('c'),cx=cv.getContext('2d'),info=document.getElementById('info');
+let swarm=null,view='both',sel=null,people=[];
+const $=id=>document.getElementById(id);
+function toUTC(d,t,z){if(!d)return null;const [Y,M,D]=d.split('-').map(Number),[h,m]=(t||'12:00').split(':').map(Number);return new Date(Date.UTC(Y,M-1,D,h,m)-Number(z||0)*3600e3);}
+function size(){const r=cv.getBoundingClientRect(),dpr=devicePixelRatio||1;cv.width=r.width*dpr;cv.height=r.height*dpr;cx.setTransform(dpr,0,0,dpr,0,0);if(swarm){for(const u of swarm.inner){u.x=u.y=undefined;}place(swarm,geom());}}
+const geom=()=>{const r=cv.getBoundingClientRect();return{cx:r.width/2,cy:r.height/2,r:Math.min(r.width,r.height)*0.42};};
+function render(){
+  people=[];const a=toUTC($('d1').value,$('t1').value,$('z1').value);if(a)people.push({owner:'You',chart:calculateChart(a)});
+  const b=toUTC($('d2').value,$('t2').value,$('z2').value);if(b)people.push({owner:'Them',chart:calculateChart(b)});
+  swarm=place(buildSwarm(people),geom());sel=null;panel();
+}
+function panel(){
+  if(!swarm){info.textContent='';return;}
+  if(sel){const u=sel;
+    if(u.kind==='outer'){info.innerHTML=`<h3>${u.owner} · ${u.side} ${u.body}</h3><p>Gate <b>${u.gate}.${u.line}</b> · color ${u.color} · tone ${u.tone} · base ${u.base}</p><p><span class="k" style="background:${COLOR[u.dimension]}"></span>${u.dimension} (base ${u.base})</p><p class="mut">Longitude ${u.longitude.toFixed(4)}°</p><button id="back">Back</button>`;}
+    else{info.innerHTML=`<h3>Inner unit ${u.gate}.${u.line}</h3><p>${u.center} center</p><p>${u.latent?(u.potential?'Latent · has potential through a channel partner':'Latent · not expressed'):'Expressed'}</p>${u.dimension?`<p><span class="k" style="background:${COLOR[u.dimension]}"></span>Leading: <b>${u.dimension}</b></p>`:''}<p class="mut">${Object.entries(u.weights).filter(([,w])=>w).map(([d,w])=>d+' '+w.toFixed(2)).join(' · ')||'no pull'}</p>${u.sources.map(s=>`<div>${s.owner} ${s.side} ${s.body} → ${s.gate}.${s.line}</div>`).join('')}<button id="back">Back</button>`;}
+    $('back').onclick=()=>{sel=null;panel();};return;}
+  const s=summary(swarm);
+  info.innerHTML=`<h3>Dual swarm</h3><p>Inner body: ${s.expressed} expressed · ${s.latent} latent of 384</p>`+
+   Object.entries(s.byDimension).map(([d,n])=>`<div><span class="k" style="background:${COLOR[d]}"></span>${d} ${n}</div>`).join('')+
+   people.map(p=>`<p><b>${p.owner}</b> · channels: ${p.chart.channels.map(c=>c.join('-')).join(', ')||'none'}<br><span class="mut">defined: ${p.chart.definedCenters.join(', ')||'none'}</span></p>`).join('')+
+   (swarm.connection.length?`<h3>Between you</h3>`+swarm.connection.map(c=>`<div>${c.channel.join('-')} · ${c.type}${c.by?' ('+c.by+')':''}</div>`).join(''):'')+
+   `<p class="mut">Tap a dot. Black ring = Personality, red ring = Design. Coupling weights are provisional.</p>`;
+}
+function draw(t){
+  const r=cv.getBoundingClientRect();cx.clearRect(0,0,r.width,r.height);
+  if(!swarm){requestAnimationFrame(draw);return;}
+  step(swarm,1,t);const g=swarm.center;
+  cx.strokeStyle='#2a2838';cx.lineWidth=1;cx.beginPath();cx.arc(g.cx,g.cy,g.r*0.97,0,7);cx.stroke();
+  for(let i=0;i<64;i++){const a=angleOf([41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60][i],0.5);
+    cx.beginPath();cx.moveTo(g.cx+Math.cos(a)*g.r*0.5,g.cy+Math.sin(a)*g.r*0.5);cx.lineTo(g.cx+Math.cos(a)*g.r*0.82,g.cy+Math.sin(a)*g.r*0.82);cx.strokeStyle='#1a1926';cx.stroke();}
+  for(const c of swarm.connection){const[a,b]=c.channel.map(x=>angleOf(x));cx.strokeStyle=c.type==='electromagnetic'?'#f4a261':c.type==='companionship'?'#06d6a0':'#666';cx.lineWidth=2;cx.beginPath();cx.moveTo(g.cx+Math.cos(a)*g.r*0.5,g.cy+Math.sin(a)*g.r*0.5);cx.quadraticCurveTo(g.cx,g.cy,g.cx+Math.cos(b)*g.r*0.5,g.cy+Math.sin(b)*g.r*0.5);cx.stroke();}
+  if(view!=='outer'){
+    if(view==='both'){cx.lineWidth=0.6;for(const u of swarm.inner)if(!u.latent)for(const s of u.sources)if(s.gate===u.gate){cx.strokeStyle=COLOR[s.dimension]+'55';cx.beginPath();cx.moveTo(s.x,s.y);cx.lineTo(u.x,u.y);cx.stroke();}}
+    for(const u of swarm.inner){const on=!u.latent;cx.globalAlpha=on?1:u.potential?0.45:0.18;cx.fillStyle=u.dimension?COLOR[u.dimension]:'#555';
+      cx.beginPath();cx.arc(u.x,u.y,on?2.5+Math.min(3,u.energy*1.5):1.6,0,7);cx.fill();}
+    cx.globalAlpha=1;}
+  if(view!=='inner')for(const a of swarm.outer){cx.fillStyle=COLOR[a.dimension];cx.strokeStyle=a.side==='Design'?'#e63946':'#000';cx.lineWidth=2.5;
+    cx.beginPath();cx.arc(a.x,a.y,6,0,7);cx.fill();cx.stroke();cx.fillStyle=OWNER_TINT[a.owner==='You'?0:1];cx.font='10px system-ui';cx.fillText(a.gate+'.'+a.line,a.x+8,a.y+3);}
+  if(sel){cx.strokeStyle='#fff';cx.lineWidth=1.5;cx.beginPath();cx.arc(sel.x,sel.y,10,0,7);cx.stroke();}
+  requestAnimationFrame(draw);
+}
+cv.addEventListener('pointerdown',e=>{if(!swarm)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+  const pool=[...(view!=='inner'?swarm.outer:[]),...(view!=='outer'?swarm.inner:[])];let best=null,bd=18;
+  for(const u of pool){const d=Math.hypot(u.x-x,u.y-y);if(d<bd){bd=d;best=u;}}sel=best;panel();});
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{view=b.dataset.v;document.querySelectorAll('[data-v]').forEach(x=>x.classList.toggle('on',x===b));});
+$('go').onclick=render;addEventListener('resize',size);size();render();requestAnimationFrame(draw);
+</script></body></html>
