@@ -93,3 +93,9 @@ export function definition(activations) {
   const centers = new Set(channels.flatMap(([a, b]) => [centerOf(a), centerOf(b)]));
   return { channels, definedCenters: [...centers] };
 }
+
+/** The sky at a moment: 13 activations, no design side. */
+export function transitsAt(date) {
+  const lons = longitudes(date);
+  return BODIES.map(body => ({ body, ...fromLongitude(lons[body]) }));
+}

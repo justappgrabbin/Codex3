@@ -19,10 +19,12 @@ export function angleOf(gate, line = 3.5) {
 }
 
 /** Build both swarms from one or more charts: [{owner, chart}]. */
-export function buildSwarm(people) {
+export function buildSwarm(people, { transits = null } = {}) {
   const outer = [];
   for (const { owner, chart } of people)
     for (const a of chart.activations) outer.push({ ...a, owner, dimension: dimOfBase(a.base), kind: 'outer' });
+  // Transits: the sky right now, conscious side only, acting on everyone.
+  if (transits) for (const a of transits) outer.push({ ...a, owner: 'Sky', side: 'Transit', dimension: dimOfBase(a.base), kind: 'outer' });
 
   const inner = [];
   for (const gate of GATE_WHEEL) for (let line = 1; line <= 6; line++) {
@@ -68,7 +70,7 @@ export function place(swarm, { cx, cy, r }) {
     u.x ??= u.home.x; u.y ??= u.home.y; u.vx ??= 0; u.vy ??= 0;
   }
   swarm.outer.forEach((a, i) => {
-    const t = angleOf(a.gate, a.line), rr = r * (a.side === 'Personality' ? 1.02 : 0.92) + (a.owner === swarm.outer[0].owner ? 0 : r * 0.08);
+    const t = angleOf(a.gate, a.line), rr = a.owner === 'Sky' ? r * 1.14 : r * (a.side === 'Personality' ? 1.02 : 0.92) + (a.owner === swarm.outer[0].owner ? 0 : r * 0.08);
     a.x = cx + Math.cos(t) * rr; a.y = cy + Math.sin(t) * rr;
   });
   swarm.center = { cx, cy, r };
@@ -104,4 +106,12 @@ export function summary(swarm) {
   const count = Object.fromEntries(DIMENSIONS.map(d => [d, 0]));
   for (const u of swarm.inner) if (u.dimension) count[u.dimension]++;
   return { expressed: swarm.inner.filter(u => !u.latent).length, latent: swarm.inner.filter(u => u.latent).length, byDimension: count };
+}
+
+/** Rebuild couplings for a new sky while keeping every unit's current
+ *  position and velocity, so the swarm flows into the change instead of resetting. */
+export function retune(old, people, transits) {
+  const next = buildSwarm(people, { transits });
+  next.inner.forEach((u, i) => { const o = old.inner[i]; Object.assign(u, { x: o.x, y: o.y, vx: o.vx, vy: o.vy, home: o.home }); });
+  return place(next, old.center);
 }

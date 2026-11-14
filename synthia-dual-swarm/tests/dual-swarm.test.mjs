@@ -31,3 +31,12 @@ assert.ok(summary(two).expressed > sm.expressed); assert.ok(Array.isArray(two.co
 place(s, { cx: 300, cy: 300, r: 250 }); for (let i = 0; i < 200; i++) step(s, 1, i * 16);
 assert.ok(s.inner.every(u => Number.isFinite(u.x) && Math.hypot(u.x - 300, u.y - 300) < 600));
 console.log('dual-swarm ok', sm, 'connections', two.connection.length);
+import { transitsAt } from '../core/chart.js';
+import { retune } from '../core/dual-swarm.js';
+const t0 = transitsAt(new Date(Date.UTC(2026, 10, 14))), t1 = transitsAt(new Date(Date.UTC(2026, 11, 14)));
+assert.equal(t0.length, 13); assert.notDeepEqual(t0.map(a => a.gate), t1.map(a => a.gate));
+const s0 = place(buildSwarm([{ owner: 'me', chart: c }], { transits: t0 }), { cx: 300, cy: 300, r: 250 });
+const s1 = retune(s0, [{ owner: 'me', chart: c }], t1);
+assert.ok(s1.inner.some((u, i) => u.dimension !== s0.inner[i].dimension || u.latent !== s0.inner[i].latent), 'sky change reshapes the inner body');
+assert.equal(s1.inner[5].x, s0.inner[5].x); // continuity, no reset
+console.log('transits ok');
