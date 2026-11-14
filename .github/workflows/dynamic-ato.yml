@@ -1,0 +1,24 @@
+name: Dynamic Swarm ATO integration
+on:
+  push:
+    branches: [feature/dynamic-swarm-ato-integration]
+  pull_request:
+    paths:
+      - 'synthia-dual-swarm/**'
+      - 'movement-state-space/**'
+      - '.github/workflows/dynamic-ato.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Native ATO integration tests
+        run: node --test synthia-dual-swarm/tests/ato-dynamic.test.mjs
+      - name: Source-grounded Movement tests
+        run: node --test movement-state-space/*.test.mjs
+      - name: Existing Swarm tests
+        working-directory: synthia-dual-swarm
+        run: npm test

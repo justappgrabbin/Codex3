@@ -1,19 +1,33 @@
-# Synthia — Adaptive Dual Swarm
+# Synthia — Native Android Swarm
 
-Function and embodiment share an addressed entity substrate, typed relations and retained history.
+The primary app is an Android APK with native controls and an embedded background swarm service. Virtual particles carry binary states, qualities and positions; editable proximity rules apply reciprocal impulses, alongside relationship learning and collective function discovery.
 
-- **Browser source:** [`synthia-dual-swarm/`](synthia-dual-swarm/)
-- **Standalone browser build:** [`synthia-dual-swarm/Synthia-Dual-Swarm.html`](synthia-dual-swarm/Synthia-Dual-Swarm.html) — download and open, or serve locally.
-- **Unity project:** [`synthia-unity/`](synthia-unity/) — open with Unity 2022.3 LTS.
+The current GitHub generative-state-space source, its sixteen Boolean operators, and the world-construction integration gap are documented in [GENERATIVE-STATE-SPACE-AUDIT.md](synthia-dual-swarm/docs/GENERATIVE-STATE-SPACE-AUDIT.md).
 
-## Run the browser project
+The six-bit compiler, geometry-derived network, trained INT8 visual readout, and remaining reconstruction/generation work are documented in [SIX-BIT-VISUAL-TRAINING.md](synthia-dual-swarm/docs/SIX-BIT-VISUAL-TRAINING.md).
 
-```sh
-cd synthia-dual-swarm
-npm start
-```
+Build and operating instructions: [android/README.md](android/README.md). No Docker, Termux or external server is required. The browser project below remains a preview and development surface.
 
-Open http://localhost:8000. Run `npm test` for the 22 core regressions. Runtime dependencies and models are vendored; rebuilding the standalone file requires `npm install` then `npm run build`.
+- [Browser source](synthia-dual-swarm/)
+- [Standalone browser build](synthia-dual-swarm/Synthia-Dual-Swarm.html)
+- [Unity scaffold](synthia-unity/) — unverified in Unity Editor
+
+Run `npm start` in `synthia-dual-swarm`, then open http://localhost:8000.
+`npm test` runs 90 checks across 7 test files; `npm install` and `npm run build` rebuild the standalone.
+Runtime code and models are vendored.
+
+The active swarm discovers executable compositions from typed primitive functions,
+current observations and explicit output contracts. A successful graph becomes a
+callable cluster, usable as a primitive in later compositions, with its constituents
+and history retained. Feedback influences subsequent selection. Preset experience
+paths and the sample lesson have been removed.
+
+The full viewport Yi Jing atlas retains one addressed identity across five
+**dimensions**, with recursive levels inside them. Selection inspection supplies real
+observations to the composition runtime. Tools provide pause, step, learned cluster
+inspection and checkpoint restoration. Purpose and progress persist separately from
+arrangements. Existing body morphing, local assembly learning and image-region
+learning remain available; old scenarios are optional fixtures.
 
 ## Included
 
@@ -24,3 +38,14 @@ Browser checks passed for assets, learned assembly, recursive frame exploration,
 ## Continuous-agent milestone
 
 The browser now includes three functional agents operating on a bounded shared clock. Use **Start agents** to observe communication, finite-resource gathering, failed repairs, experience-based action values and tool morphology with operational consequences. Pause, single-step, morphology permission and checkpoint reversal are available. The scenario uses authored legal operators and local goals; it does not establish arbitrary-task intelligence. Runs while the page is active, not as a background server. See the browser README for limits and verification.
+
+## Dynamic rule-based branch
+
+Configurable participants and physical rules, relationship-enabled numerical tool composition, retained consequence learning, local Synthia model proposals, and scene/code/media exports are described in [DYNAMIC-SWARM.md](synthia-dual-swarm/docs/DYNAMIC-SWARM.md). Existing generator sources remain separate until their actual runtime integrations are verified.
+
+## Adaptive composition boundaries
+
+This is bounded primitive composition, not completed unrestricted world generation.
+Natural-language grounding and exact directional glyph traversal remain unfinished.
+See [runtime behavior](synthia-dual-swarm/docs/ADAPTIVE-EXPERIENCES.md) and
+[verification](synthia-dual-swarm/docs/ADAPTIVE-VERIFICATION.md).

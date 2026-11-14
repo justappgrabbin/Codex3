@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthia · Drop it in</title>
+<style>
+:root{--bg:#0b0b12;--fg:#e8e6f0;--mut:#8a86a0;--line:#2a2838}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px system-ui,sans-serif;height:100vh;display:flex;flex-direction:column}
+header{display:flex;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+button,label.btn{background:#15141f;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font:inherit;cursor:pointer}
+button.on{border-color:#b9a6ff}input[type=file]{display:none}
+main{flex:1;display:flex;min-height:0;position:relative}canvas{flex:1;min-width:0;touch-action:none}
+aside{width:320px;max-width:44vw;border-left:1px solid var(--line);padding:10px;overflow:auto;font-size:13px}
+#drop{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--mut);pointer-events:none;font-size:16px;text-align:center;padding:20px}
+#drop.hot{background:#b9a6ff22;color:#fff}
+#live{position:absolute;inset:0;right:0;background:#fff;display:none}#live iframe{width:100%;height:100%;border:0}
+#sidebtn{position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:5;display:none;writing-mode:vertical-rl;padding:12px 6px;background:#b9a6ff;color:#000;border:0;border-radius:8px 0 0 8px;font-weight:600}
+.k{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.mut{color:var(--mut)}
+.p{border-left:3px solid #ff6b6b;padding:3px 7px;margin:4px 0;background:#15141f}.p.unused{border-color:#666}
+pre{white-space:pre-wrap;background:#15141f;padding:6px;border-radius:6px;max-height:40vh;overflow:auto;font-size:11px}
+h3{margin:8px 0 4px;font-size:14px}
+@media(max-width:700px){main{flex-direction:column}aside{width:auto;max-width:none;height:38vh;border-left:0;border-top:1px solid var(--line)}}
+</style></head><body>
+<header>
+ <label class="btn">Add files<input id="pick" type="file" multiple></label>
+ <label class="btn">Add folder<input id="pickdir" type="file" webkitdirectory multiple></label>
+ <button id="clear">Clear</button>
+ <span id="stat" class="mut"></span>
+</header>
+<main>
+ <canvas id="c"></canvas>
+ <div id="drop">Drop files, a folder, or a .zip here.<br><span style="font-size:13px">They break into pieces, find their partners, and assemble.</span></div>
+ <div id="live"><iframe id="frame" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe></div>
+ <button id="sidebtn">Layers</button>
+ <aside id="info"></aside>
+</main>
+<script type="module">
+import { ingest, summary, channels, proposals, become, isText } from '../core/file-swarm.js';
+import { unzipSync, strFromU8 } from '../vendor/fflate/fflate.js';
+const COLOR={Movement:'#ff6b6b',Evolution:'#ffd166',Being:'#06d6a0',Design:'#4cc9f0',Space:'#b9a6ff'};
+const CHC={module:'#b9a6ff',wire:'#ff6b6b',style:'#4cc9f0',call:'#ffd166',file:'#06d6a0'};
+const $=id=>document.getElementById(id),cv=$('c'),cx=cv.getContext('2d');
+let files=[],S=null,CH=null,PR=[],nodes=[],hubs=new Map(),sel=null,urls=[];
+const binURL=new Map();
+
+async function addFiles(list){
+  for(const f of list){const path=(f.webkitRelativePath||f.name);
+    if(/\.zip$/i.test(path)){const z=unzipSync(new Uint8Array(await f.arrayBuffer()));
+      for(const [p,b] of Object.entries(z)){if(p.endsWith('/')||/(^|\/)(node_modules|\.git|__MACOSX)\//.test(p))continue;
+        if(isText(p))files.push({path:p,text:strFromU8(b)});else files.push({path:p,url:URL.createObjectURL(new Blob([b]))});}}
+    else if(/(^|\/)(node_modules|\.git)\//.test(path))continue;
+    else if(isText(path))files.push({path,text:await f.text()});
+    else files.push({path,url:URL.createObjectURL(f)});}
+  rebuild();
+}
+function rebuild(){
+  S=ingest(files);CH=channels(S);PR=proposals(S,CH);
+  const W=cv.clientWidth,H=cv.clientHeight,old=new Map(nodes.map(n=>[n.id,n]));
+  const N=S.files.length;hubs=new Map(S.files.map((f,i)=>{const a=i*2.39996,rr=Math.sqrt((i+0.5)/N)*Math.min(W,H)*0.45,h=hubs.get(f.path);
+    return [f.path,h||{x:W/2+Math.cos(a)*rr,y:H/2+Math.sin(a)*rr,vx:0,vy:0,path:f.path}];}));
+  nodes=S.units.map(u=>{const o=old.get(u.id),h=hubs.get(u.file);return Object.assign(u,{x:o?.x??h.x+(Math.random()-.5)*40,y:o?.y??h.y+(Math.random()-.5)*40,vx:0,vy:0});});
+  $('drop').style.display=files.length?'none':'flex';panel();
+}
+function panel(){
+  const i=$('info');if(!S){i.innerHTML='<p class="mut">Nothing here yet.</p>';return;}
+  if(sel){const u=sel;i.innerHTML=`<h3>${u.name}</h3><p><span class="k" style="background:${COLOR[u.dimension]}"></span>${u.dimension} · ${u.kind} · ${u.file}:${u.line}</p><p class="mut">${Object.entries(u.weights).filter(([,w])=>w).map(([d,w])=>d+' '+w).join(' · ')}</p><pre></pre><button id="back">Back</button>`;
+    i.querySelector('pre').textContent=u.body;$('back').onclick=()=>{sel=null;panel();};return;}
+  const sm=summary(S),defined=CH.centers.filter(c=>c.defined).length;
+  $('stat').textContent=`${sm.files} files · ${sm.units} pieces · ${CH.channels.length} channels · ${CH.hanging.length} hanging`;
+  i.innerHTML=(sm.entries.length?`<h3>Become</h3>`+sm.entries.map(e=>`<button data-e="${e}">▶ ${e}</button> `).join(''):'<p class="mut">No page to run yet (no .html or main/index file).</p>')+
+   `<h3>Body</h3>`+Object.entries(sm.byDimension).map(([d,n])=>`<div><span class="k" style="background:${COLOR[d]}"></span>${d} ${n}</div>`).join('')+
+   `<p>${defined}/${S.files.length} files defined (wired in)</p>`+
+   `<h3>Synthia's proposals (${PR.length})</h3>`+(PR.slice(0,60).map(p=>`<div class="p ${p.severity}">${p.text}</div>`).join('')||'<p class="mut">Everything is wired.</p>')+
+   (CH.packages.length?`<h3>Needs from outside (${CH.packages.length})</h3><p class="mut">${CH.packages.join(', ')}</p>`:'')+`<h3>Channels</h3>`+Object.keys(CHC).map(k=>`<div><span class="k" style="background:${CHC[k]}"></span>${k} ${CH.channels.filter(c=>c.kind===k).length}</div>`).join('')+
+   `<p class="mut">Tap a piece to read it. Dimension rules are provisional.</p>`;
+  i.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>run(b.dataset.e));
+}
+function run(entry){
+  urls.forEach(URL.revokeObjectURL);urls=[];
+  const html=become(S,entry,(t,m)=>'data:'+m+';charset=utf-8,'+encodeURIComponent(t));
+  $('frame').srcdoc=html;$('live').style.display='block';$('sidebtn').style.display='block';
+}
+$('sidebtn').onclick=()=>{$('live').style.display='none';$('sidebtn').style.display='none';};
+
+function size(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;cx.setTransform(d,0,0,d,0,0);}
+function tick(){
+  const W=cv.clientWidth,H=cv.clientHeight;cx.clearRect(0,0,W,H);
+  if(S){
+    const hs=[...hubs.values()],REP=W*H/Math.max(4,hs.length)*0.6,HR=Math.max(7,Math.min(26,300/Math.sqrt(hs.length)));
+    for(const a of hs){a.vx+=(W/2-a.x)*0.0008;a.vy+=(H/2-a.y)*0.0008;
+      for(const b of hs)if(a!==b){const dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy+1;if(d2<REP*4){a.vx+=dx/d2*REP*0.05;a.vy+=dy/d2*REP*0.05;}}}
+    for(const c of CH.channels){const a=hubs.get(c.out),b=hubs.get(c.in);if(!a||!b||a===b)continue;a.vx+=(b.x-a.x)*0.0006;a.vy+=(b.y-a.y)*0.0006;b.vx+=(a.x-b.x)*0.0006;b.vy+=(a.y-b.y)*0.0006;}
+    for(const h of hs){h.vx*=0.85;h.vy*=0.85;h.x=Math.max(HR+4,Math.min(W-HR-4,h.x+h.vx));h.y=Math.max(HR+4,Math.min(H-HR-4,h.y+h.vy));}
+    const pairs=new Map();for(const c of CH.channels){if(c.out===c.in)continue;const k=c.out+'>'+c.in+'>'+c.kind;pairs.set(k,c);}
+    for(const c of pairs.values()){const a=hubs.get(c.out),b=hubs.get(c.in);cx.strokeStyle=CHC[c.kind]+'88';cx.lineWidth=1.5;cx.beginPath();cx.moveTo(a.x,a.y);cx.quadraticCurveTo((a.x+b.x)/2+(b.y-a.y)*0.15,(a.y+b.y)/2-(b.x-a.x)*0.15,b.x,b.y);cx.stroke();}
+    for(const n of nodes){const h=hubs.get(n.file);let fx=(h.x-n.x)*0.05,fy=(h.y-n.y)*0.05;
+      const s=0.12;if(n.dimension==='Movement')fy-=s;else if(n.dimension==='Being'){fx+=(h.x-n.x)*0.01;fy+=(h.y-n.y)*0.01;}else if(n.dimension==='Evolution'){fx-=(h.x-n.x)*0.008;fy-=(h.y-n.y)*0.008;}else if(n.dimension==='Design'){fx+=-(n.y-h.y)*0.004;fy+=(n.x-h.x)*0.004;}
+      n.vx=(n.vx+fx+(Math.random()-.5)*0.2)*0.85;n.vy=(n.vy+fy+(Math.random()-.5)*0.2)*0.85;n.x+=n.vx;n.y+=n.vy;}
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length&&j<i+40;j++){const a=nodes[i],b=nodes[j];if(a.file!==b.file)continue;const dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy)||1;if(d<7){const p=(7-d)/d*0.25;a.x+=dx*p;a.y+=dy*p;b.x-=dx*p;b.y-=dy*p;}}
+    for(const c of CENTERS())0;
+    cx.font='10px system-ui';
+    for(const n of nodes){cx.fillStyle=COLOR[n.dimension];cx.globalAlpha=S.orphans.includes(n)?0.45:1;cx.beginPath();cx.arc(n.x,n.y,3,0,7);cx.fill();
+      if(nodes.length<400){cx.fillText(n.name.slice(0,18),n.x+5,n.y+3);}cx.globalAlpha=1;}
+    for(const c of CH.centers){const h=hubs.get(c.file);cx.strokeStyle=c.defined?'#e8e6f0':'#555';cx.setLineDash(c.defined?[]:[4,4]);cx.lineWidth=1.5;cx.beginPath();cx.arc(h.x,h.y,HR,0,7);cx.stroke();cx.setLineDash([]);
+      if(c.hanging){cx.fillStyle='#ff6b6b';cx.font='bold 11px system-ui';cx.fillText('◐'+c.hanging,h.x+HR,h.y-HR);}
+      if(hs.length<60||c===selHub()){cx.fillStyle='#e8e6f0';cx.font='11px system-ui';cx.fillText(c.file.split('/').pop().slice(0,24),h.x-HR,h.y+HR+12);}}
+    if(sel){cx.strokeStyle='#fff';cx.beginPath();cx.arc(sel.x,sel.y,8,0,7);cx.stroke();}
+  }
+  requestAnimationFrame(tick);
+}
+const CENTERS=()=>[];const selHub=()=>sel&&CH.centers.find(c=>c.file===sel.file);
+cv.addEventListener('pointerdown',e=>{if(!S)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let b=null,bd=14;for(const n of nodes){const d=Math.hypot(n.x-x,n.y-y);if(d<bd){bd=d;b=n;}}sel=b;panel();});
+$('pick').onchange=e=>addFiles([...e.target.files]);$('pickdir').onchange=e=>addFiles([...e.target.files]);
+$('clear').onclick=()=>{files=[];S=null;nodes=[];hubs=new Map();sel=null;$('drop').style.display='flex';$('stat').textContent='';panel();};
+const main=document.querySelector('main');
+main.addEventListener('dragover',e=>{e.preventDefault();$('drop').classList.add('hot');$('drop').style.display='flex';});
+main.addEventListener('dragleave',()=>{$('drop').classList.remove('hot');if(files.length)$('drop').style.display='none';});
+main.addEventListener('drop',async e=>{e.preventDefault();$('drop').classList.remove('hot');
+  const out=[];const walk=async(entry,pre='')=>{if(entry.isFile){const f=await new Promise(r=>entry.file(r));Object.defineProperty(f,'webkitRelativePath',{value:pre+f.name});out.push(f);}
+    else if(entry.isDirectory){const rd=entry.createReader();let batch;do{batch=await new Promise(r=>rd.readEntries(r));for(const en of batch)await walk(en,pre+entry.name+'/');}while(batch.length);}};
+  const items=[...e.dataTransfer.items].map(i=>i.webkitGetAsEntry&&i.webkitGetAsEntry());
+  if(items.every(Boolean))for(const it of items)await walk(it);else out.push(...e.dataTransfer.files);
+  addFiles(out);});
+addEventListener('resize',size);size();panel();requestAnimationFrame(tick);
+</script></body></html>

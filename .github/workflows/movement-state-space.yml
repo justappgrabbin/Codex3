@@ -1,0 +1,20 @@
+name: Movement state-space checks
+on:
+  push:
+    branches:
+      - feature/movement-state-space-source
+  pull_request:
+    paths:
+      - 'movement-state-space/**'
+      - '.github/workflows/movement-state-space.yml'
+  workflow_dispatch:
+jobs:
+  movement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify source fidelity, observations and correspondence review
+        run: node --test movement-state-space/*.test.mjs

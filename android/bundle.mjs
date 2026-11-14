@@ -1,0 +1,14 @@
+import {createRequire} from 'node:module';
+import {mkdir,copyFile,readFile,writeFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+const root=fileURLToPath(new URL('../',import.meta.url)),out=path.join(root,'android/build/assets');
+const require=createRequire(path.join(root,'synthia-dual-swarm/package.json')),{build}=require('esbuild');
+await mkdir(path.join(out,'assets'),{recursive:true});
+await build({entryPoints:[path.join(root,'android/native-entry.js')],outfile:path.join(out,'native-runtime.js'),bundle:true,platform:'neutral',format:'iife',target:'es2020',minify:false});
+await build({entryPoints:[path.join(root,'android/observer.js')],outfile:path.join(out,'observer.js'),bundle:true,platform:'browser',format:'iife',target:'es2020',minify:true});
+await copyFile(path.join(root,'android/app/src/main/assets/observer.html'),path.join(out,'observer.html'));
+for(const name of ['human','wolf'])await copyFile(path.join(root,'synthia-dual-swarm/assets',name+'.glb'),path.join(out,'assets',name+'.glb'));
+const runtime=await readFile(path.join(out,'native-runtime.js'));await writeFile(path.join(out,'runtime.sha256'),createHash('sha256').update(runtime).digest('hex')+'\n');
+console.log('Bundled the on-device runtime and read-only Android world observer.');
