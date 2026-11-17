@@ -1,6 +1,7 @@
 import {proposeLocalProgram} from '../core/local-model.js';
 import {LocalProduction} from '../core/production.js';
 import {AutonomousSwarm} from '../core/autonomy.js';
+import {PARTICLE_FIELD} from '../core/swarm-scenarios.js';
 import {Substrate,gateBits} from '../core/substrate.js';
 import {World,BRANCHES} from '../core/world.js';
 import {DIMENSIONS,ACTIVE,VERSION,hash} from '../core/ontology.js';
@@ -15,7 +16,8 @@ import {compileDiscourse} from '../core/grammar.js';
 const $=id=>document.getElementById(id),el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;};
 let core=new Substrate(),world=new World(core),selected='companion',mode='embodied',replayWorld=null,scene,graph,busy=false,paused=false,sound=false,audio=null,queued=false,history=false,noticeTimer;
 mountSwarmInterface(core,document.getElementById('swarm-blueprint'),document.getElementById('swarm-interface'));
-new LocalProduction(new AutonomousSwarm(core));
+const initialSwarm = new AutonomousSwarm(core,{scenario:PARTICLE_FIELD,budget:1000,rules:{continuous:true,sixBit:{enabled:true}}});
+new LocalProduction(initialSwarm);
 let baseline=core.events.length;
 let learner=new AssemblyLearner();
 let framePath=[],frameDimension='Movement';
