@@ -16,7 +16,7 @@ import {compileDiscourse} from '../core/grammar.js';
 const $=id=>document.getElementById(id),el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;};
 let core=new Substrate(),world=new World(core),selected='companion',mode='embodied',replayWorld=null,scene,graph,busy=false,paused=false,sound=false,audio=null,queued=false,history=false,noticeTimer;
 mountSwarmInterface(core,document.getElementById('swarm-blueprint'),document.getElementById('swarm-interface'));
-const initialSwarm = new AutonomousSwarm(core,{scenario:PARTICLE_FIELD,budget:1000,rules:{continuous:true,sixBit:{enabled:true}}});
+const initialSwarm = new AutonomousSwarm(core,{scenario:PARTICLE_FIELD,budget:1000,rules:{continuous:true,field:{enabled:true,radius:3,strength:.02,pairs:{'00':-1,'01':1,'10':1,'11':-1},colors:{'0':[0,0,0],'1':[255,255,255]},asciiGroups:[]},sixBit:{enabled:true}}});
 new LocalProduction(initialSwarm);
 let baseline=core.events.length;
 let learner=new AssemblyLearner();
