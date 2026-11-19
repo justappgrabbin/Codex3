@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#080b1d"><title>Morphogen — Swarm Lab</title><link rel="stylesheet" href="./style.css"></head>
+<body><div class="shell">
+<header><a class="brand" href="./"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><strong>MORPHOGEN</strong><span class="lab">/ &nbsp; Swarm Lab</span></a><div class="headerActions"><a class="evaluationLink" href="./evaluation.pdf">Evaluation</a><span id="status" class="status"><i></i> LIVE SIMULATION</span></div></header>
+<main>
+<section class="intro"><h1>Swarm Formation</h1><p>Four binary rules. One emergent dimension.</p></section>
+<div class="workspace">
+<section class="panel visual">
+<div class="bar"><h2>Visual layer</h2><span class="micro">AGENT SIMULATION</span><div class="transport">
+<button id="play" aria-label="Play" title="Play"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l12-7z"/></svg></button>
+<button id="pause" aria-label="Pause" title="Pause"><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg></button>
+<button id="reset" aria-label="Reset" title="Reset"><svg viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5"/></svg></button>
+</div></div>
+<div class="stage" id="stage"><canvas id="field" tabindex="0" aria-label="Simulation canvas. Use arrow keys to select an agent or drag an agent to perturb the formation."></canvas><span class="stagehint">DRAG AN AGENT TO PERTURB THE SWARM</span></div>
+<div class="legend"><span><i class="line"></i> Peer link</span><span><i class="selected"></i><span id="agentLabel">Agent 22</span></span><span class="runtime" id="runtime"></span></div>
+</section>
+<aside class="panel functions"><div class="bar"><h2>Function layer</h2><span class="micro">BINARY RULES</span></div>
+<div id="rules"></div>
+<div class="dimension"><h3 title="The selected agent’s fifth value after five rounds of local averaging">Emergent dimension</h3><div class="reading"><span>D<sub>5</sub></span> <strong id="value">0.000</strong><span class="unit">/ 1.000</span></div>
+<canvas id="history" aria-label="Selected agent's emergent dimension over time"></canvas><div class="chartlabel"><span>RECENT HISTORY</span><span>NOW</span></div></div>
+<div class="recognition"><div><span class="micro">LOCAL PREDICTION</span><strong id="prediction">—</strong></div><div><span class="micro">UNANIMOUS LABEL</span><strong id="agreement">—</strong></div></div>
+</aside></div>
+<section class="panel controls" aria-label="Simulation controls"><div class="presets"><h2>Formation preset</h2><div class="presetButtons"><button data-preset="Ring"><span>○</span> Ring</button><button data-preset="Spiral"><span>◎</span> Spiral</button><button data-preset="Scatter"><span>⠿</span> Scatter</button><select aria-label="Thesis formation" id="formations"><option value="">Test shapes</option></select></div></div>
+<label class="parameter"><span>Radius <em>R</em></span><output id="radiusValue"></output><input id="radius" type="range" min="0" max="2" step="1" value="0"></label>
+<label class="parameter"><span>Influence <em>α</em></span><output id="influenceValue"></output><input id="influence" type="range" min="0" max="2" step=".01" value=".85"></label>
+</section>
+<section class="panel file-workspace" aria-labelledby="file-heading">
+<div class="bar"><h2 id="file-heading">Live file workspace</h2><span id="file-name" class="micro"></span></div>
+<div class="file-controls">
+<label class="file-input">Open HTML or text <input id="overlay-file" type="file" accept=".html,.htm,.txt,.md"></label>
+<button id="overlay-demo" type="button">Try a sample</button>
+<button id="overlay-clear" type="button" disabled>Clear file</button>
+</div>
+<fieldset id="overlay-controls" disabled>
+<legend>Temporary overlays</legend>
+<label><input id="overlay-fill" type="checkbox" checked> Fill marked gaps</label>
+<label>Theme <select id="overlay-theme"><option value="">Original</option><option value="night">Night</option><option value="paper">Paper</option><option value="aurora">Aurora</option></select></label>
+<label>Motion <select id="overlay-motion"><option value="">Original</option><option value="still">Still</option><option value="drift">Gentle drift</option></select></label>
+<label>Layout <select id="overlay-layout"><option value="">Original</option><option value="stack">Single column</option><option value="grid">Cards</option></select></label>
+</fieldset>
+<div id="overlay-drafts" class="overlay-drafts"></div>
+<p id="overlay-status" role="status">Open a local file or try the sample. HTML can mark a gap with <code>data-swarm-gap</code>. Text can use <code>TODO: description</code>.</p>
+<iframe id="overlay-preview" title="Temporary file preview" sandbox="" hidden></iframe>
+</section>
+</main></div><script defer src="./swarm.js"></script><script defer src="./trained-models.js"></script><script defer src="./app.js"></script><script defer src="./overlay.js"></script></body></html>
