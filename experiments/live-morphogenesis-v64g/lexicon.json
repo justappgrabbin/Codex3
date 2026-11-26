@@ -1,0 +1,2039 @@
+{
+ "source": "Consciousness Causal Graph Construction Specification (user's Drive doc) + two companion docs + Rave I'Ching Line Companion (384 line keynotes)",
+ "gates": {
+  "1": {
+   "gate": 1,
+   "name": "The Creative",
+   "archetype": "Self-Expression / Originality",
+   "base": 1,
+   "anchor": "Creation",
+   "zodiac": "Scorpio",
+   "house": 8,
+   "meanings": "Transcendence, Sex, Death/Regeneration",
+   "center": "G Center",
+   "biology": "Liver",
+   "lines": {
+    "1": "Creation",
+    "2": "Love",
+    "3": "Energy",
+    "4": "Alone",
+    "5": "Attracting",
+    "6": "Self-expression"
+   },
+   "keynotes": {
+    "1": "Creation is independent of will",
+    "2": "Love is light",
+    "3": "The energy to sustain creative work",
+    "4": "Aloneness as the medium of creativity",
+    "5": "Attracting society with creation",
+    "6": "Objectivity"
+   }
+  },
+  "2": {
+   "gate": 2,
+   "name": "The Receptive",
+   "archetype": "Direction / Receptivity",
+   "base": 1,
+   "anchor": "Landscape",
+   "zodiac": "Taurus",
+   "house": 2,
+   "meanings": "Materialism, Practicality, Inertia",
+   "center": "G Center",
+   "biology": "Liver",
+   "lines": {
+    "1": "Intuition",
+    "2": "Genius",
+    "3": "Patience",
+    "4": "Secretiveness",
+    "5": "Intelligent Application",
+    "6": "Fixation"
+   },
+   "keynotes": {
+    "1": "Intuition",
+    "2": "Genius",
+    "3": "Patience",
+    "4": "Secretiveness",
+    "5": "Intelligent application",
+    "6": "Fixation"
+   },
+   "linePositions": {
+    "1": "13°15'00\" – 14°11'15\" Taurus",
+    "2": "14°11'15\" – 15°07'30\" Taurus",
+    "3": "15°07'30\" – 16°03'45\" Taurus",
+    "4": "16°03'45\" – 17°00'00\" Taurus",
+    "5": "17°00'00\" – 17°56'15\" Taurus",
+    "6": "17°56'15\" – 18°52'30\" Taurus"
+   }
+  },
+  "3": {
+   "gate": 3,
+   "name": "Difficulty at Beginning",
+   "archetype": "Ordering / Mutation",
+   "base": 4,
+   "anchor": "Structure",
+   "zodiac": "Taurus",
+   "house": 2,
+   "meanings": "Desire/Will, Impulse, Materialism",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "lines": {
+    "1": "Synthesis",
+    "2": "Immaturity",
+    "3": "Survival",
+    "4": "Charisma",
+    "5": "Victimization",
+    "6": "Surrender"
+   },
+   "keynotes": {
+    "1": "Synthesis",
+    "2": "Immaturity",
+    "3": "Survival",
+    "4": "Charisma",
+    "5": "Victimization",
+    "6": "Surrender"
+   },
+   "linePositions": {
+    "1": "26°22'30\" – 27°18'45\" Aries",
+    "2": "27°18'45\" – 28°15'00\" Aries",
+    "3": "28°15'00\" – 29°11'15\" Aries",
+    "4": "29°11'15\" Aries – 00°07'30\" Taurus",
+    "5": "00°07'30\" – 01°03'45\" Taurus",
+    "6": "01°03'45\" – 02°00'00\" Taurus"
+   }
+  },
+  "4": {
+   "gate": 4,
+   "name": "Youthful Folly",
+   "archetype": "Formulization / Logic",
+   "base": 2,
+   "anchor": "Memory",
+   "zodiac": "Leo",
+   "house": 5,
+   "meanings": "Self-expression, Pleasure, Authority",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "lines": {
+    "1": "Pleasure",
+    "2": "Acceptance",
+    "3": "Irresponsibility",
+    "4": "The Liar",
+    "5": "Seduction",
+    "6": "Excess"
+   },
+   "keynotes": {
+    "1": "Pleasure",
+    "2": "Acceptance",
+    "3": "Irresponsibility",
+    "4": "The Liar",
+    "5": "Seduction",
+    "6": "Excess"
+   },
+   "linePositions": {
+    "1": "18°52'30\" – 19°48'45\" Leo",
+    "2": "19°48'45\" – 20°45'00\" Leo",
+    "3": "20°45'00\" – 21°41'15\" Leo",
+    "4": "21°41'15\" – 22°37'30\" Leo",
+    "5": "22°37'30\" – 23°33'45\" Leo",
+    "6": "23°33'45\" – 24°30'00\" Leo"
+   }
+  },
+  "5": {
+   "gate": 5,
+   "name": "Waiting",
+   "archetype": "Rhythms / Natural Timing",
+   "base": 5,
+   "anchor": "Rhythm / Timing",
+   "zodiac": "Sagittarius",
+   "house": 9,
+   "meanings": "Philosophy, Religion, Idealism",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "lines": {
+    "1": "Perseverance",
+    "2": "Inner Peace",
+    "3": "Compulsiveness",
+    "4": "The Hunter",
+    "5": "Joy",
+    "6": "Yielding"
+   },
+   "keynotes": {
+    "1": "Perseverance",
+    "2": "Inner Peace",
+    "3": "Compulsiveness",
+    "4": "The Hunter",
+    "5": "Joy",
+    "6": "Yielding"
+   }
+  },
+  "6": {
+   "gate": 6,
+   "name": "Friction",
+   "archetype": "Friction / Boundaries",
+   "base": 3,
+   "anchor": "Sex / Survival",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Mental Detail, Service, Judgment",
+   "center": "Solar Plexus",
+   "biology": "Kidney/Pancreas",
+   "lines": {
+    "1": "Retreat",
+    "2": "The Guerrilla",
+    "3": "Allegiance",
+    "4": "Triumph",
+    "5": "Arbitration",
+    "6": "The Peacemaker"
+   },
+   "keynotes": {
+    "1": "Retreat",
+    "2": "The Guerilla",
+    "3": "Allegiance",
+    "4": "Triumph",
+    "5": "Arbitration",
+    "6": "The Peacemaker"
+   },
+   "linePositions": {
+    "1": "22°37'30\" – 23°33'45\" Virgo",
+    "2": "23°33'45\" – 24°30'00\" Virgo",
+    "3": "24°30'00\" – 25°26'15\" Virgo",
+    "4": "25°26'15\" – 26°22'30\" Virgo",
+    "5": "26°22'30\" – 27°18'45\" Virgo",
+    "6": "27°18'45\" – 28°15'00\" Virgo"
+   }
+  },
+  "7": {
+   "gate": 7,
+   "name": "The Army",
+   "archetype": "Direction of the Collective",
+   "base": 1,
+   "anchor": "Orientation",
+   "zodiac": "Leo",
+   "house": 5,
+   "meanings": "Self-expression, Pleasure, Authority",
+   "center": "G Center",
+   "biology": "Liver",
+   "lines": {
+    "2": "The Democrat",
+    "4": "The Abdicator",
+    "1": "Authoritarian",
+    "3": "The Anarchist",
+    "5": "The General",
+    "6": "The Administrator"
+   },
+   "keynotes": {
+    "1": "The Authoritarian",
+    "2": "The Democrat",
+    "3": "The Anarchist",
+    "4": "The Abdicator",
+    "5": "The General",
+    "6": "The Administrator"
+   },
+   "linePositions": {
+    "1": "13°15'00\" – 14°11'15\" Leo",
+    "2": "14°11'15\" – 15°07'30\" Leo",
+    "3": "15°07'30\" – 16°03'45\" Leo",
+    "4": "16°03'45\" – 17°00'00\" Leo",
+    "5": "17°00'00\" – 17°56'15\" Leo",
+    "6": "17°56'15\" – 18°52'30\" Leo"
+   }
+  },
+  "8": {
+   "gate": 8,
+   "name": "Holding Together",
+   "archetype": "Contribution / Expression",
+   "base": 1,
+   "anchor": "Seeing",
+   "zodiac": "Taurus",
+   "house": 2,
+   "meanings": "Materialism, Changeability, Expansion",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "keynotes": {
+    "1": "Honesty",
+    "2": "Service",
+    "3": "The Phoney",
+    "4": "Respect",
+    "5": "Dharma",
+    "6": "Communion"
+   },
+   "lines": {
+    "1": "Honesty",
+    "2": "Service",
+    "3": "The phoney",
+    "4": "Respect",
+    "5": "Dharma",
+    "6": "Communion"
+   },
+   "linePositions": {
+    "1": "24°30'00\" – 25°26'15\" Taurus",
+    "2": "25°26'15\" – 26°22'30\" Taurus",
+    "3": "26°22'30\" – 27°18'45\" Taurus",
+    "4": "27°18'45\" – 28°15'00\" Taurus",
+    "5": "28°15'00\" – 29°11'15\" Taurus",
+    "6": "29°11'15\" Taurus – 00°07'30\" Gemini"
+   }
+  },
+  "9": {
+   "gate": 9,
+   "name": "Small Taming",
+   "archetype": "Focus / Detail",
+   "base": 4,
+   "anchor": "Structure",
+   "zodiac": "Sagittarius",
+   "house": 9,
+   "meanings": "Philosophy, Religion, Idealism",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "lines": {
+    "1": "Sensibility",
+    "2": "Misery Loves Company",
+    "3": "The Straw",
+    "4": "Dedication",
+    "5": "Faith",
+    "6": "Gratitude"
+   },
+   "keynotes": {
+    "1": "Sensibility",
+    "2": "Misery loves company",
+    "3": "The Straw that breaks the camel’s back",
+    "4": "Dedication",
+    "5": "Faith",
+    "6": "Gratitude"
+   }
+  },
+  "10": {
+   "gate": 10,
+   "name": "Treading",
+   "archetype": "Behavior / Self-Love",
+   "base": 3,
+   "anchor": "Being",
+   "zodiac": "Capricorn",
+   "house": 10,
+   "meanings": "Philosophy, Ambition, Status",
+   "center": "G Center",
+   "biology": "Liver",
+   "lines": {
+    "1": "Modesty",
+    "2": "The Hermit",
+    "3": "The Martyr",
+    "4": "The Opportunist",
+    "5": "The Heretic",
+    "6": "The Role Model"
+   },
+   "keynotes": {
+    "1": "Modesty",
+    "2": "The Hermit",
+    "3": "The Martyr",
+    "4": "The Opportunist",
+    "5": "The Heretic",
+    "6": "The Role Model"
+   }
+  },
+  "11": {
+   "gate": 11,
+   "name": "Peace",
+   "archetype": "Ideas / Harmony",
+   "base": 5,
+   "anchor": "Illusion / Form",
+   "zodiac": "Sagittarius",
+   "house": 9,
+   "meanings": "Philosophy, Religion, Idealism",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "lines": {
+    "1": "Attunement",
+    "2": "Rigour",
+    "3": "The Realist",
+    "4": "The Teacher",
+    "5": "The Philanthropist",
+    "6": "Adaptability"
+   },
+   "keynotes": {
+    "1": "Attunement",
+    "2": "Rigor",
+    "3": "The Realist",
+    "4": "The Teacher",
+    "5": "The Philanthropist",
+    "6": "Adaptability"
+   }
+  },
+  "12": {
+   "gate": 12,
+   "name": "Standstill",
+   "archetype": "Caution / Articulation",
+   "base": 5,
+   "anchor": "Hearing / Music",
+   "zodiac": "Gemini",
+   "house": 3,
+   "meanings": "Changeability, Duality, Expansion",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "keynotes": {
+    "1": "The Monk",
+    "2": "Purification",
+    "3": "Confession",
+    "4": "The Prophet",
+    "5": "The Pragmatist",
+    "6": "Metamorphosis"
+   },
+   "lines": {
+    "1": "The Monk",
+    "2": "Purification",
+    "3": "Confession",
+    "4": "The Prophet",
+    "5": "The Pragmatist",
+    "6": "Metamorphosis"
+   },
+   "linePositions": {
+    "1": "22°37'30\" – 23°33'45\" Gemini",
+    "2": "23°33'45\" – 24°30'00\" Gemini",
+    "3": "24°30'00\" – 25°26'15\" Gemini",
+    "4": "25°26'15\" – 26°22'30\" Gemini",
+    "5": "26°22'30\" – 27°18'45\" Gemini",
+    "6": "27°18'45\" – 28°15'00\" Gemini"
+   }
+  },
+  "13": {
+   "gate": 13,
+   "name": "The Listener",
+   "archetype": "Listening / Memory",
+   "base": 2,
+   "anchor": "Memory",
+   "zodiac": "Aquarius",
+   "house": 11,
+   "meanings": "Science, Humanitarianism, Music",
+   "center": "G Center",
+   "biology": "Liver",
+   "lines": {
+    "1": "Empathy",
+    "2": "Bigotry",
+    "3": "Pessimism",
+    "4": "Fatigue",
+    "5": "The Savior",
+    "6": "Optimism"
+   },
+   "keynotes": {
+    "1": "Empathy",
+    "2": "Bigotry",
+    "3": "Pessimism",
+    "4": "Fatigue",
+    "5": "The Savior",
+    "6": "The Optimist"
+   }
+  },
+  "14": {
+   "gate": 14,
+   "name": "Possessions in Great Measure",
+   "archetype": "Power Skills / Resources",
+   "base": 4,
+   "anchor": "Progress",
+   "zodiac": "Sagittarius",
+   "house": 9,
+   "meanings": "Transcendence, Philosophy, Idealism",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "lines": {
+    "1": "Money",
+    "5": "Arrogance",
+    "2": "Management",
+    "3": "Service",
+    "4": "Security",
+    "6": "Humility"
+   },
+   "keynotes": {
+    "1": "Money isn’t everything"
+   }
+  },
+  "15": {
+   "gate": 15,
+   "name": "Modesty",
+   "archetype": "Extremes / Rhythm",
+   "base": 5,
+   "anchor": "Rhythm",
+   "zodiac": "Gemini",
+   "house": 3,
+   "meanings": "Changeability, Sensitivity, Home/Family",
+   "center": "G Center",
+   "biology": "Liver",
+   "lines": {
+    "1": "Duty",
+    "2": "Influence",
+    "3": "Ego inflation",
+    "4": "The Wallflower",
+    "5": "Sensitivity",
+    "6": "Self-defense"
+   },
+   "linePositions": {
+    "1": "28°15'00\" – 29°11'15\" Gemini",
+    "2": "29°11'15\" Gemini – 00°07'30\" Cancer",
+    "3": "00°07'30\" – 01°03'45\" Cancer",
+    "4": "01°03'45\" – 02°00'00\" Cancer",
+    "5": "02°00'00\" – 02°56'15\" Cancer",
+    "6": "02°56'15\" – 03°52'30\" Cancer"
+   }
+  },
+  "16": {
+   "gate": 16,
+   "name": "Enthusiasm",
+   "archetype": "Selectivity / Skill",
+   "base": 5,
+   "anchor": "Music / Expression",
+   "zodiac": "Aries",
+   "house": 1,
+   "meanings": "Changeability, Duality, Expansion",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "lines": {
+    "2": "The Cynic",
+    "5": "The Grinch",
+    "1": "Delusion",
+    "3": "Independence",
+    "4": "The leader",
+    "6": "Gullibility"
+   },
+   "linePositions": {
+    "1": "05°45'00\" – 06°41'15\" Gemini",
+    "2": "06°41'15\" – 07°37'30\" Gemini",
+    "3": "07°37'30\" – 08°33'45\" Gemini",
+    "4": "08°33'45\" – 09°30'00\" Gemini",
+    "5": "09°30'00\" – 10°26'15\" Gemini",
+    "6": "10°26'15\" – 11°22'30\" Gemini"
+   }
+  },
+  "17": {
+   "gate": 17,
+   "name": "Following",
+   "archetype": "Opinions / Future Vision",
+   "base": 2,
+   "anchor": "Gravity",
+   "zodiac": "Aries",
+   "house": 1,
+   "meanings": "Desire, Will, Impulse/Courage",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "lines": {
+    "1": "Openness",
+    "4": "Personnel Manager",
+    "2": "Discrimination",
+    "3": "Understanding",
+    "5": "No man is an island",
+    "6": "Bodhisattva"
+   },
+   "linePositions": {
+    "1": "03°52'30\" – 04°48'45\" Aries",
+    "2": "04°48'45\" – 05°45'00\" Aries",
+    "3": "05°45'00\" – 06°41'15\" Aries",
+    "4": "06°41'15\" – 07°37'30\" Aries",
+    "5": "07°37'30\" – 08°33'45\" Aries",
+    "6": "08°33'45\" – 09°30'00\" Aries"
+   }
+  },
+  "18": {
+   "gate": 18,
+   "name": "Work on Spoilt",
+   "archetype": "Correction / Editing",
+   "base": 4,
+   "anchor": "Structure / Decay",
+   "zodiac": "Libra",
+   "house": 7,
+   "meanings": "Comparison, Appreciation, Evaluation",
+   "center": "Splenic",
+   "biology": "Spleen/Lymph",
+   "lines": {
+    "1": "Conservatism",
+    "2": "Terminal disease",
+    "3": "The zealot",
+    "4": "The incompetent",
+    "5": "Therapy",
+    "6": "Buddhahood"
+   },
+   "linePositions": {
+    "1": "03°52'30\" – 04°48'45\" Libra",
+    "2": "04°48'45\" – 05°45'00\" Libra",
+    "3": "05°45'00\" – 06°41'15\" Libra",
+    "4": "06°41'15\" – 07°37'30\" Libra",
+    "5": "07°37'30\" – 08°33'45\" Libra",
+    "6": "08°33'45\" – 09°30'00\" Libra"
+   }
+  },
+  "19": {
+   "gate": 19,
+   "name": "Approach",
+   "archetype": "Wanting / Synthesis",
+   "base": 3,
+   "anchor": "Touch",
+   "zodiac": "Aquarius",
+   "house": 11,
+   "meanings": "Science, Humanitarianism, Music",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "lines": {
+    "1": "Interdependence",
+    "2": "Service",
+    "3": "Dedication",
+    "4": "Teamwork",
+    "5": "Sacrifice",
+    "6": "Recluse"
+   }
+  },
+  "20": {
+   "gate": 20,
+   "name": "Contemplation",
+   "archetype": "Presence / Now",
+   "base": 1,
+   "anchor": "Environment",
+   "zodiac": "Gemini",
+   "house": 3,
+   "meanings": "Changeability, Duality, Expansion",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "lines": {
+    "1": "Superficiality",
+    "2": "The dogmatist",
+    "3": "Self-awareness",
+    "4": "Application",
+    "5": "Realism",
+    "6": "Wisdom"
+   },
+   "linePositions": {
+    "1": "00°07'30\" – 01°03'45\" Gemini",
+    "2": "01°03'45\" – 02°00'00\" Gemini",
+    "3": "02°00'00\" – 02°56'15\" Gemini",
+    "4": "02°56'15\" – 03°52'30\" Gemini",
+    "5": "03°52'30\" – 04°48'45\" Gemini",
+    "6": "04°48'45\" – 05°45'00\" Gemini"
+   }
+  },
+  "21": {
+   "gate": 21,
+   "name": "Biting Through",
+   "archetype": "Control / Authority",
+   "base": 4,
+   "anchor": "Structure",
+   "zodiac": "Aries",
+   "house": 1,
+   "meanings": "Desire, Will, Impulse/Courage",
+   "center": "Heart (Ego)",
+   "biology": "Thymus Gland",
+   "lines": {
+    "1": "Warning",
+    "2": "Might is right",
+    "3": "Powerlessness",
+    "4": "Strategy",
+    "5": "Objectivity",
+    "6": "Chaos"
+   },
+   "keynotes": {
+    "1": "Warning",
+    "2": "Might is right",
+    "3": "Powerlessness",
+    "5": "Objectivity",
+    "6": "Chaos"
+   },
+   "linePositions": {
+    "1": "09°30'00\" – 10°26'15\" Aries",
+    "2": "10°26'15\" – 11°22'30\" Aries",
+    "3": "11°22'30\" – 12°18'45\" Aries",
+    "4": "12°18'45\" – 13°15'00\" Aries",
+    "5": "13°15'00\" – 14°11'15\" Aries",
+    "6": "14°11'15\" – 15°07'30\" Aries"
+   }
+  },
+  "22": {
+   "gate": 22,
+   "name": "Grace",
+   "archetype": "Openness / Emotional Art",
+   "base": 5,
+   "anchor": "Music / Form",
+   "zodiac": "Pisces",
+   "house": 12,
+   "meanings": "Openness, Devotion, Conflict",
+   "center": "Solar Plexus",
+   "biology": "Kidney/Pancreas",
+   "lines": {
+    "1": "Second Best",
+    "2": "Charm",
+    "3": "The Enchanter",
+    "4": "Sensitivity",
+    "5": "Directness",
+    "6": "Maturity"
+   }
+  },
+  "23": {
+   "gate": 23,
+   "name": "Splitting Apart",
+   "archetype": "Assimilation / Clarity",
+   "base": 2,
+   "anchor": "Light",
+   "zodiac": "Taurus",
+   "house": 2,
+   "meanings": "Materialism, Practicality, Inertia",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "lines": {
+    "1": "Proselytization",
+    "2": "Self-defense",
+    "3": "Individuality",
+    "4": "Fragmentation",
+    "5": "Assimilation",
+    "6": "Fusion"
+   },
+   "linePositions": {
+    "1": "18°52'30\" – 19°48'45\" Taurus",
+    "2": "19°48'45\" – 20°45'00\" Taurus",
+    "3": "20°45'00\" – 21°41'15\" Taurus",
+    "4": "21°41'15\" – 22°37'30\" Taurus",
+    "5": "22°37'30\" – 23°33'45\" Taurus",
+    "6": "23°33'45\" – 24°30'00\" Taurus"
+   }
+  },
+  "24": {
+   "gate": 24,
+   "name": "Returning",
+   "archetype": "Rationalization / Memory",
+   "base": 2,
+   "anchor": "Memory",
+   "zodiac": "Taurus",
+   "house": 2,
+   "meanings": "Materialism, Practicality, Inertia",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "lines": {
+    "3": "The Addict",
+    "6": "The Gift Horse",
+    "1": "The Sin of Omission",
+    "2": "Recognition",
+    "4": "The Hermit",
+    "5": "Confession"
+   },
+   "linePositions": {
+    "1": "07°37'30\" – 08°33'45\" Taurus",
+    "2": "08°33'45\" – 09°30'00\" Taurus",
+    "3": "09°30'00\" – 10°26'15\" Taurus",
+    "4": "10°26'15\" – 11°22'30\" Taurus",
+    "5": "11°22'30\" – 12°18'45\" Taurus",
+    "6": "12°18'45\" – 13°15'00\" Taurus"
+   }
+  },
+  "25": {
+   "gate": 25,
+   "name": "Innocence",
+   "archetype": "Spirit / Universal Love",
+   "base": 2,
+   "anchor": "Love",
+   "zodiac": "Aries",
+   "house": 1,
+   "meanings": "Openness, Desire/Will, Courage",
+   "center": "G Center",
+   "biology": "Liver",
+   "harmonic": "51",
+   "lines": {
+    "1": "Selflessness",
+    "2": "The Existentialist",
+    "3": "Sensibility",
+    "4": "Survival",
+    "5": "Recuperation",
+    "6": "Ignorance"
+   },
+   "linePositions": {
+    "1": "28°15'00\" – 29°11'15\" Pisces",
+    "2": "29°11'15\" Pisces – 00°07'30\" Aries",
+    "3": "00°07'30\" – 01°03'45\" Aries",
+    "4": "01°03'45\" – 02°00'00\" Aries",
+    "5": "02°00'00\" – 02°56'15\" Aries",
+    "6": "02°56'15\" – 03°52'30\" Aries"
+   }
+  },
+  "26": {
+   "gate": 26,
+   "name": "Taming Power of Great",
+   "archetype": "Egoist / Trickster",
+   "base": 4,
+   "anchor": "Life / Art",
+   "zodiac": "Sagittarius",
+   "house": 9,
+   "meanings": "Philosophy, Religion, Idealism",
+   "center": "Heart (Ego)",
+   "biology": "Thymus Gland",
+   "harmonic": "44",
+   "lines": {
+    "1": "A Bird in the Hand",
+    "2": "The Lessons",
+    "3": "Influence",
+    "4": "Memory",
+    "5": "Adaptability",
+    "6": "Authority"
+   }
+  },
+  "27": {
+   "gate": 27,
+   "name": "Nourishment",
+   "archetype": "Caring / Preservation",
+   "base": 3,
+   "anchor": "Survival",
+   "zodiac": "Aries",
+   "house": 1,
+   "meanings": "Materialism, Practicality, Inertia",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "harmonic": "50",
+   "lines": {
+    "1": "Selfishness",
+    "2": "Self-sufficiency",
+    "4": "Generosity",
+    "3": "Greed",
+    "5": "The Executor",
+    "6": "Wariness"
+   },
+   "keynotes": {
+    "1": "Selfishness"
+   },
+   "linePositions": {
+    "1": "02°00'00\" – 02°56'15\" Taurus",
+    "2": "02°56'15\" – 03°52'30\" Taurus",
+    "3": "03°52'30\" – 04°48'45\" Taurus",
+    "4": "04°48'45\" – 05°45'00\" Taurus",
+    "5": "05°45'00\" – 06°41'15\" Taurus",
+    "6": "06°41'15\" – 07°37'30\" Taurus"
+   }
+  },
+  "28": {
+   "gate": 28,
+   "name": "Great Preponderance",
+   "archetype": "Struggle / Purpose",
+   "base": 3,
+   "anchor": "Survival",
+   "zodiac": "Scorpio",
+   "house": 8,
+   "meanings": "Transcendence, Sex, Death/Regeneration",
+   "center": "Splenic",
+   "biology": "Spleen/Lymph",
+   "harmonic": "38",
+   "lines": {
+    "1": "Preparation",
+    "2": "Shaking hands",
+    "3": "Adventurism",
+    "4": "Holding on",
+    "5": "Treachery",
+    "6": "Blaze of glory"
+   },
+   "linePositions": {
+    "1": "02°00'00\" – 02°56'15\" Scorpio",
+    "2": "02°56'15\" – 03°52'30\" Scorpio",
+    "3": "03°52'30\" – 04°48'45\" Scorpio",
+    "4": "04°48'45\" – 05°45'00\" Scorpio",
+    "5": "05°45'00\" – 06°41'15\" Scorpio",
+    "6": "06°41'15\" – 07°37'30\" Scorpio"
+   }
+  },
+  "29": {
+   "gate": 29,
+   "name": "The Abysmal",
+   "archetype": "Commitment / Perseverance",
+   "base": 3,
+   "anchor": "Matter",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Self-expression, Service, Judgment",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "harmonic": "46",
+   "lines": {
+    "1": "The Draftee",
+    "2": "Assessment",
+    "3": "Evaluation",
+    "4": "Directness",
+    "5": "Overreach",
+    "6": "Confusion"
+   },
+   "linePositions": {
+    "1": "24°30'00\" – 25°26'15\" Leo",
+    "2": "25°26'15\" – 26°22'30\" Leo",
+    "3": "26°22'30\" – 27°18'45\" Leo",
+    "4": "27°18'45\" – 28°15'00\" Leo",
+    "5": "28°15'00\" – 29°11'15\" Leo",
+    "6": "29°11'15\" Leo – 00°07'30\" Virgo"
+   }
+  },
+  "30": {
+   "gate": 30,
+   "name": "Clinging Fire",
+   "archetype": "Passion / Desires",
+   "base": 5,
+   "anchor": "Fantasy / Form",
+   "zodiac": "Aquarius",
+   "house": 11,
+   "meanings": "Science, Openness, Devotion",
+   "center": "Solar Plexus",
+   "biology": "Kidney/Pancreas",
+   "harmonic": "41",
+   "lines": {
+    "1": "Composure",
+    "2": "Pragmatism",
+    "3": "Resignation",
+    "4": "Burnout",
+    "5": "Irony",
+    "6": "Enforcement"
+   }
+  },
+  "31": {
+   "gate": 31,
+   "name": "Leading",
+   "archetype": "Influence / Voice",
+   "base": 1,
+   "anchor": "Orientation",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Self-expression, Pleasure, Authority",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "harmonic": "7",
+   "lines": {
+    "1": "Manifestation",
+    "2": "Arrogance",
+    "3": "Selectivity",
+    "4": "Intent",
+    "5": "Self-righteousness",
+    "6": "Application"
+   },
+   "keynotes": {
+    "1": "Manifestation",
+    "2": "Arrogance",
+    "3": "Selectivity",
+    "4": "Intent",
+    "5": "Self-righteousness",
+    "6": "Application"
+   },
+   "linePositions": {
+    "1": "02°00'00\" – 02°56'15\" Leo",
+    "2": "02°56'15\" – 03°52'30\" Leo",
+    "3": "03°52'30\" – 04°48'45\" Leo",
+    "4": "04°48'45\" – 05°45'00\" Leo",
+    "5": "05°45'00\" – 06°41'15\" Leo",
+    "6": "06°41'15\" – 07°37'30\" Leo"
+   }
+  },
+  "32": {
+   "gate": 32,
+   "name": "Duration",
+   "archetype": "Continuity / Preservation",
+   "base": 4,
+   "anchor": "Continuity",
+   "zodiac": "Libra",
+   "house": 7,
+   "meanings": "Comparison, Appreciation, Evaluation",
+   "center": "Splenic",
+   "biology": "Spleen/Lymph",
+   "harmonic": "54",
+   "lines": {
+    "1": "Conservation",
+    "2": "Restraint",
+    "3": "Lack of continuity",
+    "4": "Right is might",
+    "5": "Flexibility",
+    "6": "Tranquility"
+   },
+   "linePositions": {
+    "1": "20°45'00\" – 21°41'15\" Libra",
+    "2": "21°41'15\" – 22°37'30\" Libra",
+    "3": "22°37'30\" – 23°33'45\" Libra",
+    "4": "23°33'45\" – 24°30'00\" Libra",
+    "5": "24°30'00\" – 25°26'15\" Libra",
+    "6": "25°26'15\" – 26°22'30\" Libra"
+   }
+  },
+  "33": {
+   "gate": 33,
+   "name": "Retreat",
+   "archetype": "Retrospect / Privacy",
+   "base": 2,
+   "anchor": "Memory",
+   "zodiac": "Leo",
+   "house": 5,
+   "meanings": "Self-expression, Pleasure, Authority",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "harmonic": "13",
+   "lines": {
+    "1": "Avoidance",
+    "2": "Surrender",
+    "3": "Spirit",
+    "4": "Dignity",
+    "5": "Timing",
+    "6": "Disassociation"
+   },
+   "linePositions": {
+    "1": "07°37'30\" – 08°33'45\" Leo",
+    "2": "08°33'45\" – 09°30'00\" Leo",
+    "3": "09°30'00\" – 10°26'15\" Leo",
+    "4": "10°26'15\" – 11°22'30\" Leo",
+    "5": "11°22'30\" – 12°18'45\" Leo",
+    "6": "12°18'45\" – 13°15'00\" Leo"
+   }
+  },
+  "34": {
+   "gate": 34,
+   "name": "Power of Great",
+   "archetype": "Power / Pure Force",
+   "base": 3,
+   "anchor": "Matter / Body",
+   "zodiac": "Sagittarius",
+   "house": 9,
+   "meanings": "Philosophy, Religion, Idealism",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "harmonic": "10/20/57",
+   "lines": {
+    "1": "The Bully",
+    "6": "Common Sense",
+    "4": "Triumph",
+    "5": "Annihilation",
+    "2": "Momentum",
+    "3": "Machismo"
+   },
+   "lineSources": {
+    "4": "user's page image: Rave I'Ching (pdfcoffee scan, page 79/126), Gate 34 The Power of the Great",
+    "5": "user's page image: Rave I'Ching (pdfcoffee scan, page 79/126), Gate 34 The Power of the Great",
+    "1": "user's page image: Rave I'Ching (pdfcoffee scan, page 79/126), Gate 34 The Power of the Great",
+    "2": "user's page image: Rave I'Ching (pdfcoffee scan, page 79/126), Gate 34 The Power of the Great",
+    "3": "user's page image: Rave I'Ching (pdfcoffee scan, page 79/126), Gate 34 The Power of the Great",
+    "6": "user's page image: Rave I'Ching (pdfcoffee scan, page 79/126), Gate 34 The Power of the Great"
+   },
+   "linePositions": {
+    "1": "00°07'30\" – 01°03'45\" Sagittarius",
+    "2": "01°03'45\" – 02°00'00\" Sagittarius",
+    "3": "02°00'00\" – 02°56'15\" Sagittarius",
+    "4": "02°56'15\" – 03°52'30\" Sagittarius",
+    "5": "03°52'30\" – 04°48'45\" Sagittarius",
+    "6": "04°48'45\" – 05°45'00\" Sagittarius"
+   },
+   "lineExaltations": {
+    "1": "Saturn exalted, Pluto detriment",
+    "2": "Mars exalted, Venus detriment",
+    "3": "Saturn exalted",
+    "4": "Pluto exalted, Mars detriment",
+    "5": "Mars exalted, Moon detriment",
+    "6": "Earth exalted, Jupiter detriment"
+   }
+  },
+  "35": {
+   "gate": 35,
+   "name": "Progress",
+   "archetype": "Change / Experience",
+   "base": 4,
+   "anchor": "Progress",
+   "zodiac": "Gemini",
+   "house": 3,
+   "meanings": "Changeability, Duality, Expansion",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "harmonic": "36",
+   "lines": {
+    "1": "Humility",
+    "2": "Creative block",
+    "3": "Collaboration",
+    "4": "Hunger",
+    "5": "Altruism",
+    "6": "Rectification"
+   },
+   "linePositions": {
+    "1": "11°22'30\" – 12°18'45\" Gemini",
+    "2": "12°18'45\" – 13°15'00\" Gemini",
+    "3": "13°15'00\" – 14°11'15\" Gemini",
+    "4": "14°11'15\" – 15°07'30\" Gemini",
+    "5": "15°07'30\" – 16°03'45\" Gemini",
+    "6": "16°03'45\" – 17°00'00\" Gemini"
+   }
+  },
+  "36": {
+   "gate": 36,
+   "name": "Darkening of Light",
+   "archetype": "Crisis / Humanity",
+   "base": 5,
+   "anchor": "Illusion",
+   "zodiac": "Pisces",
+   "house": 12,
+   "meanings": "Openness, Devotion, Conflict",
+   "center": "Solar Plexus",
+   "biology": "Kidney/Pancreas",
+   "harmonic": "35",
+   "lines": {
+    "1": "Resistance",
+    "2": "Support",
+    "3": "Transition",
+    "4": "Espionage",
+    "5": "The Underground",
+    "6": "Justice"
+   }
+  },
+  "37": {
+   "gate": 37,
+   "name": "Family",
+   "archetype": "Friendship / Community",
+   "base": 3,
+   "anchor": "Touch",
+   "zodiac": "Pisces",
+   "house": 12,
+   "meanings": "Openness, Devotion, Conflict",
+   "center": "Solar Plexus",
+   "biology": "Kidney/Pancreas",
+   "harmonic": "40",
+   "lines": {
+    "1": "Mother/Father",
+    "2": "Responsibility",
+    "3": "Discipline",
+    "4": "Leadership",
+    "5": "Love",
+    "6": "Purpose"
+   }
+  },
+  "38": {
+   "gate": 38,
+   "name": "Opposition",
+   "archetype": "Fighter / Integrity",
+   "base": 3,
+   "anchor": "Survival",
+   "zodiac": "Capricorn",
+   "house": 10,
+   "meanings": "Ambition, Government, Status",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "28",
+   "lines": {
+    "1": "Qualification",
+    "2": "Politeness",
+    "3": "Alliance",
+    "4": "Investigation",
+    "5": "Alienation",
+    "6": "The Misunderstood"
+   }
+  },
+  "39": {
+   "gate": 39,
+   "name": "Obstruction",
+   "archetype": "Provocation / Energy",
+   "base": 1,
+   "anchor": "Energy",
+   "zodiac": "Cancer",
+   "house": 4,
+   "meanings": "Receptivity, Sensitivity, Home/Family",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "55",
+   "lines": {
+    "1": "Disengagement",
+    "2": "Confrontation",
+    "3": "Responsibility",
+    "4": "Temperance",
+    "5": "Single-mindedness",
+    "6": "The Troubleshooter"
+   },
+   "linePositions": {
+    "1": "09°30'00\" – 10°26'15\" Cancer",
+    "2": "10°26'15\" – 11°22'30\" Cancer",
+    "3": "11°22'30\" – 12°18'45\" Cancer",
+    "4": "12°18'45\" – 13°15'00\" Cancer",
+    "5": "13°15'00\" – 14°11'15\" Cancer",
+    "6": "14°11'15\" – 15°07'30\" Cancer"
+   }
+  },
+  "40": {
+   "gate": 40,
+   "name": "Deliverance",
+   "archetype": "Aloneness / Willingness",
+   "base": 4,
+   "anchor": "Ego / Structure",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Mental Detail, Service, Judgment",
+   "center": "Heart (Ego)",
+   "biology": "Thymus Gland",
+   "harmonic": "37",
+   "lines": {
+    "1": "Recuperation",
+    "2": "Resoluteness",
+    "3": "Humility",
+    "4": "Organization",
+    "5": "Rigidity",
+    "6": "Decapitation"
+   },
+   "linePositions": {
+    "1": "05°45'00\" – 06°41'15\" Virgo",
+    "2": "06°41'15\" – 07°37'30\" Virgo",
+    "3": "07°37'30\" – 08°33'45\" Virgo",
+    "4": "08°33'45\" – 09°30'00\" Virgo",
+    "5": "09°30'00\" – 10°26'15\" Virgo",
+    "6": "10°26'15\" – 11°22'30\" Virgo"
+   }
+  },
+  "41": {
+   "gate": 41,
+   "name": "Decrease",
+   "archetype": "Contraction / Fantasy",
+   "base": 5,
+   "anchor": "Fantasy",
+   "zodiac": "Aquarius",
+   "house": 11,
+   "meanings": "Science, Humanitarianism, Music",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "30",
+   "lines": {
+    "1": "Reasonableness",
+    "2": "Caution",
+    "3": "Efficiency",
+    "4": "Correction",
+    "5": "Vicariousness",
+    "6": "Contemplation"
+   }
+  },
+  "42": {
+   "gate": 42,
+   "name": "Increase",
+   "archetype": "Growth / Completion",
+   "base": 4,
+   "anchor": "Growth",
+   "zodiac": "Aries",
+   "house": 1,
+   "meanings": "Desire, Will, Impulse/Courage",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "harmonic": "53",
+   "lines": {
+    "1": "Diversification",
+    "2": "Identification",
+    "3": "Trial and error",
+    "4": "The middle man",
+    "5": "Self-actualization",
+    "6": "Nurturing"
+   },
+   "linePositions": {
+    "1": "20°45'00\" – 21°41'15\" Aries",
+    "2": "21°41'15\" – 22°37'30\" Aries",
+    "3": "22°37'30\" – 23°33'45\" Aries",
+    "4": "23°33'45\" – 24°30'00\" Aries",
+    "5": "24°30'00\" – 25°26'15\" Aries",
+    "6": "25°26'15\" – 26°22'30\" Aries"
+   }
+  },
+  "43": {
+   "gate": 43,
+   "name": "Insight",
+   "archetype": "Breakthrough / Insight",
+   "base": 2,
+   "anchor": "Light",
+   "zodiac": "Taurus",
+   "house": 2,
+   "meanings": "Transcendence, Sex, Death/Regeneration",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "harmonic": "23",
+   "lines": {
+    "1": "Patience",
+    "2": "Dedication",
+    "3": "Expediency",
+    "4": "The Mind",
+    "5": "Progression",
+    "6": "Breakthrough"
+   }
+  },
+  "44": {
+   "gate": 44,
+   "name": "Coming to Meet",
+   "archetype": "Alertness / Patterns",
+   "base": 4,
+   "anchor": "Smell / Structure",
+   "zodiac": "Scorpio",
+   "house": 8,
+   "meanings": "Transcendence, Sex, Death/Regeneration",
+   "center": "Splenic",
+   "biology": "Spleen/Lymph",
+   "harmonic": "26",
+   "lines": {
+    "1": "Conditions",
+    "2": "Management",
+    "3": "Interference",
+    "4": "Honesty",
+    "5": "Manipulation",
+    "6": "Aloofness"
+   },
+   "linePositions": {
+    "1": "07°37'30\" – 08°33'45\" Scorpio",
+    "2": "08°33'45\" – 09°30'00\" Scorpio",
+    "3": "09°30'00\" – 10°26'15\" Scorpio",
+    "4": "10°26'15\" – 11°22'30\" Scorpio",
+    "5": "11°22'30\" – 12°18'45\" Scorpio",
+    "6": "12°18'45\" – 13°15'00\" Scorpio"
+   }
+  },
+  "45": {
+   "gate": 45,
+   "name": "Gathering Together",
+   "archetype": "Gatherer / Dominance",
+   "base": 4,
+   "anchor": "Manifestation",
+   "zodiac": "Gemini",
+   "house": 3,
+   "meanings": "Changeability, Duality, Expansion",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "harmonic": "21",
+   "lines": {
+    "1": "Canvassing",
+    "2": "Consensus",
+    "3": "Exclusion",
+    "4": "Direction",
+    "5": "Leadership",
+    "6": "Reconsideration"
+   },
+   "linePositions": {
+    "1": "17°00'00\" – 17°56'15\" Gemini",
+    "2": "17°56'15\" – 18°52'30\" Gemini",
+    "3": "18°52'30\" – 19°48'45\" Gemini",
+    "4": "19°48'45\" – 20°45'00\" Gemini",
+    "5": "20°45'00\" – 21°41'15\" Gemini",
+    "6": "21°41'15\" – 22°37'30\" Gemini"
+   }
+  },
+  "46": {
+   "gate": 46,
+   "name": "Pushing Upward",
+   "archetype": "Determination / Body",
+   "base": 3,
+   "anchor": "Biology / Body",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Service, Comparison, Appreciation",
+   "center": "G Center",
+   "biology": "Liver",
+   "harmonic": "29",
+   "lines": {
+    "1": "Being Discovered",
+    "2": "The Prima Donna",
+    "3": "Projection",
+    "4": "Impact",
+    "5": "Pacing",
+    "6": "Integrity"
+   },
+   "linePositions": {
+    "1": "28°15'00\" – 29°11'15\" Virgo",
+    "2": "29°11'15\" Virgo – 00°07'30\" Libra",
+    "3": "00°07'30\" – 01°03'45\" Libra",
+    "4": "01°03'45\" – 02°00'00\" Libra",
+    "5": "02°00'00\" – 02°56'15\" Libra",
+    "6": "02°56'15\" – 03°52'30\" Libra"
+   }
+  },
+  "47": {
+   "gate": 47,
+   "name": "Oppression",
+   "archetype": "Realization / Mind",
+   "base": 2,
+   "anchor": "Memory",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Mental Detail, Service, Judgment",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "harmonic": "64",
+   "lines": {
+    "1": "Taking Stock",
+    "2": "Ambition",
+    "3": "Self-oppression",
+    "4": "Repression",
+    "5": "The Saint",
+    "6": "Futility"
+   },
+   "linePositions": {
+    "1": "17°00'00\" – 17°56'15\" Virgo",
+    "2": "17°56'15\" – 18°52'30\" Virgo",
+    "3": "18°52'30\" – 19°48'45\" Virgo",
+    "4": "19°48'45\" – 20°45'00\" Virgo",
+    "5": "20°45'00\" – 21°41'15\" Virgo",
+    "6": "21°41'15\" – 22°37'30\" Virgo"
+   }
+  },
+  "48": {
+   "gate": 48,
+   "name": "The Well",
+   "archetype": "Depth / Solutions",
+   "base": 4,
+   "anchor": "Structure",
+   "zodiac": "Libra",
+   "house": 7,
+   "meanings": "Comparison, Appreciation, Evaluation",
+   "center": "Splenic",
+   "biology": "Spleen/Lymph",
+   "harmonic": "16",
+   "lines": {
+    "1": "Insignificance",
+    "2": "Degeneracy",
+    "3": "Incommunicado",
+    "4": "Restructuring",
+    "5": "Action",
+    "6": "Self-fulfillment"
+   },
+   "linePositions": {
+    "1": "09°30'00\" – 10°26'15\" Libra",
+    "2": "10°26'15\" – 11°22'30\" Libra",
+    "3": "11°22'30\" – 12°18'45\" Libra",
+    "4": "12°18'45\" – 13°15'00\" Libra",
+    "5": "13°15'00\" – 14°11'15\" Libra",
+    "6": "14°11'15\" – 15°07'30\" Libra"
+   }
+  },
+  "49": {
+   "gate": 49,
+   "name": "Revolution",
+   "archetype": "Principles / Rejection",
+   "base": 3,
+   "anchor": "Survival",
+   "zodiac": "Aquarius",
+   "house": 11,
+   "meanings": "Science, Humanitarianism, Music",
+   "center": "Solar Plexus",
+   "biology": "Kidney/Pancreas",
+   "harmonic": "19",
+   "lines": {
+    "1": "Law",
+    "2": "The Last Resort",
+    "3": "Popularity",
+    "4": "Platform",
+    "5": "The General",
+    "6": "Liberty"
+   }
+  },
+  "50": {
+   "gate": 50,
+   "name": "The Cauldron",
+   "archetype": "Values / Responsibility",
+   "base": 4,
+   "anchor": "Structure",
+   "zodiac": "Libra",
+   "house": 7,
+   "meanings": "Appreciation, Transcendence, Sex",
+   "center": "Splenic",
+   "biology": "Spleen/Lymph",
+   "harmonic": "27",
+   "lines": {
+    "1": "The Immigrant",
+    "2": "Determination",
+    "3": "Adaptability",
+    "4": "Corruption",
+    "5": "Consistency",
+    "6": "Leadership"
+   },
+   "linePositions": {
+    "1": "26°22'30\" – 27°18'45\" Libra",
+    "2": "27°18'45\" – 28°15'00\" Libra",
+    "3": "28°15'00\" – 29°11'15\" Libra",
+    "4": "29°11'15\" Libra – 00°07'30\" Scorpio",
+    "5": "00°07'30\" – 01°03'45\" Scorpio",
+    "6": "01°03'45\" – 02°00'00\" Scorpio"
+   }
+  },
+  "51": {
+   "gate": 51,
+   "name": "The Arousing",
+   "archetype": "Shock / Initiation",
+   "base": 1,
+   "anchor": "Energy",
+   "zodiac": "Aries",
+   "house": 1,
+   "meanings": "Desire, Will, Impulse/Courage",
+   "center": "Heart (Ego)",
+   "biology": "Thymus Gland",
+   "harmonic": "25",
+   "lines": {
+    "1": "Reference",
+    "2": "Withdrawal",
+    "3": "Adaption",
+    "4": "Limitation",
+    "5": "Symmetry",
+    "6": "Separation"
+   },
+   "linePositions": {
+    "1": "15°07'30\" – 16°03'45\" Aries",
+    "2": "16°03'45\" – 17°00'00\" Aries",
+    "3": "17°00'00\" – 17°56'15\" Aries",
+    "4": "17°56'15\" – 18°52'30\" Aries",
+    "5": "18°52'30\" – 19°48'45\" Aries",
+    "6": "19°48'45\" – 20°45'00\" Aries"
+   }
+  },
+  "52": {
+   "gate": 52,
+   "name": "Keeping Still",
+   "archetype": "Stillness / Concentration",
+   "base": 4,
+   "anchor": "Structure",
+   "zodiac": "Cancer",
+   "house": 4,
+   "meanings": "Receptivity, Sensitivity, Home/Family",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "9",
+   "lines": {
+    "1": "Think before you speak",
+    "2": "Concern",
+    "3": "Controls",
+    "4": "Self-discipline",
+    "5": "Explanation",
+    "6": "Peacefulness"
+   },
+   "linePositions": {
+    "1": "03°52'30\" – 04°48'45\" Cancer",
+    "2": "04°48'45\" – 05°45'00\" Cancer",
+    "3": "05°45'00\" – 06°41'15\" Cancer",
+    "4": "06°41'15\" – 07°37'30\" Cancer",
+    "5": "07°37'30\" – 08°33'45\" Cancer",
+    "6": "08°33'45\" – 09°30'00\" Cancer"
+   }
+  },
+  "53": {
+   "gate": 53,
+   "name": "Development",
+   "archetype": "Development / Beginnings",
+   "base": 4,
+   "anchor": "Progress",
+   "zodiac": "Cancer",
+   "house": 4,
+   "meanings": "Receptivity, Sensitivity, Home/Family",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "42",
+   "lines": {
+    "1": "Accumulation",
+    "2": "Momentum",
+    "3": "Practicality",
+    "4": "Assuredness",
+    "5": "Assertion",
+    "6": "Phasing"
+   },
+   "linePositions": {
+    "1": "15°07'30\" – 16°03'45\" Cancer",
+    "2": "16°03'45\" – 17°00'00\" Cancer",
+    "3": "17°00'00\" – 17°56'15\" Cancer",
+    "4": "17°56'15\" – 18°52'30\" Cancer",
+    "5": "18°52'30\" – 19°48'45\" Cancer",
+    "6": "19°48'45\" – 20°45'00\" Cancer"
+   }
+  },
+  "54": {
+   "gate": 54,
+   "name": "Marrying Maiden",
+   "archetype": "Ambition / Drive",
+   "base": 4,
+   "anchor": "Manifestation",
+   "zodiac": "Capricorn",
+   "house": 10,
+   "meanings": "Ambition, Government, Status",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "32",
+   "lines": {
+    "1": "Influence",
+    "2": "Discretion",
+    "3": "Interaction",
+    "4": "Enlightenment",
+    "5": "Magnanimity",
+    "6": "Selectivity"
+   }
+  },
+  "55": {
+   "gate": 55,
+   "name": "Abundance",
+   "archetype": "Spirit / Emotional Wave",
+   "base": 5,
+   "anchor": "Music / Freedom",
+   "zodiac": "Pisces",
+   "house": 12,
+   "meanings": "Openness, Devotion, Conflict",
+   "center": "Solar Plexus",
+   "biology": "Kidney/Pancreas",
+   "harmonic": "39",
+   "lines": {
+    "1": "Cooperation",
+    "2": "Distrust",
+    "3": "Innocence",
+    "4": "Assimilation",
+    "5": "Self-centeredness",
+    "6": "Selfishness"
+   }
+  },
+  "56": {
+   "gate": 56,
+   "name": "The Wanderer",
+   "archetype": "Stimulation / Storytelling",
+   "base": 5,
+   "anchor": "Fantasy / Illusion",
+   "zodiac": "Leo",
+   "house": 5,
+   "meanings": "Sensitivity, Self-expression, Pleasure",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "harmonic": "11",
+   "lines": {
+    "1": "Quality",
+    "2": "Linkage",
+    "3": "Alienation",
+    "4": "Expediency",
+    "5": "Attracting attention",
+    "6": "Caution"
+   },
+   "linePositions": {
+    "1": "26°22'30\" – 27°18'45\" Cancer",
+    "2": "27°18'45\" – 28°15'00\" Cancer",
+    "3": "28°15'00\" – 29°11'15\" Cancer",
+    "4": "29°11'15\" Cancer – 00°07'30\" Leo",
+    "5": "00°07'30\" – 01°03'45\" Leo",
+    "6": "01°03'45\" – 02°00'00\" Leo"
+   }
+  },
+  "57": {
+   "gate": 57,
+   "name": "Gentle",
+   "archetype": "Intuitive Clarity",
+   "base": 4,
+   "anchor": "Smell",
+   "zodiac": "Libra",
+   "house": 7,
+   "meanings": "Comparison, Appreciation, Evaluation",
+   "center": "Splenic",
+   "biology": "Spleen/Lymph",
+   "harmonic": "10, 20, 34",
+   "lines": {
+    "1": "Confusion",
+    "2": "Cleansing",
+    "3": "Acuteness",
+    "4": "The Director",
+    "5": "Progression",
+    "6": "Utilization"
+   },
+   "linePositions": {
+    "1": "15°07'30\" – 16°03'45\" Libra",
+    "2": "16°03'45\" – 17°00'00\" Libra",
+    "3": "17°00'00\" – 17°56'15\" Libra",
+    "4": "17°56'15\" – 18°52'30\" Libra",
+    "5": "18°52'30\" – 19°48'45\" Libra",
+    "6": "19°48'45\" – 20°45'00\" Libra"
+   }
+  },
+  "58": {
+   "gate": 58,
+   "name": "Joyous",
+   "archetype": "Vitality / Joy",
+   "base": 3,
+   "anchor": "Biology",
+   "zodiac": "Capricorn",
+   "house": 10,
+   "meanings": "Ambition, Government, Status",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "18",
+   "lines": {
+    "1": "Love of Life",
+    "2": "Perversion",
+    "3": "Electricity",
+    "4": "Focus",
+    "5": "Defense",
+    "6": "Carried Away"
+   }
+  },
+  "59": {
+   "gate": 59,
+   "name": "Dispersion",
+   "archetype": "Intimacy / Sex",
+   "base": 3,
+   "anchor": "Sex",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Mental Detail, Service, Judgment",
+   "center": "Sacral",
+   "biology": "Ovaries/Testes",
+   "harmonic": "6",
+   "lines": {
+    "1": "The Preemptive Strike",
+    "2": "Shyness",
+    "3": "Openness",
+    "4": "Brotherhood/Sisterhood",
+    "5": "The Femme Fatale or Casanova",
+    "6": "The One Night Stand"
+   },
+   "linePositions": {
+    "1": "00°07'30\" – 01°03'45\" Virgo",
+    "2": "01°03'45\" – 02°00'00\" Virgo",
+    "3": "02°00'00\" – 02°56'15\" Virgo",
+    "4": "02°56'15\" – 03°52'30\" Virgo",
+    "5": "03°52'30\" – 04°48'45\" Virgo",
+    "6": "04°48'45\" – 05°45'00\" Virgo"
+   }
+  },
+  "60": {
+   "gate": 60,
+   "name": "Limitation",
+   "archetype": "Acceptance / Limitation",
+   "base": 1,
+   "anchor": "Limitation",
+   "zodiac": "Capricorn",
+   "house": 10,
+   "meanings": "Ambition, Science, Humanitarianism",
+   "center": "Root",
+   "biology": "Adrenal Glands",
+   "harmonic": "3",
+   "lines": {
+    "1": "Acceptance",
+    "2": "Decisiveness",
+    "3": "Conservatism",
+    "4": "Resourcefulness",
+    "5": "Leadership",
+    "6": "Rigidity"
+   }
+  },
+  "61": {
+   "gate": 61,
+   "name": "Inner Truth",
+   "archetype": "Mystery / Truth",
+   "base": 2,
+   "anchor": "Light",
+   "zodiac": "Capricorn",
+   "house": 10,
+   "meanings": "Ambition, Government, Status",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "harmonic": "24",
+   "lines": {
+    "1": "Occult Knowledge",
+    "2": "Natural Brilliance",
+    "3": "Interdependence",
+    "4": "Research",
+    "5": "Influence",
+    "6": "Appeal"
+   }
+  },
+  "62": {
+   "gate": 62,
+   "name": "Small Preponderance",
+   "archetype": "Details / Precision",
+   "base": 5,
+   "anchor": "Form",
+   "zodiac": "Cancer",
+   "house": 4,
+   "meanings": "Receptivity, Sensitivity, Home/Family",
+   "center": "Throat",
+   "biology": "Thyroid",
+   "harmonic": "17",
+   "lines": {
+    "1": "Routine",
+    "2": "Restraint",
+    "3": "Discovery",
+    "4": "Asceticism",
+    "5": "Metamorphosis",
+    "6": "Self-discipline"
+   },
+   "linePositions": {
+    "1": "20°45'00\" – 21°41'15\" Cancer",
+    "2": "21°41'15\" – 22°37'30\" Cancer",
+    "3": "22°37'30\" – 23°33'45\" Cancer",
+    "4": "23°33'45\" – 24°30'00\" Cancer",
+    "5": "24°30'00\" – 25°26'15\" Cancer",
+    "6": "25°26'15\" – 26°22'30\" Cancer"
+   }
+  },
+  "63": {
+   "gate": 63,
+   "name": "After Completion",
+   "archetype": "Doubt / Inquiry",
+   "base": 2,
+   "anchor": "Gravity",
+   "zodiac": "Pisces",
+   "house": 12,
+   "meanings": "Openness, Devotion, Conflict",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "harmonic": "4",
+   "lines": {
+    "1": "Composure",
+    "2": "Structuring",
+    "3": "Continuance",
+    "4": "Memory",
+    "5": "Affirmation",
+    "6": "Nostalgia"
+   }
+  },
+  "64": {
+   "gate": 64,
+   "name": "Before Completion",
+   "archetype": "Confusion / Abstract",
+   "base": 2,
+   "anchor": "Memory",
+   "zodiac": "Virgo",
+   "house": 6,
+   "meanings": "Mental Detail, Service, Judgment",
+   "center": "Ajna",
+   "biology": "Pituitary Glands",
+   "harmonic": "47",
+   "lines": {
+    "1": "Conditions",
+    "2": "Qualification",
+    "3": "Over-extension",
+    "4": "Conviction",
+    "5": "Promise",
+    "6": "Victory"
+   },
+   "linePositions": {
+    "1": "11°22'30\" – 12°18'45\" Virgo",
+    "2": "12°18'45\" – 13°15'00\" Virgo",
+    "3": "13°15'00\" – 14°11'15\" Virgo",
+    "4": "14°11'15\" – 15°07'30\" Virgo",
+    "5": "15°07'30\" – 16°03'45\" Virgo",
+    "6": "16°03'45\" – 17°00'00\" Virgo"
+   }
+  }
+ },
+ "zodiac": [
+  {
+   "Zodiac Sign": "Aries",
+   "Modality": "Cardinal",
+   "Element": "Fire",
+   "Associated House": "House 1",
+   "Primary Environmental Domain": "Emergence / Self-Identity",
+   "Core Archetypal Keywords": "Initiative, Spark, Primordial Force, Ignition"
+  },
+  {
+   "Zodiac Sign": "Taurus",
+   "Modality": "Fixed",
+   "Element": "Earth",
+   "Associated House": "House 2",
+   "Primary Environmental Domain": "Resources / Material Form",
+   "Core Archetypal Keywords": "Persistence, Substance, Value, Grounding"
+  },
+  {
+   "Zodiac Sign": "Gemini",
+   "Modality": "Mutable",
+   "Element": "Air",
+   "Associated House": "House 3",
+   "Primary Environmental Domain": "Local Exchange / Duality",
+   "Core Archetypal Keywords": "Connectivity, Perception, Duality, Syntax"
+  },
+  {
+   "Zodiac Sign": "Cancer",
+   "Modality": "Cardinal",
+   "Element": "Water",
+   "Associated House": "House 4",
+   "Primary Environmental Domain": "Roots / Containment",
+   "Core Archetypal Keywords": "Sanctuary, Memory, Container, Ancestry"
+  },
+  {
+   "Zodiac Sign": "Leo",
+   "Modality": "Fixed",
+   "Element": "Fire",
+   "Associated House": "House 5",
+   "Primary Environmental Domain": "Radiance / Expression",
+   "Core Archetypal Keywords": "Vitality, Sovereignty, Creation, Heart-Core"
+  },
+  {
+   "Zodiac Sign": "Virgo",
+   "Modality": "Mutable",
+   "Element": "Earth",
+   "Associated House": "House 6",
+   "Primary Environmental Domain": "Refinement / Synthesis",
+   "Core Archetypal Keywords": "Discrimination, Order, Synthesis, Craft"
+  },
+  {
+   "Zodiac Sign": "Libra",
+   "Modality": "Cardinal",
+   "Element": "Air",
+   "Associated House": "House 7",
+   "Primary Environmental Domain": "Equanimity / Mirroring",
+   "Core Archetypal Keywords": "Harmony, Polarization, Mirroring, Reciprocity"
+  },
+  {
+   "Zodiac Sign": "Scorpio",
+   "Modality": "Fixed",
+   "Element": "Water",
+   "Associated House": "House 8",
+   "Primary Environmental Domain": "Transmutation / Depth",
+   "Core Archetypal Keywords": "Regeneration, Bonding, Fusion, Catharsis"
+  },
+  {
+   "Zodiac Sign": "Sagittarius",
+   "Modality": "Mutable",
+   "Element": "Fire",
+   "Associated House": "House 9",
+   "Primary Environmental Domain": "Vector / Expansion",
+   "Core Archetypal Keywords": "Truth, Trajectory, Expansion, Synthesis"
+  },
+  {
+   "Zodiac Sign": "Capricorn",
+   "Modality": "Fixed",
+   "Element": "Earth",
+   "Associated House": "House 10",
+   "Primary Environmental Domain": "Architecture / Mastery",
+   "Core Archetypal Keywords": "Structure, Integrity, Pinnacle, Crystallization"
+  },
+  {
+   "Zodiac Sign": "Aquarius",
+   "Modality": "Fixed",
+   "Element": "Air",
+   "Associated House": "House 11",
+   "Primary Environmental Domain": "Network / Innovation",
+   "Core Archetypal Keywords": "Frequency, Universal Mind, Collective, Innovation"
+  },
+  {
+   "Zodiac Sign": "Pisces",
+   "Modality": "Mutable",
+   "Element": "Water",
+   "Associated House": "House 12",
+   "Primary Environmental Domain": "Dissolution / Transcendent",
+   "Core Archetypal Keywords": "Boundless, Unity, Resonance, Dissolution"
+  }
+ ],
+ "axis": [
+  {
+   "Axis Type": "Vertical",
+   "Directional Vector": "Spirit–Matter / Transcendent",
+   "Primary Associated Bases": "Base 3 (Being), Base 1 (Movement)",
+   "Associated Astrological Nodes": "MC / IC, North / South Nodes",
+   "Structural Effect on Sentence Traversal": "Establishes the core axial alignment between pure consciousness and physical embodiment."
+  },
+  {
+   "Axis Type": "Horizontal",
+   "Directional Vector": "Self–Other / Relational",
+   "Primary Associated Bases": "Base 5 (Space), Base 2 (Evolution)",
+   "Associated Astrological Nodes": "ASC / DSC, Horizon",
+   "Structural Effect on Sentence Traversal": "Defines the relational frequency, governing interaction, projection, and sensory dialogue."
+  },
+  {
+   "Axis Type": "Diagonal",
+   "Directional Vector": "Evolutionary / Kinetic",
+   "Primary Associated Bases": "Base 4 (Design)",
+   "Associated Astrological Nodes": "Vertex / Anti-Vertex, Intercepted Axes",
+   "Structural Effect on Sentence Traversal": "Drives non-linear mutations, karmic shifts, and structural adaptation vectors."
+  }
+ ],
+ "baseTone": [
+  {
+   "Base": "1. Movement",
+   "Tone 1 (Security)": "Valid (Smell/Security)",
+   "Tone 2 (Uncertainty)": "Valid (Taste/Discern)",
+   "Tone 3 (Action)": "Resonant Anchor (Outer Vision)",
+   "Tone 4 (Meditation)": "Valid (Inner Vision)",
+   "Tone 5 (Judgement)": "Valid (Feeling)",
+   "Tone 6 (Acceptance)": "Valid (Hearing)"
+  },
+  {
+   "Base": "2. Evolution",
+   "Tone 1 (Security)": "Valid (Smell/Survival)",
+   "Tone 2 (Uncertainty)": "Resonant Anchor (Taste)",
+   "Tone 3 (Action)": "Valid (Outer Vision)",
+   "Tone 4 (Meditation)": "Valid (Inner Vision)",
+   "Tone 5 (Judgement)": "Valid (Feeling)",
+   "Tone 6 (Acceptance)": "Valid (Hearing/Sound)"
+  },
+  {
+   "Base": "3. Being",
+   "Tone 1 (Security)": "Valid (Smell/Instinct)",
+   "Tone 2 (Uncertainty)": "Valid (Taste/Exploration)",
+   "Tone 3 (Action)": "Valid (Outer Vision)",
+   "Tone 4 (Meditation)": "Valid (Inner Vision)",
+   "Tone 5 (Judgement)": "Valid (Feeling)",
+   "Tone 6 (Acceptance)": "Resonant Anchor (Touch/Hearing)"
+  },
+  {
+   "Base": "4. Design",
+   "Tone 1 (Security)": "Resonant Anchor (Smell)",
+   "Tone 2 (Uncertainty)": "Valid (Taste/Doubt)",
+   "Tone 3 (Action)": "Valid (Outer Vision)",
+   "Tone 4 (Meditation)": "Valid (Inner Vision)",
+   "Tone 5 (Judgement)": "Valid (Feeling)",
+   "Tone 6 (Acceptance)": "Valid (Hearing)"
+  },
+  {
+   "Base": "5. Space",
+   "Tone 1 (Security)": "Valid (Smell/Caution)",
+   "Tone 2 (Uncertainty)": "Valid (Taste/Testing)",
+   "Tone 3 (Action)": "Valid (Outer Vision)",
+   "Tone 4 (Meditation)": "Valid (Inner Vision)",
+   "Tone 5 (Judgement)": "Valid (Feeling)",
+   "Tone 6 (Acceptance)": "Resonant Anchor (Hearing/Music)"
+  }
+ ],
+ "toneColor": [
+  {
+   "Tone": "Tone 1 (Security)",
+   "Compatible Colors": "Color 1 (Fear), Color 2 (Hope)",
+   "Incompatible Combinations": "Color 6 (Innocence - Passive vs. Alert conflict)",
+   "Binary Operational Framing": "Splenic Instinct / Immediate Survival"
+  },
+  {
+   "Tone": "Tone 2 (Uncertainty)",
+   "Compatible Colors": "Color 1 (Fear), Color 2 (Hope)",
+   "Incompatible Combinations": "Color 4 (Need - Fixity vs. Exploration conflict)",
+   "Binary Operational Framing": "Splenic Discrimination / Trial Taste"
+  },
+  {
+   "Tone": "Tone 3 (Action)",
+   "Compatible Colors": "Color 3 (Desire), Color 4 (Need)",
+   "Incompatible Combinations": "Color 1 (Fear - Paralysis vs. Action conflict)",
+   "Binary Operational Framing": "Ajna Outer Focus / Objective Execution"
+  },
+  {
+   "Tone": "Tone 4 (Meditation)",
+   "Compatible Colors": "Color 3 (Desire), Color 4 (Need)",
+   "Incompatible Combinations": "Color 5 (Guilt - External projection conflict)",
+   "Binary Operational Framing": "Ajna Inner Vision / Contemplative Mind"
+  },
+  {
+   "Tone": "Tone 5 (Judgement)",
+   "Compatible Colors": "Color 4 (Need), Color 5 (Guilt)",
+   "Incompatible Combinations": "Color 2 (Hope - Blind faith vs. Evaluation conflict)",
+   "Binary Operational Framing": "Solar Plexus Discernment / Emotional Weight"
+  },
+  {
+   "Tone": "Tone 6 (Acceptance)",
+   "Compatible Colors": "Color 5 (Guilt), Color 6 (Innocence)",
+   "Incompatible Combinations": "Color 1 (Fear - Defense vs. Integration conflict)",
+   "Binary Operational Framing": "Solar Plexus Resonance / Synthesis"
+  }
+ ],
+ "lineTrajectory": [
+  {
+   "Line #": "1",
+   "Orbital Name": "Foundation",
+   "Traversal Angle": "Forward Sequential",
+   "Mechanics & Graph Effect": "Starts strictly at Anchor Node; walks forward $N+1$, emphasizing foundational origins."
+  },
+  {
+   "Line #": "2",
+   "Orbital Name": "Natural",
+   "Traversal Angle": "Unbroken Natural",
+   "Mechanics & Graph Effect": "Traverses whole chain seamlessly along natural harmonic gradient without jumping."
+  },
+  {
+   "Line #": "3",
+   "Orbital Name": "Experimentation",
+   "Traversal Angle": "Non-Linear / Loop",
+   "Mechanics & Graph Effect": "Permitted to skip intermediate nodes or execute a recursive loop (e.g., $A to C to B to C$)."
+  },
+  {
+   "Line #": "4",
+   "Orbital Name": "Externalization",
+   "Traversal Angle": "Outward Projection",
+   "Mechanics & Graph Effect": "Emphasizes external nodes (e.g., Environment, Landscape, Communication)."
+  },
+  {
+   "Line #": "5",
+   "Orbital Name": "Projection",
+   "Traversal Angle": "Universalizing",
+   "Mechanics & Graph Effect": "Broadens keyword definitions, projecting output across universalized domains."
+  },
+  {
+   "Line #": "6",
+   "Orbital Name": "Transition",
+   "Traversal Angle": "Direct Terminal Leap",
+   "Mechanics & Graph Effect": "Skips intermediate nodes, jumping directly from the Anchor Node to the terminal link ($A to F$)."
+  }
+ ],
+ "missingLines": []
+}

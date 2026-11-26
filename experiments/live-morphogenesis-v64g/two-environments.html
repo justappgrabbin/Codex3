@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swarm · Two environments</title>
+<style>
+  * { box-sizing:border-box }
+  body { margin:0; background:#180f20; color:#f7eefa; font:16px system-ui,sans-serif }
+  main { max-width:840px; margin:auto; padding:32px 20px }
+  a { color:#eec5fa }
+  button { background:#e9b4ee; color:#210b2b; border:0; border-radius:8px; padding:12px 18px; font:inherit; font-weight:650; cursor:pointer }
+  article { border:1px solid #62456a; background:#24172e; border-radius:14px; padding:18px; min-width:0 }
+  section { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:16px }
+  article h2 { margin:0; font-size:1.25rem }
+  p { line-height:1.5 }
+  pre { font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; color:#ded1e8 }
+  canvas { display:block; width:100%; max-width:320px; image-rendering:pixelated; border-radius:8px }
+</style>
+<main>
+  
+  <h1>Two-environment test</h1>
+  <p>Send the same 64-gate swarm into an incomplete app and a grid world. Each host scores what survives after the swarm leaves.</p>
+  <button id="run">Run test</button>
+  <p id="status" role="status"></p>
+  <canvas id="swarm" width="320" height="170" aria-label="Live changes in the swarm"></canvas>
+  <section id="results"></section>
+</main>
+<script type="module">
+import { runHost } from "./lifecycle.js";
+import { twoEnvironmentsLive } from "./two_environments.js";
+const run = document.querySelector("#run"), status = document.querySelector("#status"), results = document.querySelector("#results");
+const node = (tag, text) => Object.assign(document.createElement(tag), { textContent: text });
+function show(title, receipt, evidence) {
+  const phase = name => receipt.steps.find(s => s.step === name);
+  const card = node("article", "");
+  card.append(node("h2", title),
+    node("p", `Health ${phase("enter").checkWithout} → ${phase("extract")?.checkWithSwarmGone ?? "failed"}`),
+    node("p", `POP · ${phase("orient").pop.units} units · sees ${phase("orient").pop.perception.meanSeen} peers on average`),
+    node("p", `Formation · ${phase("construct")?.plan?.join(" → ") ?? "none"}`));
+  if (evidence) card.append(evidence);
+  results.append(card);
+}
+run.onclick = () => {
+  run.disabled = true;
+  status.textContent = "Running the swarm…";
+  results.replaceChildren();
+  requestAnimationFrame(() => setTimeout(async () => {
+    try {
+      const { app, habitat, appResult, worldResult } = await twoEnvironmentsLive((place, frame, swarm) => {
+        status.textContent = `${place} · round ${frame.round} · ${frame.carriers.length} units taking on trial roles`;
+        const canvas = document.querySelector("#swarm"), ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#24172e";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (const unit of swarm.units) {
+          ctx.fillStyle = unit.trialRole ? "#fa9eee" : "#b59ac4";
+          const radius = unit.trialRole ? 4 : 2;
+          ctx.beginPath();
+          ctx.arc(unit.x * canvas.width, unit.y * canvas.height, radius, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+        return new Promise(resolve => setTimeout(resolve, 80));
+      });
+      const preview = node("div", "");
+      if (appResult.ok) {
+        const { exports } = runHost(app.app.files, { entry: "panel.js" });
+        const inputs = ["A", "B"].map(name => {
+          const label = node("label", `${name} `), input = node("input", "");
+          input.type = "checkbox";
+          label.append(input);
+          preview.append(label, " ");
+          return input;
+        });
+        const output = node("p", "");
+        const update = () => { output.textContent = `Indicator ${exports.panel(...inputs.map(input => Number(input.checked))) ? "on" : "off"}`; };
+        inputs.forEach(input => input.onchange = update);
+        update();
+        preview.append(output);
+      }
+      const source = node("details", "");
+      source.append(node("summary", "Grown JavaScript"), node("pre", app.app.files.find(f => f.path === "indicator.js")?.text ?? ""));
+      preview.append(source);
+      show("Incomplete app", appResult, preview);
+      const canvas = node("canvas", "");
+      const world = habitat.world.fork().run(120);
+      canvas.width = world.w;
+      canvas.height = world.h;
+      canvas.setAttribute("aria-label", "Grid with the integrated descendant running after extraction");
+      const ctx = canvas.getContext("2d");
+      world.cells.forEach((rgb, i) => {
+        ctx.fillStyle = `rgb(${rgb.join(",")})`;
+        ctx.fillRect(i % world.w, Math.floor(i / world.w), 1, 1);
+      });
+      show("Grid world", worldResult, canvas);
+      status.textContent = appResult.ok && worldResult.ok ? "Passed both environments. Both descendants work independently." : "One or more environments failed.";
+      document.body.dataset.result = appResult.ok && worldResult.ok ? "pass" : "fail";
+    } catch (error) {
+      status.textContent = error.message;
+      document.body.dataset.result = "fail";
+    } finally {
+      run.disabled = false;
+    }
+  }, 0));
+};
+if (new URLSearchParams(location.search).has("run")) run.click();
+</script>
+</html>

@@ -1,0 +1,670 @@
+--- a/living.html
++++ b/living.html
+@@ -21,7 +21,7 @@
+ <div id="info">Tap a unit once to see what touching it will do. Tap it again to touch it.</div>
+ <div id="faces" style="padding:6px 10px;font-size:13px;color:#dfc"></div>
+ <div id="world" style="padding:6px 10px;font-size:13px;color:#fdc"></div>
+-<div style="padding:6px 10px"><button id="tellme">Tell me what happened</button> <span id="cwstat" style="font-size:12px;color:#cdf"></span></div><div id="story" style="padding:6px 10px;font-size:13px;color:#eee"></div>
++<div style="padding:6px 10px"><a href="./two-environments.html" style="color:#eec5fa;margin-right:12px">Two-environment test</a><button id="tellme">Tell me what happened</button> <span id="cwstat" style="font-size:12px;color:#cdf"></span></div><div id="story" style="padding:6px 10px;font-size:13px;color:#eee"></div>
+ <div id="pop" style="padding:6px 10px;font-size:13px;color:#cfd"></div>
+ <div id="kern" style="padding:6px 10px;font-size:13px;color:#dcf"></div>
+ <div id="nn" style="padding:6px 10px;font-size:13px;color:#fcd"></div>
+@@ -157,7 +157,19 @@
+     st.textContent = `picture · lead ${S.leader} · units ${live.length} · settled ${Math.round(100 * settled / live.length)}% · remembered ${remembered}${window.__scene ? ` · ${window.__scene.regions.length} regions, ${window.__scene.relations.length} relations` : ''} · Klein ${K.stats().rules} rules${window.__lastShape ? ' · looked most like: ' + window.__lastShape : ''}`; return; }
+   for (const u of live) { const a = S.appearance(u), [x, y] = px(u), r = 26 * k * (0.6 + u.mass / 3);
+     cx.fillStyle = a.hex; for (const [dx, dy] of a.points) cx.fillRect(x + dx * r, y + dy * r, 1.6 * k, 1.6 * k);   // sand on the plate
+-    if (u.id === armed) { cx.strokeStyle = "#fff"; cx.lineWidth = k; cx.strokeRect(x - r / 2, y - r / 2, r, r); } }
++    if (u.id === armed || u.trialRole) { cx.strokeStyle = u.trialRole ? "#f7a4ee" : "#fff"; cx.lineWidth = k; cx.strokeRect(x - r / 2, y - r / 2, r, r); } }
++  for (const u of live) {
++    if (!u.trialRole) continue;
++    const [x, y] = px(u);
++    for (const id of u.trialRole.sources) {
++      const source = S.units[id];
++      if (!source || source === u || source.broken) continue;
++      const [sx, sy] = px(source);
++      cx.strokeStyle = "rgba(247,164,238,0.55)";
++      cx.lineWidth = k;
++      cx.beginPath(); cx.moveTo(x, y); cx.lineTo(sx, sy); cx.stroke();
++    }
++  }
+   const br = S.units.length - live.length;
+   st.textContent = `lead ${S.leader} · t ${S.t} · alive ${live.length} · broken off ${br} · clusters ${S.clusters().length}` + (window.__O?.focus?.status === 'resolved' ? ` · focus ${window.__O.focus.longitude.toFixed(1)}°` : '') + (window.__formation ? ` · reads as ${window.__formation}` : '') + (window.__N ? ` · needs open ${window.__N.open.length} · closed ${window.__N.closed.length}` : '');
+ }
+@@ -290,7 +302,11 @@
+       document.getElementById("life").innerHTML = "<b>lifecycle</b><br>" + r.report.steps.map(s => (say[s.step] ?? (() => s.step))(s)).join("<br>")
+         + r.host.filter(f => f.grown || fl.every(o => o.path !== f.path || o.text !== f.text)).map(f => `<br><a download="${f.path.split("/").pop()}" href="data:text/javascript,${encodeURIComponent(f.text)}">download ${f.path}</a>`).join(""); }
+     // finishing an app: functions the dropped files need but nothing defines, built by the units from the app's own asserts
+-    { const fin = finishApp(O, fl); if (fin.length) document.getElementById("life").innerHTML += "<br><b>finish the app</b><br>" + fin.map(x => x.ok
++    { const fin = await finishAppLive(O, fl, { onFrame: frame => {
++        info.textContent = `Morphing · round ${frame.round} · ${frame.carriers.length} units trying roles · ${frame.executions} trials`;
++        draw();
++        return new Promise(resolve => setTimeout(resolve, 45));
++      } }); if (fin.length) document.getElementById("life").innerHTML += "<br><b>finish the app</b><br>" + fin.map(x => x.ok
+         ? `${x.name}: built by ${x.by} (${x.plan.join(" → ")}), meets ${x.cases} examples · <a download="${x.path.split("/").pop()}" href="data:text/javascript,${encodeURIComponent(x.code)}">download ${x.path}</a>`
+         : `${x.name}: not built — ${x.why}`).join("<br>"); }
+   }
+@@ -360,7 +376,7 @@
+ 
+ // ---- build another me: the live swarm plans its child (reproduce.js) and hands it what it learned (child.js) ----
+ import { makeChild } from "./child.js";
+-import { finishApp } from "./finish.js";
++import { finishAppLive } from "./finish.js";
+ document.getElementById("child").onclick = async () => { const o = document.getElementById("childout"); o.textContent = "planning the child…";
+   try { const r = await makeChild({ S, FA, K, KL, N, LIB, extra: document.getElementById("childx").value.trim() });
+     const g = r.genome; o.innerHTML = r.steps.map(s => s.step + (s.note ? ": " + s.note : "")).join(" → ")
+--- a/finish.js
++++ b/finish.js
+@@ -3,7 +3,7 @@
+ // the app's own asserts (assert(JSON.stringify(f(...)) === "...")), and lets the UNITS construct each one
+ // (morphogenesis.enter over softwareHost) from the toolbox plus abilities learned from repositories plus what it grew
+ // before. Only a function that meets every example — and the one held back, when there are 3+ — is handed back.
+-import { enter } from "./morphogenesis.js";
++import { enter, enterLive } from "./morphogenesis.js";
+ import { softwareHost } from "./hosts.js";
+ import { runHost } from "./lifecycle.js";
+ import { TOOLBOX, TYPES } from "./toolbox.js";
+@@ -25,7 +25,33 @@
+   return [...wanted.values()].filter(w => !defined.has(w.name) && w.examples.length);
+ }
+ 
+-export function finishApp(O, files, { abilities = [], grown = [], budget = 4000 } = {}) {
++export function finishApp(O, files, options) {
++  const jobs = finishingJobs(files, options);
++  let next = jobs.next();
++  while (!next.done) {
++    const { host, budget } = next.value;
++    let response;
++    try { response = { result: enter(O, host, { budget }) }; }
++    catch (error) { response = { error }; }
++    next = jobs.next(response);
++  }
++  return next.value;
++}
++
++export async function finishAppLive(O, files, { onFrame, ...options } = {}) {
++  const jobs = finishingJobs(files, options);
++  let next = jobs.next();
++  while (!next.done) {
++    const { host, budget } = next.value;
++    let response;
++    try { response = { result: await enterLive(O, host, { budget, onFrame }) }; }
++    catch (error) { response = { error }; }
++    next = jobs.next(response);
++  }
++  return next.value;
++}
++
++function* finishingJobs(files, { abilities = [], grown = [], budget = 4000 } = {}) {
+   const report = [];
+   for (const need of needsOf(files)) {
+     const ex0 = need.examples[0], params = ex0.args.map((v, i) => ({ id: "p" + i, type: typeOf(v) })), outType = typeOf(ex0.out);
+@@ -39,7 +65,8 @@
+     const testOf = list => `import { ${need.name} } from './${need.path}';\n` + list.map(e => `assert(JSON.stringify(${call(e.args)}) === ${JSON.stringify(JSON.stringify(e.out))});`).join("\n") + "\n";
+     const host = softwareHost({ name: "app:" + need.name, types: TYPES, files: [{ path: "test.js", text: testOf(seen) }], materials: mats, operations: ops,
+       requirement: { name: need.name, path: need.path, params: params.map(p => p.id), outType, cases: seen.map(e => ({ args: e.args, out: e.out })) } });
+-    let r; try { r = enter(O, host, { budget }); } catch (e) { report.push({ name: need.name, ok: false, why: "construction error: " + e.message }); continue; }
++    const { result: r, error } = yield { host, budget };
++    if (error) { report.push({ name: need.name, ok: false, why: "construction error: " + error.message }); continue; }
+     const st = n => r.steps.filter(s => s.step === n).at(-1);
+     if (!r.ok) { report.push({ name: need.name, ok: false, why: st("fail")?.reason ?? "not built", steps: r.steps }); continue; }
+     const code = host.app.files.find(f => f.path === need.path).text;
+--- a/morphogenesis.js
++++ b/morphogenesis.js
+@@ -8,7 +8,8 @@
+ // larger limits on the SAME substrate (so clusters are shared), memory of which materials a formation used.
+ import { PrimitiveSwarm } from "./codex3/synthia-dual-swarm/core/primitive-swarm.js";
+ import { installPrimitives } from "./codex3/synthia-dual-swarm/core/primitives.js";
+-import { unitsConstruct, runPlan } from "./unitbuild.js";
++import { readPOP } from "./opp.js";
++import { unitsConstruct, constructRounds, runPlan, matchesGoal } from "./unitbuild.js";
+ 
+ /** The organism's builder for morphing: same substrate as O.function, bigger working limits. */
+ export function morphBuilder(O) {
+@@ -30,12 +31,55 @@
+   return carry;
+ }
+ 
+-export function enter(O, host, { budget = 4000 } = {}) {
++const liveRuns = new WeakSet();
++
++export function enter(O, host, options) {
++  if (liveRuns.has(O)) throw new Error("this swarm is already morphing");
++  return cycle(O, host, { ...options, live: false }).next().value;
++}
++
++export async function enterLive(O, host, { onFrame = () => {}, ...options } = {}) {
++  if (liveRuns.has(O)) throw new Error("this swarm is already morphing");
++  liveRuns.add(O);
++  const search = cycle(O, host, { ...options, live: true });
++  const units = new Map(O.S.units.map(u => [u.id, u]));
++  let active = [];
++  try {
++    let state = search.next();
++    for (; !state.done; state = search.next()) {
++      for (const id of active) delete units.get(id).trialRole;
++      const frame = state.value;
++      active = frame.carriers.map(c => c.unit);
++      for (const carrier of frame.carriers) {
++        const unit = units.get(carrier.unit);
++        unit.trialRole = carrier;
++        const sources = carrier.sources.map(id => units.get(id)).filter(source => source && source !== unit);
++        if (unit.target || !sources.length) continue;
++        const dx = sources.reduce((sum, source) => sum + source.x - unit.x, 0) / sources.length;
++        const dy = sources.reduce((sum, source) => sum + source.y - unit.y, 0) / sources.length;
++        unit.x += dx * 0.08;
++        unit.y += dy * 0.08;
++      }
++      await onFrame(frame, O.S);
++    }
++    return state.value;
++  } finally {
++    for (const id of active) delete units.get(id).trialRole;
++    search.return();
++    liveRuns.delete(O);
++  }
++}
++
++function* cycle(O, host, { budget = 4000, live = false } = {}) {
+   const B = morphBuilder(O), mem = O.morphMemory, steps = [], say = (step, d = {}) => steps.push({ step, ...d });
+   const before = host.check(); say("enter", { host: host.name, kind: host.kind, checkWithout: +before.toFixed(3) });
+   if (before >= host.enough) { say("nothing-needed"); return { ok: true, steps }; }
+-  const m = host.materials(); say("observe", { materials: m.observations.length, primitives: m.primitives.map(p => p.id) });
+-  say("discover", { needs: m.need });
++  const pop = host.healthOnly ? readPOP(O.S.units) : null;
++  if (pop) say("orient", { pop });
++  const m = host.materials();
++  if (!m) { say("fail", { reason: "no supported gap in the observations" }); return { ok: false, steps }; }
++ say("observe", { materials: m.observations.length, primitives: m.primitives.map(p => p.id) });
++  say("discover", host.healthOnly ? { observation: m.observation } : { needs: m.need });
+   for (const [t, v] of Object.entries(m.types ?? {})) if (!B.types.has(t)) B.registerType(t, v);
+   const dims = new Map(); for (const p of m.primitives) { B.register(p); dims.set(p.id, p.dimension ?? null); }
+   // what was learned before comes first: materials a past formation used are offered first (the builder tries in id order)
+@@ -48,11 +92,13 @@
+   // what can be used HERE: this host's operations, the organism's own primitives, and learned formations built only from those
+   const here = new Set([...B.builtin, ...m.primitives.map(p => p.id)]), usable = p => here.has(p.id) || (p.formation && p.formation.plan.every(s => usable(B.registry.get(s.op) ?? { id: s.op })));
+   const ops = [...B.registry.values()].filter(usable).map(p => ({ ...p, dimension: dims.get(p.id) ?? p.dimension }));
+-  const U = unitsConstruct(O.S, { types: Object.fromEntries([...B.types].map(([k, f]) => [k, f])), observations: obs, primitives: ops, cases });
++  const conditions = { types: Object.fromEntries(B.types), observations: obs, primitives: ops, cases, pop, live };
++  const U = live ? yield* constructRounds(O.S, conditions) : unitsConstruct(O.S, conditions);
+   let formation, by;
+   if (U.found) { formation = U.formation; by = "units";
+     say("construct", { by, recalled: !!U.recalled, simplified: U.simplified ?? 0, rounds: U.rounds, executions: U.executions, toFirst: U.toFirst, plan: formation.plan.map(s => s.op), units: formation.units, rejected: U.log.filter(l => !l.allCases).length }); }
+-  else { say("construct", { by: "units", found: false, executions: U.executions, note: "the units did not find it; the builder is asked" });
++  else { say("construct", { by: "units", found: false, executions: U.executions, note: host.healthOnly ? "no formation reached the health threshold" : "the units did not find it; the builder is asked" });
++    if (host.healthOnly) { say("fail", { reason: "no healthy formation found" }); return { ok: false, steps }; }
+     B.observe(obs).seek(cases[0].goal); let n = 0; while (B.state.running && n++ < budget) B.step();
+     const st = B.state; if (st.status !== "satisfied") { say("fail", { reason: `neither the units nor the builder met the host's requirement (builder ${st.status})` }); return { ok: false, steps }; }
+     const g = st.result.cluster ? O.function.core.require(st.result.cluster).state.graph : { steps: [], output: st.result.ref };
+@@ -67,7 +113,7 @@
+   const opsHere = new Map([...B.registry, ...ops.map(p => [p.id, p])]),   /* the builder may answer with its own clusters, so its registry is included */
+     result = runPlan(formation.plan, formation.output, opsHere, (t, x) => B.validate(t, x), cases[0].inputs);
+   /* every case is actually run (the builder searches on the first case only, so its answer can fit that one and no other) */
+-  const met = cases.filter(c => { try { const out = runPlan(formation.plan, formation.output, opsHere, (t, x) => B.validate(t, x), c.inputs); return c.goal.constraints.every(k => (k.path ?? []).length || JSON.stringify(out) === JSON.stringify(k.equals)); } catch { return false; } }).length;
++  const met = cases.filter(c => { try { const out = runPlan(formation.plan, formation.output, opsHere, (t, x) => B.validate(t, x), c.inputs); return matchesGoal(out, c.goal); } catch { return false; } }).length;
+   say("act+evaluate", { result, plan: formation.plan.map(s => s.op), casesMet: met, of: cases.length });
+   if (met < cases.length) { say("fail", { reason: `${by === "units" ? "the units'" : "the builder's"} formation met ${met} of ${cases.length} cases; nothing is grown or learned from it` }); return { ok: false, steps }; }
+   // LEARN (as a capability): the formation becomes one operation at the next scale, available to units and builder alike
+--- a/lifecycle.js
++++ b/lifecycle.js
+@@ -28,7 +28,7 @@
+     const imp = obs.imports.find(i => i.name === name); return { name, arity, cases, path: imp ? resolve(imp.in, imp.from) : `${name}.js` }; })
+     .filter(n => n.cases.length && n.arity >= 1 && n.arity <= LIFE.MAX_INPUTS);
+ }
+-const resolve = (from, rel) => { const base = from.split("/").slice(0, -1); for (const p of rel.split("/")) { if (p === "." || !p) continue; if (p === "..") base.pop(); else base.push(p); } return base.join("/"); };
++export const resolve = (from, rel) => { const base = from.split("/").slice(0, -1); for (const p of rel.split("/")) { if (p === "." || !p) continue; if (p === "..") base.pop(); else base.push(p); } return base.join("/"); };
+ export const signature = need => need.arity + ":" + need.cases.map(c => c.args.join("") + ">" + c.out).sort().join(",");
+ 
+ // ---------- EXPERIMENT / CONSTRUCT / TEST: arrangements of NAND units, smallest first ----------
+@@ -65,7 +65,7 @@
+ }
+ 
+ // ---------- INTEGRATE / VERIFY: run the host's own asserts with a small loader (host files only) ----------
+-export function runHost(host) {
++export function runHost(host, { entry } = {}) {
+   const files = new Map(host.map(f => [f.path, f.text])), cache = new Map(), failures = [];
+   const load = path => { if (cache.has(path)) return cache.get(path); const src = files.get(path); if (src === undefined) throw new Error("missing module " + path);
+     const exp = {}; cache.set(path, exp); const deps = [];
+@@ -76,7 +76,7 @@
+     new Function("__exp", "__load", "assert", pre + "\n" + body + "\n" + names.map(n => `__exp.${n} = ${n};`).join("\n"))(exp, load,
+       (ok, ...rest) => { if (!ok) failures.push({ in: path }); });
+     return exp; };
+-  try { for (const f of host) load(f.path); return { ok: failures.length === 0, failures, error: null }; }
++  try { for (const f of host) load(f.path); return { ok: failures.length === 0, failures, error: null, ...(entry ? { exports: load(entry) } : {}) }; }
+   catch (e) { return { ok: false, failures, error: String(e.message ?? e) }; }
+ }
+ 
+--- a/unitbuild.js
++++ b/unitbuild.js
+@@ -21,6 +21,9 @@
+     if (includes !== undefined && !((Array.isArray(f) || typeof f === "string") && f.includes(includes))) return false;
+     if (minimum !== undefined && !(typeof f === "number" && f >= minimum)) return false;
+     if (maximum !== undefined && !(typeof f === "number" && f <= maximum)) return false; return true; });
++}
++export function matchesGoal(value, goal) {
++  return matches(value, goal.constraints) && (!goal.accept || goal.accept(value));
+ }
+ // how close a value is to what the host asked for (character-pair overlap of their written forms) — the units build on
+ // whatever is closest first. This is the host's requirement acting as a gradient, not a recipe.
+@@ -62,9 +65,22 @@
+  * The units build. m = { types, observations:[{id,type,value}], primitives:[ops], cases:[{inputs:{id:value}, goal:{type,constraints}}] }.
+  * Returns { found, formation:{plan, output, units}, rounds, executions, log }.
+  */
+-export function unitsConstruct(S, m, { rounds = 150, perUnit = 3, perRound = 3, leader = S.leader } = {}) {
++export function unitsConstruct(S, m, options) {
++  const search = constructRounds(S, m, options);
++  let state = search.next();
++  while (!state.done) state = search.next();
++  return state.value;
++}
++
++export function* constructRounds(S, m, { rounds = 150, perUnit = 3, perRound = 3, leader = S.leader } = {}) {
+   const ops = new Map(m.primitives.map(p => [p.id, p])), types = m.types ?? {}, validate = (t, x) => { if (types[t] && !types[t](x)) throw Error("type " + t); };
+-  const units = S.units.filter(u => !u.broken), byId = new Map(units.map(u => [u.id, u]));
++  const units = S.units.filter(u => !u.broken);
++  if (m.pop) {
++    // Start with units that can see their peers. Give sparsely represented actions a turn first.
++    units.sort((a, b) => Number(!a.opp?.perception.count) - Number(!b.opp?.perception.count)
++      || (m.pop.position.share[a.opp?.position.as] ?? 1) - (m.pop.position.share[b.opp?.position.as] ?? 1));
++  }
++  const byId = new Map(units.map(u => [u.id, u]));
+   if (!units.length) return { found: false, reason: "no units" };
+   const case0 = m.cases[0], target = case0.goal.constraints?.find(c => c.equals !== undefined && !(c.path ?? []).length)?.equals, tokens = [], seen = new Set(), tried = new Set(), log = [];
+   // the observations enter the swarm: each is held by a unit (spread over the swarm)
+@@ -89,11 +105,12 @@
+       if (seen.has(sig)) continue; seen.add(sig);
+       const tok = { ref: "@" + (fnv(key) >>> 0).toString(16), type: op.output, value, op: op.id, from: Object.entries(b).map(([port, t]) => ({ port, tok: t })), unit: u.id,
+         holder: u.id, holders: new Set([u.id]), depth: 1, close: closeness(value, target), recalled: true }; tokens.push(tok); bySig.set(sig, tok);
+-      if (tok.type === case0.goal.type && m.cases.every(c => { try { return matches(runPlan(planOf(tok), tok.ref, ops, validate, c.inputs), c.goal.constraints); } catch { return false; } })) {
++      if (tok.type === case0.goal.type && m.cases.every(c => { try { return matchesGoal(runPlan(planOf(tok), tok.ref, ops, validate, c.inputs), c.goal); } catch { return false; } })) {
+         winners.push(tok); firstWin = -1; firstExec = executions; log.push({ round: "recall", unit: u.id, op: op.id, allCases: true }); } } }
+   if (winners.length) { const res = pick(0); res.recalled = true; return res; }
+   for (let r = 0; r < rounds; r++) {
+     let progressed = false;
++    const active = m.live ? new Map() : null;
+     for (const u of units) {
+       const near = [u.id, ...neighbours(u)], pool = tokens.filter(t => near.some(id => t.holders.has(id))).sort((a, b) => (b.close - 0.08 * b.depth) - (a.close - 0.08 * a.depth) || a.depth - b.depth);   /* closest to what the host asked for first, simpler first among close */
+       if (!pool.length) continue;
+@@ -115,22 +132,24 @@
+           const cand = { ref, op: op.id, from, unit: u.id }, candLen = planOf(cand).length;
+           /* two ways of making something are the SAME value only if they agree on every case, not just the first (3*4 and 3+4+5 are both 12 once) */
+           const sig = op.output + stable(value) + (m.cases.length > 1 ? stable(m.cases.slice(1).map(c => { try { return runPlan(planOf(cand), ref, ops, validate, c.inputs); } catch { return "×"; } })) : "");
+-          if (seen.has(sig) && op.output === case0.goal.type && matches(value, case0.goal.constraints)) {   /* a NEW way to a value that answers the first case: it may answer the others where the old way did not */
++          if (seen.has(sig) && op.output === case0.goal.type && matchesGoal(value, case0.goal)) {   /* a NEW way to a value that answers the first case: it may answer the others where the old way did not */
+             const alt = { ref, type: op.output, value, op: op.id, from, unit: u.id, holder: u.id, holders: new Set([u.id]), depth, close: 1 }, plan = planOf(alt);
+-            const all = m.cases.every(c => { try { return matches(runPlan(plan, ref, ops, validate, c.inputs), c.goal.constraints); } catch { return false; } });
++            const all = m.cases.every(c => { try { return matchesGoal(runPlan(plan, ref, ops, validate, c.inputs), c.goal); } catch { return false; } });
+             log.push({ round: r, unit: u.id, op: op.id, candidate: plan.map(s => s.op), allCases: all, anotherWay: true });
+             if (all) { winners.push(alt); firstWin ??= r; firstExec ??= executions; } }
+           if (seen.has(sig)) { const old = bySig.get(sig);   // same value reached a simpler way: the value keeps its name, its making gets simpler
+             if (old && old.op && candLen < planOf(old).length && !planOf(cand).some(st => st.id === old.ref)) { old.op = op.id; old.from = from; old.unit = u.id; old.holders.add(u.id); simplified++;
+-              for (const t of tokens) if (t.op && t.type === case0.goal.type && !winners.includes(t) && matches(t.value, case0.goal.constraints)) {   /* what was built on it now reads differently: check those answers again */
++              for (const t of tokens) if (t.op && t.type === case0.goal.type && !winners.includes(t) && matchesGoal(t.value, case0.goal)) {   /* what was built on it now reads differently: check those answers again */
+                 const plan = planOf(t); if (!plan.some(st => st.id === old.ref) && t !== old) continue;
+-                if (m.cases.every(c => { try { return matches(runPlan(plan, t.ref, ops, validate, c.inputs), c.goal.constraints); } catch { return false; } })) { winners.push(t); firstWin ??= r; firstExec ??= executions; log.push({ round: r, unit: u.id, op: t.op, candidate: plan.map(st => st.op), allCases: true, afterSimplifying: true }); } } }
++                if (m.cases.every(c => { try { return matchesGoal(runPlan(plan, t.ref, ops, validate, c.inputs), c.goal); } catch { return false; } })) { winners.push(t); firstWin ??= r; firstExec ??= executions; log.push({ round: r, unit: u.id, op: t.op, candidate: plan.map(st => st.op), allCases: true, afterSimplifying: true }); } } }
+             continue; }
+           seen.add(sig);
++          if (active) active.set(u.id, { unit: u.id, op: op.id, dimension: op.dimension ?? u.address.dimension,
++            sources: [...new Set(from.map(input => input.tok.holder))] });
+           const tok = { ref, type: op.output, value, op: op.id, from, unit: u.id, holder: u.id, holders: new Set([u.id]), depth, close: closeness(value, target) }; tokens.push(tok); bySig.set(sig, tok); did = progressed = true;
+           // EVALUATE against every case, not just the one it was built on
+-          if (tok.type === case0.goal.type && matches(value, case0.goal.constraints)) {
+-            const plan = planOf(tok); const all = m.cases.every(c => { try { const out = runPlan(plan, tok.ref, ops, validate, c.inputs); return c.goal.type === tok.type && matches(out, c.goal.constraints); } catch { return false; } });
++          if (tok.type === case0.goal.type && matchesGoal(value, case0.goal)) {
++            const plan = planOf(tok); const all = m.cases.every(c => { try { const out = runPlan(plan, tok.ref, ops, validate, c.inputs); return c.goal.type === tok.type && matchesGoal(out, c.goal); } catch { return false; } });
+             log.push({ round: r, unit: u.id, op: op.id, candidate: plan.map(s => s.op), allCases: all });
+             if (all) { winners.push(tok); firstWin ??= r; firstExec ??= executions; }
+             reward(S, byId, plan, -0.3); }
+@@ -141,6 +160,7 @@
+       if (!did) { const n = (idle.get(u.id) ?? 0) + 1; idle.set(u.id, n);
+         if (n % 5 === 0) changeLine(u, pref[0]?.[0], leader); }        // CHANGING LINE: what it is inclined to carry shifts
+     }
++    if (active) yield { round: r + 1, executions, carriers: [...active.values()] };
+     // SELECTION: once something works, the swarm keeps going two more rounds and keeps the simplest formation that works
+     if (winners.length && r - firstWin >= 3) return pick(r + 1);   /* a few more rounds: a simpler way may still turn up */
+     // VALUES travel along bonds: what a unit holds reaches the units bonded to it next round (so materials can meet)
+--- /dev/null
++++ b/two-environments.html
+@@ -0,0 +1,106 @@
++<!doctype html>
++<html lang="en">
++<meta charset="utf-8">
++<meta name="viewport" content="width=device-width, initial-scale=1">
++<title>Swarm · Two environments</title>
++<style>
++  * { box-sizing:border-box }
++  body { margin:0; background:#180f20; color:#f7eefa; font:16px system-ui,sans-serif }
++  main { max-width:840px; margin:auto; padding:32px 20px }
++  a { color:#eec5fa }
++  button { background:#e9b4ee; color:#210b2b; border:0; border-radius:8px; padding:12px 18px; font:inherit; font-weight:650; cursor:pointer }
++  article { border:1px solid #62456a; background:#24172e; border-radius:14px; padding:18px; min-width:0 }
++  section { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:16px }
++  article h2 { margin:0; font-size:1.25rem }
++  p { line-height:1.5 }
++  pre { font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; color:#ded1e8 }
++  canvas { display:block; width:100%; max-width:320px; image-rendering:pixelated; border-radius:8px }
++</style>
++<main>
++  <a href="./living.html">Living swarm</a>
++  <h1>Two-environment test</h1>
++  <p>Send the same 64-gate swarm into an incomplete app and a grid world. Each host scores what survives after the swarm leaves.</p>
++  <button id="run">Run test</button>
++  <p id="status" role="status"></p>
++  <canvas id="swarm" width="320" height="170" aria-label="Live changes in the swarm"></canvas>
++  <section id="results"></section>
++</main>
++<script type="module">
++import { runHost } from "./lifecycle.js";
++import { twoEnvironmentsLive } from "./two_environments.js";
++const run = document.querySelector("#run"), status = document.querySelector("#status"), results = document.querySelector("#results");
++const node = (tag, text) => Object.assign(document.createElement(tag), { textContent: text });
++function show(title, receipt, evidence) {
++  const phase = name => receipt.steps.find(s => s.step === name);
++  const card = node("article", "");
++  card.append(node("h2", title),
++    node("p", `Health ${phase("enter").checkWithout} → ${phase("extract")?.checkWithSwarmGone ?? "failed"}`),
++    node("p", `POP · ${phase("orient").pop.units} units · sees ${phase("orient").pop.perception.meanSeen} peers on average`),
++    node("p", `Formation · ${phase("construct")?.plan?.join(" → ") ?? "none"}`));
++  if (evidence) card.append(evidence);
++  results.append(card);
++}
++run.onclick = () => {
++  run.disabled = true;
++  status.textContent = "Running the swarm…";
++  results.replaceChildren();
++  requestAnimationFrame(() => setTimeout(async () => {
++    try {
++      const { app, habitat, appResult, worldResult } = await twoEnvironmentsLive((place, frame, swarm) => {
++        status.textContent = `${place} · round ${frame.round} · ${frame.carriers.length} units taking on trial roles`;
++        const canvas = document.querySelector("#swarm"), ctx = canvas.getContext("2d");
++        ctx.fillStyle = "#24172e";
++        ctx.fillRect(0, 0, canvas.width, canvas.height);
++        for (const unit of swarm.units) {
++          ctx.fillStyle = unit.trialRole ? "#fa9eee" : "#b59ac4";
++          const radius = unit.trialRole ? 4 : 2;
++          ctx.beginPath();
++          ctx.arc(unit.x * canvas.width, unit.y * canvas.height, radius, 0, 2 * Math.PI);
++          ctx.fill();
++        }
++        return new Promise(resolve => setTimeout(resolve, 80));
++      });
++      const preview = node("div", "");
++      if (appResult.ok) {
++        const { exports } = runHost(app.app.files, { entry: "panel.js" });
++        const inputs = ["A", "B"].map(name => {
++          const label = node("label", `${name} `), input = node("input", "");
++          input.type = "checkbox";
++          label.append(input);
++          preview.append(label, " ");
++          return input;
++        });
++        const output = node("p", "");
++        const update = () => { output.textContent = `Indicator ${exports.panel(...inputs.map(input => Number(input.checked))) ? "on" : "off"}`; };
++        inputs.forEach(input => input.onchange = update);
++        update();
++        preview.append(output);
++      }
++      const source = node("details", "");
++      source.append(node("summary", "Grown JavaScript"), node("pre", app.app.files.find(f => f.path === "indicator.js")?.text ?? ""));
++      preview.append(source);
++      show("Incomplete app", appResult, preview);
++      const canvas = node("canvas", "");
++      const world = habitat.world.fork().run(120);
++      canvas.width = world.w;
++      canvas.height = world.h;
++      canvas.setAttribute("aria-label", "Grid with the integrated descendant running after extraction");
++      const ctx = canvas.getContext("2d");
++      world.cells.forEach((rgb, i) => {
++        ctx.fillStyle = `rgb(${rgb.join(",")})`;
++        ctx.fillRect(i % world.w, Math.floor(i / world.w), 1, 1);
++      });
++      show("Grid world", worldResult, canvas);
++      status.textContent = appResult.ok && worldResult.ok ? "Passed both environments. Both descendants work independently." : "One or more environments failed.";
++      document.body.dataset.result = appResult.ok && worldResult.ok ? "pass" : "fail";
++    } catch (error) {
++      status.textContent = error.message;
++      document.body.dataset.result = "fail";
++    } finally {
++      run.disabled = false;
++    }
++  }, 0));
++};
++if (new URLSearchParams(location.search).has("run")) run.click();
++</script>
++</html>
+--- a/hosts.js
++++ b/hosts.js
+@@ -2,13 +2,13 @@
+ // Each offers: materials (typed observations), what its world allows (pure primitives), its own check, how a descendant lives.
+ import { World } from "./hostworld.js";
+ import { UnitSystem, trial } from "./morph.js";
+-import { observe as obsApp, discover as discApp, runHost } from "./lifecycle.js";
++import { observe as obsApp, discover as discApp, runHost, resolve, LIFE } from "./lifecycle.js";
+ 
+ // ---------- a world simulation ----------
+-export function worldHost(W, check, { enough = 0.9 } = {}) {
++export function worldHost(W, check, { enough = 0.9, healthOnly = false } = {}) {
+   W.checks = [check];
+   const ids = Array.from({ length: 24 }, (_, i) => `trial-${i}`);
+-  return { name: W.name, kind: "world", enough,
++  return { name: W.name, kind: "world", enough, healthOnly,
+     check: () => W.fork().run(120).score(), checkAlone: () => W.fork().run(120).score(),
+     materials: () => ({
+       types: { edge: x => ["top", "bottom", "left", "right", "anywhere"].includes(x), heading: x => Array.isArray(x) && x.length === 2,
+@@ -22,6 +22,7 @@
+       primitives: [{ id: "behave", dimension: "Movement", inputs: { appear: "edge", move: "heading", mark: "mode", colour: "colour" }, output: "fit",
+         run: ({ appear, move, mark, colour }) => { const b = { appear, move, wander: 0, stopOnContact: 0, leaveColour: mark, colour };
+           return { score: +trial(W, b, ids).toFixed(2), behaviour: b }; } }],
++      observation: "world health is below threshold",
+       need: "the world's own check is below " + enough, goal: { type: "fit", constraints: [{ path: ["score"], minimum: enough }] } }),
+     descend: ({ result, carry }) => ({ label: `${carry.length} unit(s) as one of the world's systems`, standalone: true,
+       system: new UnitSystem(result.behaviour, carry.map((c, i) => `${W.name}-descendant-${i}`), { seed: 11 }) }),
+@@ -30,11 +31,28 @@
+ 
+ // ---------- an incomplete application ----------
+ const IMPL = { xor: "a.map((x,i)=>x^b[i])", equivalence: "a.map((x,i)=>x===b[i]?1:0)", nand: "a.map((x,i)=>(x&&b[i])?0:1)", not: "v.map(x=>x?0:1)" };
+-export function appHost(files, { enough = 1 } = {}) {
+-  const host = { files: files.map(f => ({ ...f })) }, need = () => discApp(obsApp(host.files))[0];
+-  return { name: files.map(f => f.path).join("+"), kind: "app", enough,
+-    check: () => runHost(host.files).ok ? 1 : 0, checkAlone: () => runHost(host.files.map(f => ({ path: f.path, text: f.text }))).ok ? 1 : 0,
+-    materials: () => { const n = need(), cols = Array.from({ length: n.arity }, (_, k) => n.cases.map(c => c.args[k]));
++export function appHost(files, { enough = 1, health } = {}) {
++  const host = { files: files.map(f => ({ ...f })) };
++  const healthOnly = typeof health === "function";
++  let gap;
++  const need = () => healthOnly ? (gap ??= observeBitGap(host.files)) : discApp(obsApp(host.files))[0];
++  const score = files => healthOnly ? health(files.map(f => ({ ...f }))) : Number(runHost(files).ok);
++
++  return { name: files.map(f => f.path).join("+"), kind: "app", enough, healthOnly,
++    check: () => score(host.files), checkAlone: () => score(host.files),
++    materials: () => { const n = need(); if (!n) return null;
++      const cols = Array.from({ length: n.arity }, (_, k) => n.cases.map(c => c.args[k]));
++      if (healthOnly) return {
++        observations: cols.map((v, k) => ({ id: "arg" + k, type: "bits", value: v })),
++        primitives: [], observation: { name: n.name, path: n.path, arity: n.arity },
++        goal: { type: "bits", accept: bits => {
++          if (!Array.isArray(bits) || bits.length !== n.cases.length) return false;
++          const code = `export function ${n.name}(...args) {
++            return ${JSON.stringify(bits)}[args.reduce((index, bit) => 2 * index + Number(bit), 0)];
++          }`;
++          return score(withModule(host.files, { path: n.path, code })) >= enough;
++        } }
++      };
+       return { observations: cols.map((v, k) => ({ id: "arg" + k, type: "bits", value: v })), primitives: [],
+         need: `${n.name} (${n.cases.length} cases)`, goal: { type: "bits", constraints: [{ path: [], equals: n.cases.map(c => c.out) }] }, fn: n }; },
+     descend: ({ graph, builder }) => { const n = need(), ins = Array.from({ length: n.arity }, (_, k) => "arg" + k), body = [];
+@@ -51,8 +69,40 @@
+       const out = emit(graph, {});
+       const code = `// descendant of the swarm: ${graph.steps.map(s => s.primitive).join(" → ")}; standalone\nexport function ${n.name}(${ins.join(", ")}) {\n${body.join("\n")}\n  return ${out}[0];\n}\n`;
+       return { label: `${n.path} grown into the app`, standalone: !/swarm|organism/.test(code.split("\n").slice(1).join("\n")), path: n.path, code }; },
+-    integrate: d => { const f = host.files.find(x => x.path === d.path); if (f) f.text += "\n" + d.code; else host.files.push({ path: d.path, text: d.code }); },
++    integrate: d => { host.files = withModule(host.files, d); },
+     app: host };
++}
++
++function withModule(files, { path, code }) {
++  if (!files.some(f => f.path === path)) return [...files, { path, text: code }];
++  return files.map(f => f.path === path ? { ...f, text: f.text + "\n" + code } : f);
++}
++
++function observeBitGap(files) {
++  const { imports } = obsApp(files);
++  const gaps = new Map();
++  for (const imp of imports) {
++    const path = resolve(imp.in, imp.from);
++    const target = files.find(f => f.path === path);
++    if (!imp.from.startsWith(".") || !/^[A-Za-z_$][\w$]*$/.test(imp.name)
++      || (target && obsApp([target]).defined.has(imp.name))) continue;
++    const key = JSON.stringify([path, imp.name]);
++    const gap = gaps.get(key) ?? { path, name: imp.name, arities: new Set() };
++    const escaped = imp.name.replaceAll("$", "\\$");
++    const caller = files.find(f => f.path === imp.in);
++    for (const call of caller.text.matchAll(new RegExp(`(?<![\\w$])${escaped}\\s*\\(([^()]*)\\)`, "g"))) {
++      gap.arities.add(call[1].trim() ? call[1].split(",").length : 0);
++    }
++    gaps.set(key, gap);
++  }
++  if (gaps.size !== 1) return null;
++  const [gap] = gaps.values();
++  const [arity] = gap.arities;
++  if (gap.arities.size !== 1 || arity < 1 || arity > LIFE.MAX_INPUTS) return null;
++  return { name: gap.name, path: gap.path, arity,
++    cases: Array.from({ length: 2 ** arity }, (_, i) => ({
++      args: Array.from({ length: arity }, (_, bit) => (i >> (arity - bit - 1)) & 1)
++    })) };
+ }
+ 
+ // ---------- ANY software environment: observable state, operations it allows, constraints, evaluable requirements ----------
+--- /dev/null
++++ b/two_environments.js
+@@ -0,0 +1,60 @@
++import { LivingSwarm } from "./living.js";
++import { OrganismSwarm } from "./organism_swarm.js";
++import { World } from "./hostworld.js";
++import { enter, enterLive } from "./morphogenesis.js";
++import { appHost, worldHost } from "./hosts.js";
++import { runHost } from "./lifecycle.js";
++
++function* setupEnvironments() {
++  const swarm = new LivingSwarm({ seed: 9 });
++  const dimensions = ["Movement", "Evolution", "Being", "Design"];
++  for (let i = 0; i < 64; i++) {
++    swarm.add({ gate: i + 1, line: i % 6 + 1, color: i % 6 + 1,
++      tone: i % 6 + 1, base: i % 5 + 1, dimension: dimensions[i % 4] },
++    "person", 0.25 + i % 8 * 0.07, 0.25 + Math.floor(i / 8) * 0.07);
++  }
++  const organism = new OrganismSwarm(swarm);
++  swarm.link(0.11);
++  for (let i = 0; i < 5; i++) organism.step();
++
++  const app = appHost([
++    { path: "panel.js", text: "import { indicator } from './indicator.js';\nexport function panel(a, b) { return indicator(a, b); }" }
++  ], { health: files => Number(runHost([...files, {
++    path: "private-health.js",
++    text: "import { panel } from './panel.js';\nassert(panel(0,0) === 0); assert(panel(0,1) === 0); assert(panel(1,0) === 0); assert(panel(1,1) === 1);"
++  }]).ok) });
++  const appResult = yield { organism, host: app, place: "Incomplete app" };
++
++  for (let i = 0; i < 5; i++) organism.step();
++  const world = new World({ name: "ridge", w: 24, h: 18, temperature: -4 });
++  world.palette = [[20, 20, 20], [200, 40, 30], [40, 170, 60], [235, 235, 245]];
++  const habitat = worldHost(world, { measure: w => {
++    const ground = w.cells.slice((w.h - 1) * w.w);
++    return ground.filter(rgb => rgb.every(c => c > 200)).length / w.w;
++  } }, { healthOnly: true });
++  const worldResult = yield { organism, host: habitat, place: "Grid world" };
++  return { app, habitat, appResult, worldResult, organism };
++}
++
++
++export function twoEnvironments() {
++  const places = setupEnvironments();
++  let next = places.next();
++  while (!next.done) {
++    const { organism, host } = next.value;
++    next = places.next(enter(organism, host));
++  }
++  return next.value;
++}
++
++export async function twoEnvironmentsLive(onFrame) {
++  const places = setupEnvironments();
++  let next = places.next();
++  while (!next.done) {
++    const { organism, host, place } = next.value;
++    next = places.next(await enterLive(organism, host, {
++      onFrame: (frame, swarm) => onFrame(place, frame, swarm)
++    }));
++  }
++  return next.value;
++}
+--- a/HANDOFF.md
++++ b/HANDOFF.md
+@@ -206,3 +206,13 @@
+ - v64e: opp.js — each unit's OPP (orientation: heading + its gate's direction of action; position: where and as what; perception: who/what is within reach) and the swarm's POP (alignment of headings, share of each kind of doing, what nothing active is doing, how much is seen, who is blind). Live line 'POP' on the page; tap shows a unit's OPP. Nothing is prescribed — it is what the swarm reads of itself in a place. test_opp.mjs 5/5, test_pop_browser.mjs PASS. NEXT: two-environment test (expose what's there / what can be done / a health signal; no requirement) so orientation → discovery comes from the POP.
+ - v64f: canTouch per user (Nov 25): gate–gate/line/color; line–line/color/gate; color–color/line/tone/gate; tone–tone/color/base; base–base/tone. Line≠tone, tone/base≠gate. Old neighbours-only kept as canTouchNeighbours. Rule tests still 12/12, 8/8.
+ - v64g: fixed places, relative seeing — opp.js crossOf: each unit's fixed body pair (bodyPairs in the rule book: Sun–Earth, Nodes, Moon–Mercury, Venus–Mars, Jupiter–Saturn, Uranus–Neptune; Pluto unpaired) with which one is vertical/across decided by the unit's own heading; the cross point is its gate.line; Design × Personality crossing = self. In every unit's OPP as position.cross.
++
++## November 26, 2026 — live morphogenesis checkpoint (derived from v64g)
++
++Both supplied Drive links returned the same 10,478,526-byte ZIP (SHA-256 2bb5dc0b0c75fb0eb840b042d489d13899fdb98cfa21e65e868b48e43d4650a9). The source handoff ends at v64g. Compare with v64o before porting or assuming a four-side layout.
++
++- `enterLive` runs the existing construction loop cooperatively. Units try roles, change lines through the existing search, and move toward the units supplying their current values. Frame observers read the actual units. Trial roles are cleared on completion or interruption. The synchronous entry point remains available.
++- The health-only test places one 64-gate organism in a partial Boolean app and a grid world. The app exposes its import/call surface. Its private checks accept or reject temporary candidates. The world scores candidates tested on a fork. OPP/POP is read before activities begin and affects which units try first. The test checks that both descendants still work after extraction.
++- `living.html` uses the cooperative path when it grows a function for a dropped app. The Two-environment test link opens a browser demo with live unit motion, generated JavaScript, an interactive panel using that JavaScript, and the grid running the surviving descendant. The static site requires no application backend.
++- `node test_two_environments.mjs`, `node test_morphogenesis.mjs`, `node test_software.mjs` and `node test_finish.mjs` passed. Browser module syntax passed. The available Chromium launcher pointed to a missing browser binary, so visual execution was not verified here. The standalone legacy ternary test expects a file under /home/claude, and the legacy self-host suite exceeded the 45-second run limit.
++- The health-only app adapter handles one unresolved relative Boolean import with simple direct call sites and up to three inputs. This test does not establish arbitrary app or ecosystem construction. Original and research-only files were retained. Arcadia coordination, social conditions, cross-driven movement and the reality layer are open.
+--- /dev/null
++++ b/test_two_environments.mjs
+@@ -0,0 +1,51 @@
++import assert from "node:assert/strict";
++import { twoEnvironments } from "./two_environments.js";
++import { enter } from "./morphogenesis.js";
++import { appHost } from "./hosts.js";
++
++const { app, habitat, appResult, worldResult, organism } = twoEnvironments();
++for (const [kind, host, result] of [["app", app, appResult], ["world", habitat, worldResult]]) {
++  const phase = name => result.steps.find(s => s.step === name);
++  assert.equal(host.healthOnly, true);
++  assert.ok(phase("enter").checkWithout < host.enough);
++  assert.equal(phase("orient").pop.units, 64);
++  assert.ok(result.steps.indexOf(phase("orient")) < result.steps.indexOf(phase("discover")));
++  assert.equal(phase("discover").needs, undefined);
++  assert.equal(phase("construct").by, "units");
++  assert.ok(phase("construct").plan.length);
++  assert.equal(phase("clone").standalone, true);
++  assert.equal(phase("extract").unitsStillCarrying, 0);
++  assert.ok(host.checkAlone() >= host.enough);
++  assert.ok(result.ok);
++  console.log(kind, JSON.stringify(result.steps.filter(s => ["enter", "orient", "discover", "construct", "extract"].includes(s.step))));
++}
++assert.equal(app.app.files.length, 2);
++assert.ok(app.app.files.some(f => f.path === "indicator.js"));
++assert.equal(habitat.world.systems.length, 1);
++assert.equal(organism.morphMemory.formations.length, 2);
++const impossible = appHost([{ path: "x.js", text: "export const x = 0;" }], { health: () => 0 });
++assert.equal(enter(organism, impossible).ok, false);
++const rejected = appHost([{ path: "x.js", text: "import { gate } from './gate.js';\nexport function x(v) { return gate(v); }" }], { health: () => 0 });
++assert.equal(enter(organism, rejected).ok, false);
++assert.equal(rejected.app.files.length, 1);
++assert.equal(organism.morphMemory.formations.length, 2);
++console.log("Two environments passed, including unsupported and unsatisfied hosts.");
++
++const { twoEnvironmentsLive } = await import("./two_environments.js");
++const positions = new Map(), frames = new Map();
++let moved = false;
++const live = await twoEnvironmentsLive((place, frame, swarm) => {
++  frames.set(place, (frames.get(place) ?? 0) + 1);
++  for (const carrier of frame.carriers) {
++    const unit = swarm.units[carrier.unit];
++    assert.equal(unit.trialRole, carrier);
++    const key = place + unit.id, position = [unit.x, unit.y];
++    if (positions.has(key) && positions.get(key).some((value, i) => value !== position[i])) moved = true;
++    positions.set(key, position);
++  }
++});
++assert.ok(live.appResult.ok && live.worldResult.ok);
++assert.ok(moved);
++assert.ok([...frames.values()].every(count => count > 1));
++assert.ok(live.organism.S.units.every(unit => !unit.trialRole && !unit.role));
++console.log("Live morphogenesis passed: provisional roles, movement across frames, and extraction.");
